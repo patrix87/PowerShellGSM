@@ -7,33 +7,48 @@
 # Variables
 #---------------------------------------------------------
 
-#Change settings in C:\Users\Administrator\Zomboid\Server\servertest.ini
+#Change settings in C:\Users\%username%\Zomboid\Server\servertest.ini
 
 #Variables      
-$ProcessName="java"                                                             #Process name in the task manager
-$serverExec="C:\ProjectZomboidServer\ProjectZomboid64.exe"                      #ProjectZomboid64.exe
-$7zExec="C:\7z\7za.exe"                                                         #7zip
-$mcrconExec="C:\mcrcon\mcrcon.exe"                                              #mcrcon
-$serverSaves="C:\Users\Administrator\Zomboid"                                   #Folder to include in backup
-$backupPath="C:\ProjectZomboidServerBackups"                                    #Backup Folder
+
+$serverExec="ProjectZomboidServer\ProjectZomboid64.exe"                         #ProjectZomboid64.exe
+$7zExec="7z\7za.exe"                                                            #7zip
+$mcrconExec="mcrcon\mcrcon.exe"                                                 #mcrcon
+$steamCMDExec="SteamCMD\steamcmd.exe"                                           #SteamCMD executable
+$serverPath="ProjectZomboidServer"                                              #Server Files Location
+$backupPath="ProjectZomboidServerBackups"                                       #Backup Folder
 $backupDays="7"                                                                 #Number of days of backups to keep.
 $backupWeeks="4"                                                                #Number of weeks of weekly backups to keep.
 $rconIP="127.0.0.1"                                                             #Rcon IP, usually localhost
 $rconPort="27015"                                                               #Rcon Port in servertest.ini
-$rconPassword="CHANGEME"                                                        #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini
-$steamCMDExec="C:\SteamCMD\steamcmd.exe"                                        #SteamCMD executable
-$serverPath="C:\ProjectZomboidServer"                                           #Server Files Location
+$rconPassword="CHANGEME"                                                        #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
+$serverSaves="$env:userprofile\Zomboid"                                         #Folder to include in backup
 $steamAppID="380870"                                                            #Steam Server App Id
 $beta=$false                                                                    #Use Beta builds *(currently not supported but the script is future proof) $true or $false
 $betaBuild="iwillbackupmysave"                                                  #Name of the Beta Build
 $betaBuildPassword="iaccepttheconsequences"                                     #Beta Build Password
-
+$logFolder="PZLogs"                                                             #Name of the Log folder.
+$ProcessName="java"                                                             #Process name in the task manager
 
 
 #Do not modify below this line
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------------
+#Path reconstruction
+#---------------------------------------------------------
+
+$CurrentPath = $MyInvocation.MyCommand.Path | Split-Path
+Set-Location -Path $CurrentPath
+$serverExec="$CurrentPath\$serverExec"
+$7zExec="$CurrentPath\$7zExec"
+$mcrconExec="$CurrentPath\$mcrconExec"
+$steamCMDExec="$CurrentPath\$steamCMDExec"
+$serverPath="$CurrentPath\$serverPath"
+$backupPath="$CurrentPath\$backupPath"
+$logPath="$CurrentPath\$logFolder"
 
 #---------------------------------------------------------
 #Functions
@@ -47,6 +62,16 @@ function Update-Game {
         & $steamcmdExec +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $serverPath +app_update $steamAppID -+validate +quit
     }
 }
+
+#---------------------------------------------------------
+# Logging
+#---------------------------------------------------------
+Function TimeStamp {
+    return Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+}
+$logFile="$(TimeStamp)_log.txt"
+# Start Logging
+Start-Transcript -Path "$logPath\$logFile"
 
 #---------------------------------------------------------
 #Config Check
@@ -169,13 +194,17 @@ Write-Host "Starting Server..."
 
 $PZ_CLASSPATH="java/jinput.jar;java/lwjgl.jar;java/lwjgl_util.jar;java/sqlite-jdbc-3.8.10.1.jar;java/trove-3.0.3.jar;java/uncommons-maths-1.2.3.jar;java/javacord-2.0.17-shaded.jar;java/guava-23.0.jar;java/"
 
-Set-Location -Path $serverPath
-
-$app = Start-Process -FilePath ".\jre64\bin\java.exe" -WorkingDirectory "C:\ProjectZomboidServer" -ArgumentList "-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer" -PassThru
+$app = Start-Process -FilePath "$serverPath\jre64\bin\java.exe" -WorkingDirectory $serverPath -ArgumentList "-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer" -PassThru
 
 # Set the priority and affinity
 $app.PriorityClass = "High"
 #$app.ProcessorAffinity=15
 
+#Delete old logs
+Write-Host "Deleting logs older than 30 days"
+$limit = (Get-Date).AddDays(-30)
+Get-ChildItem -Path $logPath -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $limit } | Remove-Item -Force
+
+Stop-Transcript
 Start-Sleep -s 5
 

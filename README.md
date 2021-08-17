@@ -4,11 +4,11 @@ Powershell script to automatically manage a Project Zomboid Server.
 
 This powershell script will install, backup, update and reboot your Project Zomboid server when executed.
 
-To install simply copy the 3 folders and 2 files directly to your C:/ Drive and edit the variables section of ProjectZomboid.ps1 in order to configure your Server.
+To install simply extract the content of the zip file to any folder and edit the variables section of ProjectZomboid.ps1 in order to configure your Server.
 
 You can create a Scheduled Task to run the ProjectZomboid.cmd file daily to backup, update and reboot your Project Zomboid server.
 
-To run the script run the ProjectZomboid.cmd, You can place this file anywhere on your pc, the path is hardcoded to C:\ProjectZomboid.ps1
+To run the script run the ProjectZomboid.cmd
 
 To configure your server settings you need to edit the files in "C:\Users\%username%\Zomboid\Server\"
 

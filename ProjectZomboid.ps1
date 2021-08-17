@@ -9,7 +9,9 @@
 
 #Change settings in C:\Users\%username%\Zomboid\Server\servertest.ini
 
-#Variables      
+#Variables
+
+# All path are relative to the ps1 file location.
 
 $serverExec="ProjectZomboidServer\ProjectZomboid64.exe"                         #ProjectZomboid64.exe
 $7zExec="7z\7za.exe"                                                            #7zip

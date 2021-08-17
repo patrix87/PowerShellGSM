@@ -10,7 +10,7 @@ You can create a Scheduled Task to run the ProjectZomboid.cmd file daily to back
 
 To run the script run the ProjectZomboid.cmd
 
-To configure your server settings you need to edit the files in "C:\Users\%username%\Zomboid\Server\"
+To configure your server settings you need to edit the files in "C:\Users\\%username%\Zomboid\Server\"
 
 Options to look for when setting your server in servertest.ini (Suggested values)
 ```

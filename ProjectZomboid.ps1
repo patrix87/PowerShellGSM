@@ -24,11 +24,29 @@ $rconPassword="CHANGEME"                                                        
 $steamCMDExec="C:\SteamCMD\steamcmd.exe"                                        #SteamCMD executable
 $serverPath="C:\ProjectZomboidServer"                                           #Server Files Location
 $steamAppID="380870"                                                            #Steam Server App Id
+$beta=$false                                                                    #Use Beta builds *(currently not supported but the script is future proof) $true or $false
+$betaBuild="iwillbackupmysave"                                                  #Name of the Beta Build
+$betaBuildPassword="iaccepttheconsequences"                                     #Beta Build Password
+
+
 
 #Do not modify below this line
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+#---------------------------------------------------------
+#Functions
+#---------------------------------------------------------
+function Update-Game {
+    if($beta){
+        Write-Host Updating / Installing Beta Build
+        & $steamcmdExec +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $serverPath "+app_update $steamAppID -beta $betaBuild -betapassword $betaBuildPassword" +validate +quit
+    } else {
+        Write-Host Updating / Installing Regular Build
+        & $steamcmdExec +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $serverPath +app_update $steamAppID -+validate +quit
+    }
+}
 
 #---------------------------------------------------------
 #Config Check
@@ -61,7 +79,7 @@ if (!(Test-Path $mcrconExec)){
 #---------------------------------------------------------
 if (!(Test-Path $serverExec)){
     Write-Host "Server is not installed : Installing $serverName ..."
-    & $steamcmdExec +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $serverPath +app_update $steamAppID +validate +quit
+    Update-Game
 }else{
 
 #---------------------------------------------------------
@@ -140,9 +158,7 @@ if (!(Test-Path $serverExec)){
 #---------------------------------------------------------
 
     Write-Host "Updating Server..."
-
-    & $steamcmdExec +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $serverPath +app_update $steamAppID +quit
-
+    Update-Game
 }
 
 #---------------------------------------------------------

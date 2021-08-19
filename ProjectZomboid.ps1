@@ -23,7 +23,7 @@ $backupDays="7"                                                                 
 $backupWeeks="4"                                                                #Number of weeks of weekly backups to keep.
 $rconIP="127.0.0.1"                                                             #Rcon IP, usually localhost
 $rconPort="27015"                                                               #Rcon Port in servertest.ini
-$rconPassword="CHANGEME"                                                        #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
+$rconPassword="CHANGEME2"                                                        #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
 $serverSaves="$env:userprofile\Zomboid"                                         #Folder to include in backup
 $steamAppID="380870"                                                            #Steam Server App Id
 $beta=$false                                                                    #Use Beta builds *(currently not supported but the script is future proof) $true or $false
@@ -31,7 +31,6 @@ $betaBuild="iwillbackupmysave"                                                  
 $betaBuildPassword="iaccepttheconsequences"                                     #Beta Build Password
 $logFolder="PZLogs"                                                             #Name of the Log folder.
 $ProcessName="java"                                                             #Process name in the task manager
-
 
 #Do not modify below this line
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -44,6 +43,7 @@ $ProcessName="java"                                                             
 
 $CurrentPath = $MyInvocation.MyCommand.Path | Split-Path
 Set-Location -Path $CurrentPath
+
 $serverExec="$CurrentPath\$serverExec"
 $7zExec="$CurrentPath\$7zExec"
 $mcrconExec="$CurrentPath\$mcrconExec"
@@ -65,69 +65,14 @@ function Update-Game {
     }
 }
 
-#---------------------------------------------------------
-# Logging
-#---------------------------------------------------------
-Function TimeStamp {
-    return Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
-}
-$logFile="$(TimeStamp)_log.txt"
-# Start Logging
-Start-Transcript -Path "$logPath\$logFile"
-
-#---------------------------------------------------------
-#Config Check
-#---------------------------------------------------------
-Write-Host Checking config
-
-if (!(Test-Path $serverPath)){
-    Write-Host "Server path : $serverPath not found"
-    Write-Host "Creating $serverPath"
-    New-Item -ItemType directory -Path $serverPath -ErrorAction SilentlyContinue
-}
-if (!(Test-Path $steamCMDExec)){
-    Write-Host "SteamCMD.exe not found at : $steamCMDExec"
-    pause
-    exit
-}
-if (!(Test-Path $7zExec)){
-    Write-Host "7za.exe not found at : $7zExec"
-    pause
-    exit
-}
-if (!(Test-Path $mcrconExec)){
-    Write-Host "mcrcon.exe not found at : $mcrconExec"
-    pause
-    exit
-}
-
-#---------------------------------------------------------
-#Install if not installed
-#---------------------------------------------------------
-if (!(Test-Path $serverExec)){
-    Write-Host "Server is not installed : Installing $serverName ..."
-    Update-Game
-}else{
-
-#---------------------------------------------------------
-#If Server is running warn players then stop server
-#---------------------------------------------------------
-
-    Write-Host "Checking if server is running"
-    $server=Get-Process $ProcessName -ErrorAction SilentlyContinue
-    if ($server) {
-        Write-Host "Server is running... Warning users about restart..."
-        & $mcrconExec -c -H $rconIP -P $rconPort -p $rconPassword "servermsg THE SERVER WILL REBOOT IN 5 MINUTES !"
-        Start-Sleep -s 240
-        & $mcrconExec -c -H $rconIP -P $rconPort -p $rconPassword "servermsg THE SERVER WILL REBOOT IN 1 MINUTE !"
-        Start-Sleep -s 60
-        & $mcrconExec -c -H $rconIP -P $rconPort -p $rconPassword "servermsg THE SERVER IS REBOOTING !"
-        Start-Sleep -s 5
-        Write-Host "Saving and shutting down server."
-        & $mcrconExec -c -H $rconIP -P $rconPort -p $rconPassword "quit"
-        Start-Sleep -s 30
+function Stop-Server {
+    param (
+        $server
+    )
+    if(-not $server.HasExited){
         Write-Host "Closing Main Windows..."
         $server.CloseMainWindow()
+        $server.WaitForExit()
         Start-Sleep -s 10
         if ($server.HasExited) {
             Write-Host "Server succesfully shutdown"
@@ -143,6 +88,120 @@ if (!(Test-Path $serverExec)){
                 #Force Stop
                 $server | Stop-Process -Force
             }
+        }
+    }
+}
+
+#---------------------------------------------------------
+# Logging
+#---------------------------------------------------------
+Function TimeStamp {
+    return Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+}
+$logFile="$(TimeStamp)_log.txt"
+# Start Logging
+Start-Transcript -Path "$logPath\$logFile"
+
+#---------------------------------------------------------
+#Config Check
+#---------------------------------------------------------
+Write-Host Installing components.
+
+if (!(Test-Path $serverPath)){
+    Write-Host "Server path : $serverPath not found"
+    Write-Host "Creating $serverPath"
+    New-Item -ItemType directory -Path $serverPath -ErrorAction SilentlyContinue
+}
+if (!(Test-Path $steamCMDExec)){
+    Write-Host "SteamCMD.exe not found at : $steamCMDExec"
+    Write-Host "Downloading SteamCMD"
+    New-Item -Path ".\downloads" -ItemType "directory"
+    Invoke-WebRequest -Uri "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip" -OutFile ".\downloads\steamcmd.zip" -ErrorAction SilentlyContinue
+    Expand-Archive -Path ".\downloads\steamcmd.zip" -DestinationPath (Split-Path -Path $steamCMDExec) -Force
+    Remove-Item -Path ".\downloads" -Recurse -Force
+}
+if (!(Test-Path $7zExec)){
+    Write-Host "7za.exe not found at : $7zExec"
+    Write-Host "Downloading 7zip 9.20 to extract 7zip 19.00"
+    New-Item -Path ".\downloads" -ItemType "directory"
+    Invoke-WebRequest -Uri "https://www.7-zip.org/a/7za920.zip" -OutFile ".\downloads\7za920.zip"
+    Expand-Archive -Path ".\downloads\7za920.zip" -DestinationPath ".\downloads\7z920\" -Force
+    Write-Host "Downloading 7zip 19.00"
+    Invoke-WebRequest -Uri "https://www.7-zip.org/a/7z1900-extra.7z" -OutFile ".\downloads\7z1900-extra.7z" -ErrorAction SilentlyContinue
+    $7z920 = Resolve-Path -Path ".\downloads\7z920\7za.exe"
+    & $7z920 x ".\downloads\7z1900-extra.7z" -o".\downloads\7z1900\" -y
+    Copy-Item -Path ".\downloads\7z1900\x64\" -Destination (Split-Path -Path $7zExec) -Recurse -Force
+    Remove-Item -Path ".\downloads" -Recurse -Force
+}
+if (!(Test-Path $mcrconExec)){
+    Write-Host "mcrcon.exe not found at : $mcrconExec"
+    Write-Host "Downloading mcrcon"
+    New-Item -Path ".\downloads" -ItemType "directory"
+    New-Item -Path (Split-Path -Path $mcrconExec) -ItemType "directory"
+    Invoke-WebRequest -Uri "https://github.com/Tiiffi/mcrcon/releases/download/v0.7.1/mcrcon-0.7.1-windows-x86-32.zip" -OutFile ".\downloads\mcrcon.zip" -ErrorAction SilentlyContinue
+    Expand-Archive -Path ".\downloads\mcrcon.zip" -DestinationPath ".\downloads\mcrcon\" -Force
+    $mcrconPath = Resolve-Path -Path ".\downloads\mcrcon\mcrcon-0.7.1-windows-x86-32\mcrcon.exe"
+    Copy-Item -Path $mcrconPath -Destination $mcrconExec -Force
+    Remove-Item -Path ".\downloads" -Recurse -Force
+}
+
+#---------------------------------------------------------
+#Install if not installed
+#---------------------------------------------------------
+if (!(Test-Path $serverExec)){
+    Write-Host "Server is not installed : Installing $serverName ..."
+    Update-Game
+}else{
+
+#---------------------------------------------------------
+#If Server is running warn players then stop server
+#---------------------------------------------------------
+
+#TODO Add loop here with timers and warning list in minutes
+
+    Write-Host "Checking if server is running"
+    $server=Get-Process $ProcessName -ErrorAction SilentlyContinue
+    if ($server) {
+        Write-Host "Server is running... Warning users about restart..."
+        $task = Start-Process $mcrconExec -ArgumentList "-c -H $rconIP -P $rconPort -p $rconPassword `"servermsg THE SERVER WILL REBOOT IN 5 MINUTES !`"" -Wait -PassThru -NoNewWindow
+        if ($task.ExitCode -eq 0) {
+            Write-Host "Message Sent."
+            Write-Host "Waiting 4 Minutes"
+            Start-Sleep -s 240
+        } else {
+            Write-Error "Unable to send server reboot warning."
+            Write-Host "Hard Restarting now."
+            Stop-Server($server)
+        }
+        $task = Start-Process $mcrconExec -ArgumentList "-c -H $rconIP -P $rconPort -p $rconPassword `"servermsg THE SERVER WILL REBOOT IN 1 MINUTE !`"" -Wait -PassThru -NoNewWindow
+        if ($task.ExitCode -eq 0) {
+            Write-Host "Message Sent."
+            Write-Host "Waiting 1 Minutes"
+            Start-Sleep -s 60
+        } else {
+            Write-Error "Unable to send server reboot warning."
+            Write-Host "Hard Restarting now."
+            Stop-Server($server)
+        }
+        $task = Start-Process $mcrconExec -ArgumentList "-c -H $rconIP -P $rconPort -p $rconPassword `"servermsg THE SERVER IS REBOOTING !`"" -Wait -PassThru -NoNewWindow
+        if ($task.ExitCode -eq 0) {
+            Write-Host "Message Sent."
+            Write-Host "Waiting 5 Seconds"
+            Start-Sleep -s 5
+        } else {
+            Write-Error "Unable to send server reboot warning."
+            Write-Host "Hard Restarting now."
+            Stop-Server($server)
+        }
+        $task = Start-Process $mcrconExec -ArgumentList "-c -H $rconIP -P $rconPort -p $rconPassword `"quit`"" -Wait -PassThru -NoNewWindow
+        if ($task.ExitCode -eq 0) {
+            Write-Host "Message Sent."
+            Write-Host "Saving and shutting down server."
+            Start-Sleep -s 30
+        } else {
+            Write-Error "Unable to send server reboot command"
+            Write-Host "Hard Restarting now."
+            Stop-Server($server)
         }
     }else{
         Write-Host "Server is not running"

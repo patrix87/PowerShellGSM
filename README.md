@@ -44,7 +44,7 @@ You do not need to forward RCON.
 
 I'm am in no way responsible for anything that this script will do, you are responsible for reading and understanding what this script will do before executing it.
 
-7zip, mcrcon and SteamCMD are not developed or supported by me, they are included in this package to simplify the installation.
+7zip, mcrcon and SteamCMD are not developed or supported by me.
 
 7zip : https://www.7-zip.org/
 

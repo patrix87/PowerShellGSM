@@ -1,1 +1,0 @@
-start powershell.exe -noprofile -executionpolicy bypass -file .\ProjectZomboid.ps1

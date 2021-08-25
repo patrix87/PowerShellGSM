@@ -1,0 +1,11 @@
+{
+    "powershell.scriptAnalysis.settingsPath": ".vscode\\PSScriptAnalyzerSettings.psd1",
+    "powershell.scriptAnalysis.enable": true,
+    "files.exclude": {
+        "**/7z": true,
+        "**/logs": true,
+        "**/mcrcon": true,
+        "**/SteamCMD": true,
+        "**/ProjectZomboidServer": true
+    },
+}

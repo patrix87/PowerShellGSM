@@ -1,4 +1,4 @@
-# Powershell Server Manager
+# Powershell SteamCMD Server Manager
 
 Powershell script to automatically manage most SteamCMD servers
 

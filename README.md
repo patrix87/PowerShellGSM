@@ -1,44 +1,33 @@
-# Project Zomboid Server Manager
+# Powershell Server Manager
 
-Powershell script to automatically manage a Project Zomboid Server.
+Powershell script to automatically manage most SteamCMD servers
 
-This powershell script will install, backup, update and reboot your Project Zomboid server when executed.
+This powershell script will install, backup, update and reboot your server when executed.
 
-To install simply extract the content of the zip file to any folder and edit the variables section of ProjectZomboid.ps1 in order to configure your Server.
+You can create a Scheduled Task to execute the run.cmd file daily to backup, update and reboot your server.
 
-You can create a Scheduled Task to run the ProjectZomboid.cmd file daily to backup, update and reboot your Project Zomboid server.
+# Installation
 
-To run the script run the ProjectZomboid.cmd
+- Extract the release code in any directory.
+- Copy and rename then edit run.cmd to select your server configuration file.
+- Edit your server configuration file in the configs folder.
+- Exectute your version of run.cmd
 
-To configure your server settings you need to edit the files in "C:\Users\\%username%\Zomboid\Server\"
+# Expanding the code
 
-Options to look for when setting your server in servertest.ini (Suggested values)
-```
-DefaultPort=16261
-MaxPlayers=64
-Open=true
-PVP=true
-Password=My server password
-PauseEmpty=true
-PingFrequency=10
-PingLimit=200
-Public=true
-PublicDescription=My server Description
-PublicName=My server name
-RCONPassword=RCONPassword from ProjectZomboid.ps1 without "
-RCONPort=27015
-SteamPort1=8766
-SteamPort2=8767
-```
+You can create Pull Requests for changes to this project.
 
-You need to port forward the following Ports on your router, both in TCP and UDP
+Please follow the current structure and formating.
 
-```
-DefaultPort=16261
-SteamPort1=8766
-SteamPort2=8767
-```
-You do not need to forward RCON.
+If you want to add support for more games, copy one of the configuration files in /configs and edit the values and launch parameters.
+
+# Requirements : 
+
+A windows machine with at least Powershell 5.1 installed (Windows 10 or Windows Server 2016 or newer)
+
+Some basic powershell knowledge.
+
+Some networking basics to configure port forwarding.
 
 # Disclaimer : 
 

@@ -21,7 +21,7 @@ Please follow the current structure and formating.
 
 If you want to add support for more games, copy one of the configuration files in /configs and edit the values and launch parameters.
 
-# Requirements : 
+# Requirements
 
 A windows machine with at least Powershell 5.1 installed (Windows 10 or Windows Server 2016 or newer)
 
@@ -29,7 +29,7 @@ Some basic powershell knowledge.
 
 Some networking basics to configure port forwarding.
 
-# Disclaimer : 
+# Disclaimer
 
 I'm am in no way responsible for anything that this script will do, you are responsible for reading and understanding what this script will do before executing it.
 

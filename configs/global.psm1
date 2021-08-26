@@ -10,4 +10,4 @@
 #Path of the logs folder.
 [string]$LogFolder=".\logs"
 
-Export-ModuleMember -Variable * -Verbose:$false
+Export-ModuleMember -Variable *

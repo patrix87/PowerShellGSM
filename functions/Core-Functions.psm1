@@ -1,22 +1,16 @@
-#---------------------------------------------------------
-#General Functions
-#---------------------------------------------------------
 Function Get-TimeStamp {
     return Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 }
 
-function Exit-WithCode
+function Exit-WithError
 {
     param
     (
-		[string]$ErrorMsg,
-		$ErrorObj,
-        [int32]$ExitCode
+        [string]$ErrorMsg
     )
-	Write-Error $ErrorMsg -TargetObject $ErrorObj
-	Stop-Transcript
-	Read-Host
-    $Host.SetShouldExit($Exitcode)
+    Write-Host -ForegroundColor "Red" -BackgroundColor "Black" -Object $ErrorMsg
+    Stop-Transcript
+    Read-Host
     exit
 }
 
@@ -27,9 +21,9 @@ function Remove-OldLog {
         [int32]$Days=30
     )
     #Delete old logs
-    Write-Verbose "Deleting logs older than 30 days"
+    Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Deleting logs older than $Days days."
     $Limit=(Get-Date).AddDays(-$Days)
     Get-ChildItem -Path $LogFolder -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force
 }
 
-Export-ModuleMember -Function Get-TimeStamp, Exit-WithCode, Remove-OldLog -Verbose:$false
+Export-ModuleMember -Function Get-TimeStamp, Exit-WithError, Remove-OldLog

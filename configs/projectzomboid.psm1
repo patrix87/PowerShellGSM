@@ -14,7 +14,7 @@ PingLimit=200
 Public=true
 PublicDescription=My server Description
 PublicName=My server name
-RCONPassword=RCONPassword from ProjectZomboid.ps1 without "
+RCONPassword=CHANGEME
 RCONPort=27015
 SteamPort1=8766
 SteamPort2=8767
@@ -41,7 +41,7 @@ You do not need to forward RCON.
 [int32]$RconPort=27015
 
 #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
-[securestring]$RconPassword = ConvertTo-SecureString -String "CHANGEME" -AsPlainText -Force
+[string]$RconPassword="CHANGEME"
 
 #---------------------------------------------------------
 # Server Installation
@@ -51,7 +51,7 @@ You do not need to forward RCON.
 [string]$ServerName="ProjectZomboid"
 
 #Server Installation Path
-[string]$ServerPath=".\Servers\$ServerName"
+[string]$ServerPath=".\servers\$ServerName"
 
 #Steam Server App Id
 [int32]$SteamAppID=380870
@@ -63,13 +63,13 @@ You do not need to forward RCON.
 [string]$BetaBuild="iwillbackupmysave"
 
 #Beta Build Password
-[securestring]$BetaBuildPassword = ConvertTo-SecureString -String "iaccepttheconsequences" -AsPlainText -Force
+[string]$BetaBuildPassword="iaccepttheconsequences"
 
 #Process name in the task manager
 [string]$ProcessName="java"
 
 #ProjectZomboid64.exe
-[string]$ServerExec=".\Servers\$ServerName\ProjectZomboid64.exe"
+[string]$ServerExec=".\servers\$ServerName\ProjectZomboid64.exe"
 
 #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
 [bool]$UsePriority=$True
@@ -102,7 +102,7 @@ Core 8=> 10000000=> 128
 [bool]$UseBackups=$True
 
 #Backup Folder
-[string]$BackupPath=".\Backups\$ServerName"
+[string]$BackupPath=".\backups\$ServerName"
 
 #Number of days of backups to keep.
 [int32]$BackupDays=7
@@ -120,7 +120,7 @@ Core 8=> 10000000=> 128
 [bool]$UseWarnings=$True
 
 #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
-[int32[]]$RestartTimers=@(240,50,10) #Total wait time is 240 + 50 + 10 = 300 seconds or 5 minutes
+[System.Collections.ArrayList]$RestartTimers=@(240,50,10) #Total wait time is 240+50+10=300 seconds or 5 minutes
 
 #message that will be sent. % is a wildcard for the timer.
 [string]$RestartMessageMinutes="The server will restart in % minutes !"
@@ -151,16 +151,14 @@ Core 8=> 10000000=> 128
 #---------------------------------------------------------
 
 function Start-Server {
-    Write-Verbose "Starting Server..."
-
     $App=Start-Process -FilePath $Launcher -WorkingDirectory $ServerPath -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.
-    Start-Sleep 10
+    Start-Sleep -Seconds 10
     if ($App.HasExited){
         Write-Warning "Server Failed to launch."
     } else {
-        Write-Verbose "Server Started."
+        Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server Started."
     }
 
     # Set the priority and affinity
@@ -172,4 +170,4 @@ function Start-Server {
     }
 }
 
-Export-ModuleMember -Function * -Variable * -Verbose:$false
+Export-ModuleMember -Function * -Variable *

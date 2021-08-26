@@ -9,24 +9,33 @@ param (
     $ServerCfg
 )
 
+#Console Output Text Color
+[string]$FgColor="Green"
+
+#Console Output Text Color for sections
+[string]$SectionColor="Blue"
+
+#Console Output Background Color
+[string]$BgColor="Black"
+
 #---------------------------------------------------------
 # Set Script Directory as Working Directory
-Write-Verbose "Setting Working Directory."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Setting Working Directory..."
 #---------------------------------------------------------
 
-$scriptpath = $MyInvocation.MyCommand.Path
-$dir = Split-Path -Path $scriptpath
-$dir = Resolve-Path -Path $dir
+$scriptpath=$MyInvocation.MyCommand.Path
+$dir=Split-Path -Path $scriptpath
+$dir=Resolve-Path -Path $dir
 Set-Location -Path $dir
 
 #---------------------------------------------------------
 # Import Functions and Modules
-Write-Verbose "Importing modules."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Importing modules..."
 #---------------------------------------------------------
 
 # Core Function
 try {
-    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module -Verbose:$false
+    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
 }
 catch {
     Write-Warning "Unable to import functions."
@@ -34,31 +43,31 @@ catch {
 
 # Modules
 try {
-    Get-ChildItem -Path ".\Modules" -Include "*.psm1" -Recurse | Import-Module -Verbose:$false
+    Get-ChildItem -Path ".\Modules" -Include "*.psm1" -Recurse | Import-Module
 }
 catch {
-    Exit-WithCode -ErrorMsg "Unable to import module." -ErrorObj $_ -ExitCode 404
+    Exit-WithError -ErrorMsg "Unable to import module."
 }
 
 #---------------------------------------------------------
 # Import Variables
-Write-Verbose "Importing functions and variables from $ServerCfg"
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Importing functions and variables from $ServerCfg ..."
 #---------------------------------------------------------
 
 # Global Variables
 try {
-    Import-Module -Name ".\configs\global.psm1" -Verbose:$false
+    Import-Module -Name ".\configs\global.psm1"
 }
 catch {
-    Exit-WithCode -ErrorMsg "Unable to import global configuration." -ErrorObj $_ -ExitCode 404
+    Exit-WithError -ErrorMsg "Unable to import global configuration."
 }
 
 # Server Variables and Functions
 try {
-    Import-Module -Name ".\configs\$ServerCfg.psm1" -Verbose:$false
+    Import-Module -Name ".\configs\$ServerCfg.psm1"
 }
 catch {
-    Exit-WithCode -ErrorMsg "Unable to import server configuration." -ErrorObj $_ -ExitCode 404
+    Exit-WithError -ErrorMsg "Unable to import server configuration."
 }
 
 #---------------------------------------------------------
@@ -71,7 +80,7 @@ Start-Transcript -Path "$LogFolder\$LogFile" -IncludeInvocationHeader
 
 #---------------------------------------------------------
 # Install Dependencies
-Write-Verbose "Installing Dependencies..."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Dependencies..."
 #---------------------------------------------------------
 
 [Hashtable]$Dependencies=@{
@@ -84,7 +93,7 @@ Write-Verbose "Installing Dependencies..."
 
 foreach ($Key in $Dependencies.keys) {
     if (!(Test-Path $Dependencies[$Key])) {
-        $MissingDependencies.Add($Key)
+        $null=$MissingDependencies.Add($Key)
     }
 }
 
@@ -103,33 +112,35 @@ if ($MissingDependencies.Count -gt 0){
 
 #---------------------------------------------------------
 # Install Server
-Write-Verbose "Verifying Server installation"
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server installation..."
 #---------------------------------------------------------
+
 if (!(Test-Path $ServerExec)){
-    Write-Verbose "Server is not installed : Installing $ServerName Server..."
-    $Code=Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Installing"
-    if ($Code -ne 0) {
-        Exit-WithCode -ErrorMsg "Unable to update server." -ErrorObj " " -ExitCode 500
-    } else {
-        Write-Verbose "Server successfully installed."
-    }
+    Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server is not installed : Installing $ServerName Server."
+    Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Installing"
+    Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully installed."
 }
 
 #---------------------------------------------------------
 # If Server is running warn players then stop server
-Write-Verbose "Verifying Server State"
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server State..."
 #---------------------------------------------------------
 
 If ($UseWarnings) {
     Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd
 } else {
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
-    Stop-Server -Server $Server
+    $Stopped=Stop-Server -Server $Server
+    if ($Stopped) {
+        Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server closed."
+    } else {
+        Exit-WithError -ErrorMsg "Unable to stop server."
+    }
 }
 
 #---------------------------------------------------------
 # Backup
-Write-Verbose "Backups."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Backups..."
 #---------------------------------------------------------
 
 if ($UseBackups) {
@@ -138,46 +149,41 @@ if ($UseBackups) {
 
 #---------------------------------------------------------
 # Update
-Write-Verbose "Updating Server..."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Updating Server..."
 #---------------------------------------------------------
 
-$Code=Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
-if ($Code -ne 0) {
-    Exit-WithCode -ErrorMsg "Unable to update server." -ErrorObj " " -ExitCode 500
-} else {
-    Write-Verbose "Server successfully installed."
-}
+Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
 
 #---------------------------------------------------------
 # Start Server
-Write-Verbose "Starting Server..."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Starting Server..."
 #---------------------------------------------------------
 
 try {
     Start-Server
 }
 catch {
-    Exit-WithCode -ErrorMsg "Unable to start server." -ErrorObj $_ -ExitCode 500
+    Exit-WithError -ErrorMsg "Unable to start server."
 }
 
 #---------------------------------------------------------
 # Cleanup
-Write-Verbose "Cleaning old logs."
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Cleaning old logs..."
 #---------------------------------------------------------
 
 try {
     Remove-OldLog -LogFolder $LogFolder -Days 30
 }
 catch {
-    Exit-WithCode -ErrorMsg "Unable clean old logs." -ErrorObj $_ -ExitCode 401
+    Exit-WithError -ErrorMsg "Unable clean old logs."
 }
 
 #---------------------------------------------------------
 # Stop Logging
 #---------------------------------------------------------
 
-Write-Verbose "Script successfully completed."
+Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Script successfully completed."
 
 Stop-Transcript
 
-Start-Sleep -s 5
+Start-Sleep -Seconds 5

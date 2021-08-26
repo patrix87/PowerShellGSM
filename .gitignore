@@ -1,6 +1,4 @@
+backups/
 logs/
-7z/
-mcrcon/
-SteamCMD/
-ProjectZomboidServer/
-ProjectZomboidServerBackups/
+tools/
+servers/

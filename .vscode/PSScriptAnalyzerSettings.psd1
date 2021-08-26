@@ -4,6 +4,8 @@
         'PSUseDeclaredVarsMoreThanAssignments',
         'PSUseShouldProcessForStateChangingFunctions',
         'PSProvideCommentHelp',
-        'PSAvoidUsingConvertToSecureStringWithPlainText'
+        'PSAvoidUsingConvertToSecureStringWithPlainText',
+        'PSAvoidUsingWriteHost',
+        'PSAvoidUsingPlainTextForPassword'
     )
 }

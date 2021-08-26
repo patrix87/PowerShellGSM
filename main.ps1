@@ -153,6 +153,7 @@ Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Upd
 #---------------------------------------------------------
 
 Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
+Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully updated and/or verified."
 
 #---------------------------------------------------------
 # Start Server

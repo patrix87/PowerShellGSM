@@ -9,7 +9,7 @@ You can create a Scheduled Task to execute the run.cmd file daily to backup, upd
 # Installation
 
 - Extract the release code in any directory.
-- Copy then edit run.cmd to select your server configuration file.
+- Copy and rename then edit run.cmd to select your server configuration file.
 - Edit your server configuration file in the configs folder.
 - Exectute your version of run.cmd
 
@@ -18,6 +18,16 @@ You can create a Scheduled Task to execute the run.cmd file daily to backup, upd
 You can create Pull Requests for changes to this project.
 
 Please follow the current structure and formating.
+
+If you want to add support for more games, copy one of the configuration files in /configs and edit the values and launch parameters.
+
+# Requirements : 
+
+A windows machine with at least Powershell 5.1 installed (Windows 10 or Windows Server 2016 or newer)
+
+Some basic powershell knowledge.
+
+Some networking basics to configure port forwarding.
 
 # Disclaimer : 
 

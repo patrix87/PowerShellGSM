@@ -22,7 +22,7 @@ function Send-Command {
 function Send-RestartWarning {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory=$True)]
         [string]$ProcessName,
         [string]$Mcrcon,
         [string]$RconIP,
@@ -32,7 +32,9 @@ function Send-RestartWarning {
         [string]$RestartMessageMinutes,
         [string]$RestartMessageSeconds,
         [string]$MessageCmd,
-        [string]$ServerStopCmd
+        [string]$ServerStopCmd,
+        [Parameter(Mandatory=$False)]
+        [string]$ServerSaveCmd
     )
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
     $exited=$false
@@ -40,6 +42,7 @@ function Send-RestartWarning {
         $Timer=$RestartTimers[0]
         if (!$server -or $Server.HasExited) {
             $exited=$true
+            Write-Warning "Server is not running."
             break
         }
         Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server is running, warning users about upcomming restart."
@@ -64,10 +67,16 @@ function Send-RestartWarning {
             break
         }
     }
-    foreach ($Timer in $RestartTimers) {
-
-    }
     if (!$exited){
+        if (![string]::IsNullOrWhiteSpace($ServerSaveCmd)){
+            Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Saving server."
+            $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerSaveCmd
+            if ($Success) {
+                Start-Sleep -Seconds 10
+            } else {
+                Write-Warning "Unable to send server save command."
+            }
+        }
         Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Closing server."
         $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerStopCmd
         if ($Success) {

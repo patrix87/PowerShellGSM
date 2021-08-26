@@ -29,6 +29,21 @@ $dir=Resolve-Path -Path $dir
 Set-Location -Path $dir
 
 #---------------------------------------------------------
+# Get server local IP
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Getting server local IP..."
+#---------------------------------------------------------
+
+$ServerIP = (
+    Get-NetIPConfiguration |
+    Where-Object {
+        $_.IPv4DefaultGateway -ne $null -and
+        $_.NetAdapter.Status -ne "Disconnected"
+    }
+).IPv4Address.IPAddress
+
+Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Server local IP : $ServerIP"
+
+#---------------------------------------------------------
 # Import Functions and Modules
 Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Importing modules..."
 #---------------------------------------------------------
@@ -127,7 +142,7 @@ Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Ver
 #---------------------------------------------------------
 
 If ($UseWarnings) {
-    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd
+    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd -ServerSaveCmd $ServerSaveCmd
 } else {
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
     $Stopped=Stop-Server -Server $Server

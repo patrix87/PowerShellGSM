@@ -9,28 +9,29 @@ function Update-Server {
 
         [Parameter(Mandatory=$False)]
         [string]$BetaBuild,
-        [securestring]$BetaBuildPassword
+        [securestring]$BetaBuildPassword,
+        [string]$UpdateType
     )
 
     if (!(Test-Path $ServerPath)){
-        New-Item -ItemType directory -Path $ServerPath -ErrorAction SilentlyContinue
+        New-Item -ItemType "directory" -Path $ServerPath -ErrorAction SilentlyContinue
     }
     $ServerPath = Resolve-Path -Path $ServerPath
     if($Beta){
-        Write-Output "Updating / Installing Beta Build"
+        Write-Verbose "$UpdateType Beta Build"
         try {
             $Task=Start-Process $SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $ServerPath `"+app_update $SteamAppID -beta $BetaBuild -betapassword $BetaBuildPassword`" -validate +quit" -Wait -PassThru -NoNewWindow
         } catch {
             Exit-WithCode -ErrorMsg "SteamCMD failed to complete." -ErrorObj $_ -ExitCode 400
         }
     } else {
-        Write-Output "Updating / Installing Regular Build"
+        Write-Verbose "$UpdateType Regular Build"
         try {
             $Task=Start-Process $SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $ServerPath +app_update $SteamAppID -validate +quit" -Wait -PassThru -NoNewWindow
         } catch {
             Exit-WithCode -ErrorMsg "SteamCMD failed to complete." -ErrorObj $_ -ExitCode 400
         }
     }
-    return $Task.ExitCode
+    return $($Task.ExitCode)
 }
-Export-ModuleMember -Function Update-Server
+Export-ModuleMember -Function Update-Server -Verbose:$false

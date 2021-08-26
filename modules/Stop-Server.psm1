@@ -3,30 +3,30 @@ function Stop-Server {
         $Server
     )
     if(-not $Server.HasExited){
-        Write-Output "Closing Main Windows..."
+        Write-Verbose "Closing Main Windows..."
         $Server.CloseMainWindow()
         $Server.WaitForExit()
         Start-Sleep -s 10
         if ($Server.HasExited) {
-            Write-Output "Server succesfully shutdown"
+            Write-Verbose "Server succesfully shutdown"
         }else{
-            Write-Output "Trying again to stop the Server..."
+            Write-Verbose "Trying again to stop the Server..."
             #Try Again
             Stop-Process $Server
             Start-Sleep -s 10
             if ($Server.HasExited) {
-                Write-Output "Server succesfully shutdown on second try"
+                Write-Verbose "Server succesfully shutdown on second try"
             }else{
-                Write-Output "Forcing server shutdown..."
+                Write-Verbose "Forcing server shutdown..."
                 #Force Stop
                 Stop-Process $Server -Force
             }
         }
     }
-    if ($Server) {
-        return $False
-    } else {
+    if ($Server.HasExited) {
         return $True
+    } else {
+        return $False
     }
 }
-Export-ModuleMember -Function Stop-Server
+Export-ModuleMember -Function Stop-Server -Verbose:$false

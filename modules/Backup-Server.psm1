@@ -4,37 +4,40 @@ function Backup-Server {
         [Parameter(Mandatory=$True)]
         [string]$BackupPath,
         [string]$ServerSaves,
-        [string]$7Zip,
+        [string]$SevenZip,
         [Parameter(Mandatory=$False)]
         [int32]$BackupDays=7,
         [int32]$BackupWeeks=4
     )
-    Write-Output "Creating Backup"
+    $SevenZip = Resolve-Path -Path $SevenZip
+    Write-Verbose "Creating Backup"
     #Create backup name from date and time
     $BackupName=Get-TimeStamp
     #Check if it's friday (Sunday is 0)
     if ((Get-Date -UFormat %u) -eq 5){
-        #Weekly backup
-        #Check / Create Path
-        New-Item -ItemType directory -Path $BackupPath\Weekly -ErrorAction SilentlyContinue
-        & $7Zip a -tzip -mx=1 $BackupPath\Weekly\$BackupName.zip $ServerSaves
-    }else {
-        #Daily backup
-        #Check / Create Path
-        New-Item -ItemType directory -Path $BackupPath\Daily -ErrorAction SilentlyContinue
-        & $7Zip a -tzip -mx=1 $BackupPath\Daily\$BackupName.zip $ServerSaves
+        $Type = "Weekly"
+        $Limit=(Get-Date).AddDays(-$BackupWeeks)
+    } else {
+        $Type = "Daily"
+        $Limit=(Get-Date).AddDays(-$BackupDays)
     }
-    Write-Output "Backup Created : $BackupName.zip"
+    #Check if directory exist and create it.
+    if (!(Test-Path "$BackupPath\$Type" -PathType "Container")){
+        New-Item -Path $BackupPath\$Type -ItemType "directory" -ErrorAction SilentlyContinue
+    }
+    #Run Backup
+    try {
+        & $SevenZip a -tzip -mx=1 $BackupPath\$Type\$BackupName.zip $ServerSaves
+    }
+    catch {
+        Exit-WithCode -ErrorMsg "Unable to backup server." -ErrorObj $_ -ExitCode 500
+    }
 
-    #Delete old Daily backup
-    Write-Output "Deleting daily backup older than $BackupDays"
-    $Limit=(Get-Date).AddDays(-$BackupDays)
-    Get-ChildItem -Path $BackupPath\Daily -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force
+    Write-Verbose "Backup Created : $BackupName.zip"
 
-    #Delete old Weekly backup
-    Write-Output "Deleting weekly backup older than $BackupWeeks"
-    $Limit=(Get-Date).AddDays(-($BackupWeeks)*7)
-    Get-ChildItem -Path $BackupPath\Weekly -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force
+    #Delete old backups
+    Write-Verbose "Deleting backup old backups"
+    Get-ChildItem -Path $BackupPath\$Type -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force
 }
 
-Export-ModuleMember -Function Backup-Server
+Export-ModuleMember -Function Backup-Server -Verbose:$false

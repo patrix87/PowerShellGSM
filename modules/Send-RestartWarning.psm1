@@ -1,3 +1,24 @@
+function Send-Command {
+    [CmdletBinding()]
+    [OutputType([boolean])]
+    param (
+        [Parameter(Mandatory)]
+        [string]$Mcrcon,
+        [string]$RconIP,
+        [int32]$RconPort,
+        [securestring]$RconPassword,
+        [string]$Command
+    )
+    $Task=Start-Process $Mcrcon -ArgumentList "-c -H $RconIP -P $RconPort -p $RconPassword `"$Command`"" -Wait -PassThru -NoNewWindow
+    if ($Task.ExitCode -eq 0) {
+        Write-Verbose "Command Sent"
+        return $True
+    } else {
+        Write-Warning "Unable to send command"
+        return $False
+    }
+}
+
 function Send-RestartWarning {
     [CmdletBinding()]
     param (
@@ -6,54 +27,58 @@ function Send-RestartWarning {
         [string]$Mcrcon,
         [string]$RconIP,
         [int32]$RconPort,
-        [securestring]$RconPassword
+        [securestring]$RconPassword,
+        [array]$RestartTimers,
+        [string]$RestartMessageMinutes,
+        [string]$RestartMessageSeconds,
+        [string]$MessageCmd,
+        [string]$ServerStopCmd
     )
-    Write-Output "Checking if server is running"
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
-    if ($Server) {
-        Write-Output "Server is running... Warning users about restart..."
-        $Task=Start-Process $Mcrcon -ArgumentList "-c -H $RconIP -P $RconPort -p $RconPassword `"servermsg THE SERVER WILL REBOOT IN 5 MINUTES !`"" -Wait -PassThru -NoNewWindow
-        if ($Task.ExitCode -eq 0) {
-            Write-Output "Message Sent."
-            Write-Output "Waiting 4 Minutes"
-            Start-Sleep -s 240
-        } else {
-            Write-Error "Unable to send server reboot warning."
-            Write-Output "Hard Restarting now."
-            Stop-Server($Server)
+    $exited = $false
+    foreach ($Timer in $RestartTimers) {
+        if (!$server -or $Server.HasExited) {
+            $exited = $true
+            break
         }
-        $Task=Start-Process $Mcrcon -ArgumentList "-c -H $RconIP -P $RconPort -p $RconPassword `"servermsg THE SERVER WILL REBOOT IN 1 MINUTE !`"" -Wait -PassThru -NoNewWindow
-        if ($Task.ExitCode -eq 0) {
-            Write-Output "Message Sent."
-            Write-Output "Waiting 1 Minutes"
-            Start-Sleep -s 60
+        Write-Verbose "Server is running... Warning users about upcomming restart..."
+        if ($Timer -lt 60) {
+            $Message = $RestartMessageSeconds
         } else {
-            Write-Error "Unable to send server reboot warning."
-            Write-Output "Hard Restarting now."
-            Stop-Server($Server)
+            $Message = $RestartMessageMinutes
+            $TimerText = [string][Math]::Round($Timer / 60,[MidpointRounding]::AwayFromZero)
         }
-        $Task=Start-Process $Mcrcon -ArgumentList "-c -H $RconIP -P $RconPort -p $RconPassword `"servermsg THE SERVER IS REBOOTING !`"" -Wait -PassThru -NoNewWindow
-        if ($Task.ExitCode -eq 0) {
-            Write-Output "Message Sent."
-            Write-Output "Waiting 5 Seconds"
-            Start-Sleep -s 5
+        $Message -replace "%", $TimerText
+        $Command = "$MessageCmd $Message"
+        $Success = Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $Command
+        if ($Success) {
+            Write-Verbose "Waiting $Timer seconds..."
+            Start-Sleep $Timer
         } else {
-            Write-Error "Unable to send server reboot warning."
-            Write-Output "Hard Restarting now."
-            Stop-Server($Server)
+            Write-Warning "Unable to send server reboot warning."
+            Write-Warning "Stopping now."
+            Stop-Server -Server $Server
+            $exited = $true
+            break
         }
-        $Task=Start-Process $Mcrcon -ArgumentList "-c -H $RconIP -P $RconPort -p $RconPassword `"quit`"" -Wait -PassThru -NoNewWindow
-        if ($Task.ExitCode -eq 0) {
-            Write-Output "Message Sent."
-            Write-Output "Saving and shutting down server."
-            Start-Sleep -s 30
+    }
+    if (!$exited){
+        $Success = Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerStopCmd
+        if ($Success) {
+            Write-Verbose "Server closed"
+            Start-Sleep 5
         } else {
-            Write-Error "Unable to send server reboot command"
-            Write-Output "Hard Restarting now."
-            Stop-Server($Server)
+            Write-Warning "Unable to send server stop command."
+            Write-Warning "Stopping now."
+            try {
+                Stop-Server -Server $Server
+            }
+            catch {
+                Exit-WithCode -ErrorMsg "Unable to stop server." -ErrorObj " " -ExitCode 500
+            }
         }
-    }else{
-        Write-Output "Server is not running"
+
     }
 }
-Export-ModuleMember -Function Send-RestartWarning
+
+Export-ModuleMember -Function Send-RestartWarning -Verbose:$false

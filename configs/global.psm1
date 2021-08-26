@@ -1,13 +1,13 @@
 #7zip
-[string]$7Zip=".\7z\7za.exe"
+[string]$SevenZip=".\tools\7z\7za.exe"
 
 #mcrcon
-[string]$Mcrcon=".\mcrcon\mcrcon.exe"
+[string]$Mcrcon=".\tools\mcrcon\mcrcon.exe"
 
 #SteamCMD
-[string]$SteamCMD=".\SteamCMD\steamcmd.exe"
+[string]$SteamCMD=".\tools\SteamCMD\steamcmd.exe"
 
 #Path of the logs folder.
 [string]$LogFolder=".\logs"
 
-Export-ModuleMember -Variable *
+Export-ModuleMember -Variable * -Verbose:$false

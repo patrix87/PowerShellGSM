@@ -10,20 +10,31 @@ param (
 )
 
 #---------------------------------------------------------
+# Set Script Directory as Working Directory
+Write-Verbose "Setting Working Directory."
+#---------------------------------------------------------
+
+$scriptpath = $MyInvocation.MyCommand.Path
+$dir = Split-Path -Path $scriptpath
+$dir = Resolve-Path -Path $dir
+Set-Location -Path $dir
+
+#---------------------------------------------------------
 # Import Functions and Modules
+Write-Verbose "Importing modules."
 #---------------------------------------------------------
 
 # Core Function
 try {
-    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
+    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module -Verbose:$false
 }
 catch {
-    Write-Error "Unable to import functions."
+    Write-Warning "Unable to import functions."
 }
 
 # Modules
 try {
-    Get-ChildItem -Path ".\Modules" -Include "*.psm1" -Recurse | Import-Module
+    Get-ChildItem -Path ".\Modules" -Include "*.psm1" -Recurse | Import-Module -Verbose:$false
 }
 catch {
     Exit-WithCode -ErrorMsg "Unable to import module." -ErrorObj $_ -ExitCode 404
@@ -31,11 +42,12 @@ catch {
 
 #---------------------------------------------------------
 # Import Variables
+Write-Verbose "Importing functions and variables from $ServerCfg"
 #---------------------------------------------------------
 
 # Global Variables
 try {
-    Import-Module -Name ".\configs\global.psm1"
+    Import-Module -Name ".\configs\global.psm1" -Verbose:$false
 }
 catch {
     Exit-WithCode -ErrorMsg "Unable to import global configuration." -ErrorObj $_ -ExitCode 404
@@ -43,7 +55,7 @@ catch {
 
 # Server Variables and Functions
 try {
-    Import-Module -Name ".\configs\$ServerCfg.psm1"
+    Import-Module -Name ".\configs\$ServerCfg.psm1" -Verbose:$false
 }
 catch {
     Exit-WithCode -ErrorMsg "Unable to import server configuration." -ErrorObj $_ -ExitCode 404
@@ -59,10 +71,11 @@ Start-Transcript -Path "$LogFolder\$LogFile" -IncludeInvocationHeader
 
 #---------------------------------------------------------
 # Install Dependencies
+Write-Verbose "Installing Dependencies..."
 #---------------------------------------------------------
 
 [Hashtable]$Dependencies=@{
-    SevenZip=$7Zip
+    SevenZip=$SevenZip
     Mcrcon=$Mcrcon
     SteamCMD=$SteamCMD
 }
@@ -90,23 +103,25 @@ if ($MissingDependencies.Count -gt 0){
 
 #---------------------------------------------------------
 # Install Server
+Write-Verbose "Verifying Server installation"
 #---------------------------------------------------------
 if (!(Test-Path $ServerExec)){
-    Write-Output "Server is not installed : Installing $ServerName Server..."
-    $Code = Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword
+    Write-Verbose "Server is not installed : Installing $ServerName Server..."
+    $Code=Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Installing"
     if ($Code -ne 0) {
-        Exit-WithCode -ErrorMsg "Unable to update server." -ErrorObj $_ -ExitCode 500
+        Exit-WithCode -ErrorMsg "Unable to update server." -ErrorObj " " -ExitCode 500
     } else {
-        Write-Output "Server successfully installed."
+        Write-Verbose "Server successfully installed."
     }
 }
 
 #---------------------------------------------------------
 # If Server is running warn players then stop server
+Write-Verbose "Verifying Server State"
 #---------------------------------------------------------
 
-If ($UseRcon) {
-    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword
+If ($UseWarnings) {
+    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd
 } else {
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
     Stop-Server -Server $Server
@@ -114,26 +129,28 @@ If ($UseRcon) {
 
 #---------------------------------------------------------
 # Backup
+Write-Verbose "Backups."
 #---------------------------------------------------------
 
 if ($UseBackups) {
-    Backup-Server -BackupPath $BackupPath -ServerSaves $ServerSaves -7Zip $7Zip -BackupDays $BackupDays -BackupWeeks $BackupWeeks
+    Backup-Server -BackupPath $BackupPath -ServerSaves $ServerSaves -SevenZip $SevenZip -BackupDays $BackupDays -BackupWeeks $BackupWeeks
 }
 
 #---------------------------------------------------------
 # Update
+Write-Verbose "Updating Server..."
 #---------------------------------------------------------
 
-Write-Output "Updating Server..."
-try {
-    Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword
-}
-catch {
-    Exit-WithCode -ErrorMsg "Unable to update server." -ErrorObj $_ -ExitCode 500
+$Code=Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
+if ($Code -ne 0) {
+    Exit-WithCode -ErrorMsg "Unable to update server." -ErrorObj " " -ExitCode 500
+} else {
+    Write-Verbose "Server successfully installed."
 }
 
 #---------------------------------------------------------
 # Start Server
+Write-Verbose "Starting Server..."
 #---------------------------------------------------------
 
 try {
@@ -145,6 +162,7 @@ catch {
 
 #---------------------------------------------------------
 # Cleanup
+Write-Verbose "Cleaning old logs."
 #---------------------------------------------------------
 
 try {
@@ -158,7 +176,7 @@ catch {
 # Stop Logging
 #---------------------------------------------------------
 
-Write-Output "Script successfully completed."
+Write-Verbose "Script successfully completed."
 
 Stop-Transcript
 

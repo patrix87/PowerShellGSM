@@ -48,10 +48,10 @@ You do not need to forward RCON.
 #---------------------------------------------------------
 
 #Name of the Server Instance
-[string]$ServerName="Project Zomboid"
+[string]$ServerName="ProjectZomboid"
 
 #Server Installation Path
-[string]$ServerPath=".\ProjectZomboidServer"
+[string]$ServerPath=".\Servers\$ServerName"
 
 #Steam Server App Id
 [int32]$SteamAppID=380870
@@ -69,7 +69,7 @@ You do not need to forward RCON.
 [string]$ProcessName="java"
 
 #ProjectZomboid64.exe
-[string]$ServerExec=".\ProjectZomboidServer\ProjectZomboid64.exe"
+[string]$ServerExec=".\Servers\$ServerName\ProjectZomboid64.exe"
 
 #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
 [bool]$UsePriority=$True
@@ -102,7 +102,7 @@ Core 8=> 10000000=> 128
 [bool]$UseBackups=$True
 
 #Backup Folder
-[string]$BackupPath=".\ProjectZomboidServerBackups"
+[string]$BackupPath=".\Backups\$ServerName"
 
 #Number of days of backups to keep.
 [int32]$BackupDays=7
@@ -117,15 +117,15 @@ Core 8=> 10000000=> 128
 # Restart Warnings (Require RCON)
 #---------------------------------------------------------
 #Use Rcon to restart server softly.
-[bool]$UseRcon=$True
+[bool]$UseWarnings=$True
 
-#Times at which the servers will warn the players that it is about to restart. (in seconds before restart)
-[int32[]]$RestartTimers=@(300,60,10)
+#Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
+[int32[]]$RestartTimers=@(240,50,10) #Total wait time is 240 + 50 + 10 = 300 seconds or 5 minutes
 
-#message that will be sent.
+#message that will be sent. % is a wildcard for the timer.
 [string]$RestartMessageMinutes="The server will restart in % minutes !"
 
-#message that will be sent.
+#message that will be sent. % is a wildcard for the timer.
 [string]$RestartMessageSeconds="The server will restart in % seconds !"
 
 #command to send a message.
@@ -142,16 +142,7 @@ Core 8=> 10000000=> 128
 [string]$PZ_CLASSPATH="java/jinput.jar;java/lwjgl.jar;java/lwjgl_util.jar;java/sqlite-jdbc-3.8.10.1.jar;java/trove-3.0.3.jar;java/uncommons-maths-1.2.3.jar;java/javacord-2.0.17-shaded.jar;java/guava-23.0.jar;java/"
 
 #Launch Arguments
-[string]$ArgumentList="`
--Dzomboid.steam=1 `
--Dzomboid.znetlog=1 `
--XX:+UseConcMarkSweepGC `
--XX:-CreateMinidumpOnCrash `
--XX:-OmitStackTraceInFastThrow `
--Xms2048m `
--Xmx2048m `
--Djava.library.path=natives/;. `
--cp $PZ_CLASSPATH zombie.network.GameServer"
+[string]$ArgumentList="-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer"
 
 [string]$Launcher="$ServerPath\jre64\bin\java.exe"
 
@@ -160,27 +151,16 @@ Core 8=> 10000000=> 128
 #---------------------------------------------------------
 
 function Start-Server {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param (
+    Write-Verbose "Starting Server..."
 
-    )
-    Write-Output "Starting Server..."
-
-    if ($PSCmdlet.ShouldProcess("Target", "Operation"))
-    {
-        $App=Start-Process -FilePath $Launcher -WorkingDirectory $ServerPath -ArgumentList $ArgumentList -PassThru
-    }
-    else
-    {
-        Write-Output ("Start-Process -FilePath $Launcher -WorkingDirectory $ServerPath -ArgumentList $ArgumentList")
-    }
+    $App=Start-Process -FilePath $Launcher -WorkingDirectory $ServerPath -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.
     Start-Sleep 10
-    if ($App){
-        Write-Output "Server Started."
+    if ($App.HasExited){
+        Write-Warning "Server Failed to launch."
     } else {
-        Write-Error "Server Failed to launch."
+        Write-Verbose "Server Started."
     }
 
     # Set the priority and affinity
@@ -192,4 +172,4 @@ function Start-Server {
     }
 }
 
-Export-ModuleMember -Function * -Variable *
+Export-ModuleMember -Function * -Variable * -Verbose:$false

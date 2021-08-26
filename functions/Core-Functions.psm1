@@ -13,9 +13,7 @@ function Exit-WithCode
 		$ErrorObj,
         [int32]$ExitCode
     )
-    $ErrorObj = ($ErrorObj | ConvertTo-Json)
-	Write-Error $ErrorMsg
-	Write-Error $ErrorObj
+	Write-Error $ErrorMsg -TargetObject $ErrorObj
 	Stop-Transcript
 	Read-Host
     $Host.SetShouldExit($Exitcode)
@@ -29,9 +27,9 @@ function Remove-OldLog {
         [int32]$Days=30
     )
     #Delete old logs
-    Write-Output "Deleting logs older than 30 days"
+    Write-Verbose "Deleting logs older than 30 days"
     $Limit=(Get-Date).AddDays(-$Days)
     Get-ChildItem -Path $LogFolder -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force
 }
 
-Export-ModuleMember -Function Get-TimeStamp, Exit-WithCode, Remove-OldLog
+Export-ModuleMember -Function Get-TimeStamp, Exit-WithCode, Remove-OldLog -Verbose:$false

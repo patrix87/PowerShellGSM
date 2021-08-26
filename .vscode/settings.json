@@ -6,6 +6,7 @@
         "**/logs": true,
         "**/mcrcon": true,
         "**/SteamCMD": true,
-        "**/ProjectZomboidServer": true
+        "**/ProjectZomboidServer": true,
+        "**/ProjectZomboidServerBackups": true
     },
 }

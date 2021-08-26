@@ -130,10 +130,12 @@ if ($MissingDependencies.Count -gt 0){
 Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server installation..."
 #---------------------------------------------------------
 
+[string]$FreshInstall=$false
 if (!(Test-Path $ServerExec)){
     Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server is not installed : Installing $ServerName Server."
     Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Installing"
     Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully installed."
+    $FreshInstall=$true
 }
 
 #---------------------------------------------------------
@@ -141,7 +143,7 @@ if (!(Test-Path $ServerExec)){
 Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server State..."
 #---------------------------------------------------------
 
-If ($UseWarnings) {
+If ($UseWarnings -and !$FreshInstall) {
     Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd -ServerSaveCmd $ServerSaveCmd
 } else {
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
@@ -158,7 +160,7 @@ If ($UseWarnings) {
 Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Backups..."
 #---------------------------------------------------------
 
-if ($UseBackups) {
+if ($UseBackups -and !$FreshInstall) {
     Backup-Server -BackupPath $BackupPath -ServerSaves $ServerSaves -SevenZip $SevenZip -BackupDays $BackupDays -BackupWeeks $BackupWeeks
 }
 
@@ -167,8 +169,10 @@ if ($UseBackups) {
 Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Updating Server..."
 #---------------------------------------------------------
 
-Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
-Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully updated and/or verified."
+if (!$FreshInstall) {
+    Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
+    Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully updated and/or verified."
+}
 
 #---------------------------------------------------------
 # Start Server

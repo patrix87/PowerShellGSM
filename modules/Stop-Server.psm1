@@ -25,9 +25,9 @@ function Stop-Server {
     }
     Start-Sleep -Seconds 10
     if ($Server.HasExited) {
-        return $True
+        return $true
     } else {
-        return $False
+        return $false
     }
 }
 Export-ModuleMember -Function Stop-Server

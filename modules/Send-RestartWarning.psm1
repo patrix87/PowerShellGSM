@@ -12,17 +12,17 @@ function Send-Command {
     $Task=Start-Process $Mcrcon -ArgumentList "-c -H $RconIP -P $RconPort -p $RconPassword `"$Command`"" -Wait -PassThru -NoNewWindow
     if ($Task.ExitCode -eq 0) {
         Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Command Sent."
-        return $True
+        return $true
     } else {
         Write-Warning "Unable to send command"
-        return $False
+        return $false
     }
 }
 
 function Send-RestartWarning {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$True)]
+        [Parameter(Mandatory=$true)]
         [string]$ProcessName,
         [string]$Mcrcon,
         [string]$RconIP,
@@ -33,7 +33,7 @@ function Send-RestartWarning {
         [string]$RestartMessageSeconds,
         [string]$MessageCmd,
         [string]$ServerStopCmd,
-        [Parameter(Mandatory=$False)]
+        [Parameter(Mandatory=$false)]
         [string]$ServerSaveCmd
     )
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue

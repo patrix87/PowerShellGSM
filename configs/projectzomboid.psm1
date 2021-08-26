@@ -56,8 +56,8 @@ You do not need to forward RCON.
 #Steam Server App Id
 [int32]$SteamAppID=380870
 
-#Use Beta builds $True or $False
-[bool]$Beta=$False
+#Use Beta builds $true or $false
+[bool]$Beta=$false
 
 #Name of the Beta Build
 [string]$BetaBuild="iwillbackupmysave"
@@ -72,7 +72,7 @@ You do not need to forward RCON.
 [string]$ServerExec=".\servers\$ServerName\ProjectZomboid64.exe"
 
 #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
-[bool]$UsePriority=$True
+[bool]$UsePriority=$true
 [string]$AppPriority="High"
 
 <#
@@ -91,7 +91,7 @@ Core 8=> 10000000=> 128
 2 Cores=> 00000011=> 3
 #>
 
-[bool]$UseAffinity=$False
+[bool]$UseAffinity=$false
 [int32]$AppAffinity=15
 
 #---------------------------------------------------------
@@ -99,7 +99,7 @@ Core 8=> 10000000=> 128
 #---------------------------------------------------------
 
 #Do Backups
-[bool]$UseBackups=$True
+[bool]$UseBackups=$true
 
 #Backup Folder
 [string]$BackupPath=".\backups\$ServerName"
@@ -117,7 +117,7 @@ Core 8=> 10000000=> 128
 # Restart Warnings (Require RCON)
 #---------------------------------------------------------
 #Use Rcon to restart server softly.
-[bool]$UseWarnings=$True
+[bool]$UseWarnings=$true
 
 #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
 [System.Collections.ArrayList]$RestartTimers=@(240,50,10) #Total wait time is 240+50+10=300 seconds or 5 minutes

@@ -1,13 +1,13 @@
 function Update-Server {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$True)]
+        [Parameter(Mandatory=$true)]
         [string]$ServerPath,
         [string]$SteamCMD,
         [int32]$SteamAppID,
         [boolean]$Beta,
 
-        [Parameter(Mandatory=$False)]
+        [Parameter(Mandatory=$false)]
         [string]$BetaBuild,
         [string]$BetaBuildPassword,
         [string]$UpdateType

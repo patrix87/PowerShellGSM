@@ -1,11 +1,11 @@
 function Backup-Server {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$True)]
+        [Parameter(Mandatory=$true)]
         [string]$BackupPath,
         [string]$ServerSaves,
         [string]$SevenZip,
-        [Parameter(Mandatory=$False)]
+        [Parameter(Mandatory=$false)]
         [int32]$BackupDays=7,
         [int32]$BackupWeeks=4
     )

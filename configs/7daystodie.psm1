@@ -12,10 +12,10 @@
 [string]$RconIP="127.0.0.1"
 
 #Rcon Port in serverconfig.xml
-[int32]$RconPort=26913
+[int32]$RconPort=8081
 
 #Rcon Password as set in serverconfig.xml
-[string]$RconPassword="CHANGEME"
+[string]$RconPassword=""
 
 #Server Log File
 [string]$ServerLogFile="$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
@@ -96,6 +96,9 @@ Core 8=> 10000000=> 128
 #Use Rcon to restart server softly.
 [bool]$UseWarnings=$true
 
+#Use Telnet protocol instead of RCON
+[string]$protocol="Telnet"
+
 #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
 [System.Collections.ArrayList]$RestartTimers=@(240,50,10) #Total wait time is 240+50+10=300 seconds or 5 minutes
 
@@ -119,16 +122,21 @@ Core 8=> 10000000=> 128
 #---------------------------------------------------------
 
 #Launch Arguments
-[string]$ArgumentList="-logfile $ServerLogFile -configfile $ConfigFile -batchmode -nographics -dedicated"
+[string]$ArgumentList="-logfile $ServerLogFile -configfile=$ConfigFile -batchmode -nographics -dedicated -quit"
 
 #Server Launcher
-[string]$Launcher="$ServerExec"
+[string]$Launcher=$ServerExec
 
 #---------------------------------------------------------
 # Launch Function
 #---------------------------------------------------------
 
 function Start-Server {
+    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
+    If(-Not (Test-Path -Path $ConfigFile -PathType "leaf")){
+        Copy-Item -Path "$ServerPath\serverconfig.xml" -Destination $ConfigFile
+    }
+    #Start Server
     $App=Start-Process -FilePath $Launcher -WorkingDirectory $ServerPath -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.

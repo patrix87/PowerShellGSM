@@ -4,7 +4,7 @@
 
 [CmdletBinding()]
 param (
-    [Parameter()]
+    [Parameter(Mandatory)]
     [string]
     $ServerCfg
 )
@@ -53,7 +53,7 @@ try {
     Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
 }
 catch {
-    Write-Warning "Unable to import functions."
+    Exit-WithError -ErrorMsg "Unable to import functions."
 }
 
 # Modules
@@ -130,7 +130,7 @@ if ($MissingDependencies.Count -gt 0){
 Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server installation..."
 #---------------------------------------------------------
 
-[string]$FreshInstall=$false
+[boolean]$FreshInstall=$false
 if (!(Test-Path $ServerExec)){
     Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server is not installed : Installing $ServerName Server."
     Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Installing"
@@ -144,7 +144,7 @@ Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Ver
 #---------------------------------------------------------
 
 If ($UseWarnings -and !$FreshInstall) {
-    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd -ServerSaveCmd $ServerSaveCmd
+    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd -ServerSaveCmd $ServerSaveCmd -Protocol $Protocol
 } else {
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
     $Stopped=Stop-Server -Server $Server
@@ -170,7 +170,7 @@ Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Upd
 #---------------------------------------------------------
 
 if (!$FreshInstall) {
-    Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
+    #Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
     Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully updated and/or verified."
 }
 

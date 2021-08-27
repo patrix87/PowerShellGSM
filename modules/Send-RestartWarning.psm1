@@ -19,6 +19,27 @@ function Send-Command {
     }
 }
 
+function Send-TelnetCommand {
+    [CmdletBinding()]
+    [OutputType([boolean])]
+    param (
+        [Parameter(Mandatory)]
+        [string]$RconIP,
+        [int32]$RconPort,
+        [string]$RconPassword,
+        [string]$Command
+    )
+    $Result=Get-Telnet -Command $Command -RemoteHost $RconIP -Port $RconPort -Password $RconPassword
+    Write-Host $Result
+    if (($Result -like "*Unable to connect to host:*") -or ($Result -like "*incorrect*")) {
+        Write-Warning "Unable to send command."
+        return $false
+    } else {
+        Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Command Sent."
+        return $true
+    }
+}
+
 function Send-RestartWarning {
     [CmdletBinding()]
     param (
@@ -34,7 +55,8 @@ function Send-RestartWarning {
         [string]$MessageCmd,
         [string]$ServerStopCmd,
         [Parameter(Mandatory=$false)]
-        [string]$ServerSaveCmd
+        [string]$ServerSaveCmd=$null,
+        [string]$protocol="RCON"
     )
     $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
     $exited=$false
@@ -57,8 +79,14 @@ function Send-RestartWarning {
             $TimerText=[string][Math]::Round($TimeLeft / 60,[MidpointRounding]::AwayFromZero)
         }
         $Message=$Message -replace "%", $TimerText
-        $Command="$MessageCmd $Message"
-        $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $Command
+        if ($protocol -eq "RCON"){
+            $Command="$MessageCmd $Message"
+            $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $Command
+        }
+        if ($protocol -eq "Telnet"){
+            $Command="$MessageCmd `"$Message`""
+            $Success=Send-TelnetCommand -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $Command
+        }
         if ($Success) {
             Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Waiting $Timer seconds before next warning..."
             Start-Sleep -Seconds $Timer
@@ -68,20 +96,30 @@ function Send-RestartWarning {
         }
     }
     if (!$exited){
-        if (![string]::IsNullOrWhiteSpace($ServerSaveCmd)){
+        if (-not ($ServerSaveCmd -eq $null)){
             Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Saving server."
-            $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerSaveCmd
+            if ($protocol -eq "RCON"){
+                $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerSaveCmd
+            }
+            if ($protocol -eq "Telnet"){
+                $Success=Send-TelnetCommand -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerSaveCmd
+            }
             if ($Success) {
-                Start-Sleep -Seconds 10
+                Start-Sleep -Seconds 5
             } else {
                 Write-Warning "Unable to send server save command."
             }
         }
         Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Closing server."
-        $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerStopCmd
+        if ($protocol -eq "RCON"){
+            $Success=Send-Command -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerStopCmd
+        }
+        if ($protocol -eq "Telnet"){
+            $Success=Send-TelnetCommand -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -Command $ServerStopCmd
+        }
         if ($Success) {
             Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server closed."
-            Start-Sleep -Seconds 10
+            Start-Sleep -Seconds 5
         } else {
             Write-Warning "Unable to send server stop command."
             $Stopped=Stop-Server -Server $Server

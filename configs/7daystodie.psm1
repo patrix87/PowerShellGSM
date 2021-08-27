@@ -5,6 +5,7 @@
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
+
 #Server Configuration
 [string]$ConfigFile="$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
 
@@ -93,6 +94,7 @@ Core 8=> 10000000=> 128
 #---------------------------------------------------------
 # Restart Warnings (Require RCON)
 #---------------------------------------------------------
+
 #Use Rcon to restart server softly.
 [bool]$UseWarnings=$true
 

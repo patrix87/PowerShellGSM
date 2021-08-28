@@ -1,1 +1,1 @@
-start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "7daystodie"
+start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "projectzomboid"

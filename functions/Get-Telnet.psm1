@@ -9,16 +9,15 @@
 #>
 Function Get-Telnet{
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         [Parameter()]
-        [OutputType([string])]
         [string]$Command,
-        [string]$RemoteHost="127.0.0.1",
-        [string]$Port="23",
-        [string]$Password="",
-        [int32]$WaitTime=1000
+        [string]$RemoteHost = "127.0.0.1",
+        [string]$Port = "23",
+        [string]$Password = ""
     )
-    [System.Collections.ArrayList]$Commands=@()
+    [System.Collections.ArrayList]$Commands = @()
     if ($Password -ne ""){
         $Commands.Add($Password)
         $Commands.Add($Command)
@@ -43,16 +42,16 @@ Function Get-Telnet{
         foreach ($Command in $Commands)
         {   $Writer.WriteLine($Command)
             $Writer.Flush()
-            Start-Sleep -Milliseconds $WaitTime
+            Start-Sleep -Seconds 1
         }
         #All commands issued, but since the last command is usually going to be
         #the longest let's wait a little longer for it to finish
-        Start-Sleep -Milliseconds ($WaitTime * 4)
+        Start-Sleep -Seconds 5
         [string]$Result = ""
         #Save all the results
         while($Stream.DataAvailable)
         {   $Read = $Stream.Read($Buffer, 0, 1024)
-            $Result += ($Encoding.GetString($Buffer, 0, $Read))
+            $Result +=  ($Encoding.GetString($Buffer, 0, $Read))
         }
     } else {
         $Result = "Unable to connect to host: $($RemoteHost):$Port"

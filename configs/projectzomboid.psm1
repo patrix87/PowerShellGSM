@@ -89,7 +89,7 @@ $ServerDetails = @{
     Core 6 = > 00100000 = > 32
     Core 7 = > 01000000 = > 64
     Core 8 = > 10000000 = > 128
-    = = = = = = = = = = = = = = = = = = = = = = = = =  = 
+    ----------------------------
     8 Cores = > 11111111 = > 255
     4 Cores = > 00001111 = > 15
     2 Cores = > 00000011 = > 3
@@ -131,7 +131,7 @@ $WarningsDetails = @{
     Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Telnet"
+    Protocol = "Rcon"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -165,7 +165,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $PZ_CLASSPATH = "java/jinput.jar;java/lwjgl.jar;java/lwjgl_util.jar;java/sqlite-jdbc-3.8.10.1.jar;java/trove-3.0.3.jar;java/uncommons-maths-1.2.3.jar;java/javacord-2.0.17-shaded.jar;java/guava-23.0.jar;java/"
 
 #Launch Arguments
-$ArgumentList = "-Dzomboid.steam = 1 -Dzomboid.znetlog = 1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path = natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer"
+$ArgumentList = "-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer"
 
 $Launcher = "$($Server.Path)\jre64\bin\java.exe"
 

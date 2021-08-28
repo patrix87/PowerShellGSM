@@ -23,7 +23,7 @@ function Stop-Server {
             }
         }
     }
-    Start-Sleep -Seconds 5
+    Start-Sleep -Seconds 10
     if ($ServerProcess.HasExited) {
         return $true
     } else {

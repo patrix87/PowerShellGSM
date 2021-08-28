@@ -23,6 +23,14 @@ catch {
 }
 
 #---------------------------------------------------------
+# Start Logging
+#---------------------------------------------------------
+
+$LogFile = "$(Get-TimeStamp).txt"
+# Start Logging
+Start-Transcript -Path "$($Global.LogFolder)\$LogFile" -IncludeInvocationHeader
+
+#---------------------------------------------------------
 # Set Script Directory as Working Directory
 #---------------------------------------------------------
 
@@ -53,14 +61,6 @@ Write-ScriptMsg "Server external IP : $ServerExternalIP"
 
 Add-Member -InputObject $Global -Name "ServerInternalIP" -Type NoteProperty -Value $ServerInternalIP
 Add-Member -InputObject $Global -Name "ServerExternalIP" -Type NoteProperty -Value $ServerExternalIP
-
-#---------------------------------------------------------
-# Start Logging
-#---------------------------------------------------------
-
-$LogFile = "$(Get-TimeStamp).txt"
-# Start Logging
-Start-Transcript -Path "$($Global.LogFolder)\$LogFile" -IncludeInvocationHeader
 
 #---------------------------------------------------------
 # Install Dependencies

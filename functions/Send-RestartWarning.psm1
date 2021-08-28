@@ -6,6 +6,7 @@ function Send-RestartWarning {
         $ServerProcess
     )
     $Stopped = $false
+    $Failed = $false
     while ($Warnings.Timers.Count -gt 0) {
         $Timer = $Warnings.Timers[0]
         $TimeLeft = 0
@@ -25,23 +26,26 @@ function Send-RestartWarning {
             Start-Sleep -Seconds $Timer
         } else {
             Write-Warning "Unable to send restart warning."
+            $Failed = $true
             break
         }
     }
-    if (-not ($null -eq $Warnings.CmdSave)){
-        Write-ServerMsg "Saving server."
-        $Success = Send-Command -Command $Warnings.CmdSave
-        if ($Success) {
-            Start-Sleep -Seconds $Warnings.SaveDelay
-        } else {
-            Write-Warning "Unable to send save command."
+    if (-not ($Failed)) {
+        if (-not ($null -eq $Warnings.CmdSave)){
+            Write-ServerMsg "Saving server."
+            $Success = Send-Command -Command $Warnings.CmdSave
+            if ($Success) {
+                Start-Sleep -Seconds $Warnings.SaveDelay
+            } else {
+                Write-Warning "Unable to send save command."
+            }
         }
-    }
-    Write-ServerMsg "Closing server."
-    $Stopped = Send-Command -Command $Warnings.CmdStop
-    Start-Sleep -Seconds 10
-    if (-Not ($Stopped)) {
-        $Stopped = Stop-Server -ServerProcess $ServerProcess
+        Write-ServerMsg "Closing server."
+        $Stopped = Send-Command -Command $Warnings.CmdStop
+        Start-Sleep -Seconds 10
+        if (-Not ($Stopped)) {
+            $Stopped = Stop-Server -ServerProcess $ServerProcess
+        }
     }
     return $Stopped
 }

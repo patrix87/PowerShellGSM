@@ -2,132 +2,149 @@
 #Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
 #>
 
+$Name = "7DaysToDie"
+
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
-#Server Configuration
-[string]$ConfigFile="$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
+$ServerDetails = @{
+    #Server Configuration
+    ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
 
-#Rcon IP, usually localhost
-[string]$RconIP="127.0.0.1"
+    #Rcon IP, usually localhost
+    ManagementIP = "127.0.0.1"
 
-#Rcon Port in serverconfig.xml
-[int32]$RconPort=8081
+    #Rcon Port in serverconfig.xml
+    ManagementPort = 8081
 
-#Rcon Password as set in serverconfig.xml
-[string]$RconPassword=""
+    #Rcon Password as set in serverconfig.xml nothing is localhost only.
+    ManagementPassword = ""
 
-#Server Log File
-[string]$ServerLogFile="$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
+    #Server Log File
+    LogFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
 
 #---------------------------------------------------------
-# Server Installation
+# Server Installation Details
 #---------------------------------------------------------
 
-#Name of the Server Instance
-[string]$ServerName="7DaysToDie"
+    #Name of the Server Instance
+    Name = $Name
 
-#Server Installation Path
-[string]$ServerPath=".\servers\$ServerName"
+    #Server Installation Path
+    Path = ".\servers\$Name"
 
-#Steam Server App Id
-[int32]$SteamAppID=294420
+    #Steam Server App Id
+    AppID = 294420
 
-#Use Beta builds $true or $false
-[bool]$Beta=$false
+    #Use Beta builds $true or $false
+    Beta = $false
 
-#Name of the Beta Build
-[string]$BetaBuild="iwillbackupmysave"
+    #Name of the Beta Build
+    BetaBuild = "iwillbackupmysave"
 
-#Beta Build Password
-[string]$BetaBuildPassword="iaccepttheconsequences"
+    #Beta Build Password
+    BetaBuildPassword = "iaccepttheconsequences"
 
-#Process name in the task manager
-[string]$ProcessName="7DaysToDieServer"
+    #Process name in the task manager
+    ProcessName = "7DaysToDieServer"
 
-#ProjectZomboid64.exe
-[string]$ServerExec=".\servers\$ServerName\7DaysToDieServer.exe"
+    #ProjectZomboid64.exe
+    Exec = ".\servers\$Name\7DaysToDieServer.exe"
 
-#Process Priority Realtime, High, Above normal, Normal, Below normal, Low
-[bool]$UsePriority=$true
-[string]$AppPriority="High"
+    #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
+    UsePriority = $true
+    AppPriority = "High"
 
-<#
-Process Affinity (Core Assignation)
-Core 1=> 00000001=> 1
-Core 2=> 00000010=> 2
-Core 3=> 00000100=> 4
-Core 4=> 00001000=> 8
-Core 5=> 00010000=> 16
-Core 6=> 00100000=> 32
-Core 7=> 01000000=> 64
-Core 8=> 10000000=> 128
-==========================
-8 Cores=> 11111111=> 255
-4 Cores=> 00001111=> 15
-2 Cores=> 00000011=> 3
-#>
+    <#
+    Process Affinity (Core Assignation)
+    Core 1 = > 00000001 = > 1
+    Core 2 = > 00000010 = > 2
+    Core 3 = > 00000100 = > 4
+    Core 4 = > 00001000 = > 8
+    Core 5 = > 00010000 = > 16
+    Core 6 = > 00100000 = > 32
+    Core 7 = > 01000000 = > 64
+    Core 8 = > 10000000 = > 128
+    = = = = = = = = = = = = = = = = = = = = = = = = = = 
+    8 Cores = > 11111111 = > 255
+    4 Cores = > 00001111 = > 15
+    2 Cores = > 00000011 = > 3
+    #>
 
-[bool]$UseAffinity=$false
-[int32]$AppAffinity=15
+    UseAffinity = $false
+    AppAffinity = 15
+}
+#Create the object
+$Server = New-Object -TypeName PsObject -Property $ServerDetails
 
 #---------------------------------------------------------
 # Backups
 #---------------------------------------------------------
 
-#Do Backups
-[bool]$UseBackups=$true
+$BackupsDetails = @{
+    #Do Backups
+    Use = $true
 
-#Backup Folder
-[string]$BackupPath=".\backups\$ServerName"
+    #Backup Folder
+    Path = ".\backups\$($Server.Name)"
 
-#Number of days of backups to keep.
-[int32]$BackupDays=7
+    #Number of days of backups to keep.
+    Days = 7
 
-#Number of weeks of weekly backups to keep.
-[int32]$BackupWeeks=4
+    #Number of weeks of weekly backups to keep.
+    Weeks = 4
 
-#Folder to include in backup
-[string]$ServerSaves="$Env:userprofile\AppData\Roaming\7DaysToDie"
+    #Folder to include in backup
+    Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
+}
+#Create the object
+$Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 #---------------------------------------------------------
-# Restart Warnings (Require RCON)
+# Restart Warnings (Require RCON, Telnet or WebSocket API)
 #---------------------------------------------------------
 
-#Use Rcon to restart server softly.
-[bool]$UseWarnings=$true
+$WarningsDetails = @{
+    #Use Rcon to restart server softly.
+    Use = $true
 
-#Use Telnet protocol instead of RCON
-[string]$protocol="Telnet"
+    #What protocol to use : Rcon, Telnet, Websocket
+    Protocol = "Telnet"
 
-#Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
-[System.Collections.ArrayList]$RestartTimers=@(240,50,10) #Total wait time is 240+50+10=300 seconds or 5 minutes
+    #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
+    Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
 
-#message that will be sent. % is a wildcard for the timer.
-[string]$RestartMessageMinutes="The server will restart in % minutes !"
+    #message that will be sent. % is a wildcard for the timer.
+    MessageMin = "The server will restart in % minutes !"
 
-#message that will be sent. % is a wildcard for the timer.
-[string]$RestartMessageSeconds="The server will restart in % seconds !"
+    #message that will be sent. % is a wildcard for the timer.
+    MessageSec = "The server will restart in % seconds !"
 
-#command to send a message.
-[string]$MessageCmd="say"
+    #command to send a message.
+    CmdMessage = "say"
 
-#command to save the server
-[string]$ServerSaveCmd="saveworld"
+    #command to save the server
+    CmdSave = "saveworld"
 
-#command to stop the server
-[string]$ServerStopCmd="shutdown"
+    #How long to wait in seconds after the save command is sent.
+    SaveDelay = 15
+
+    #command to stop the server
+    CmdStop = "shutdown"
+}
+#Create the object
+$Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #---------------------------------------------------------
 # Launch Arguments
 #---------------------------------------------------------
 
 #Launch Arguments
-[string]$ArgumentList="-logfile $ServerLogFile -configfile=$ConfigFile -batchmode -nographics -dedicated -quit"
+$ArgumentList = "-logfile $($Server.LogFile) -configfile=$($Server.ConfigFile) -batchmode -nographics -dedicated -quit"
 
 #Server Launcher
-[string]$Launcher=$ServerExec
+$Launcher = $Server.Exec
 
 #---------------------------------------------------------
 # Launch Function
@@ -135,27 +152,30 @@ Core 8=> 10000000=> 128
 
 function Start-Server {
     #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
-    If(-Not (Test-Path -Path $ConfigFile -PathType "leaf")){
-        Copy-Item -Path "$ServerPath\serverconfig.xml" -Destination $ConfigFile
+    $ConfigFilePath = Split-Path -Path $Server.ConfigFile
+    if (-not(Test-Path -Path $ConfigFilePath)){
+        New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
+    }
+    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
+        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
     }
     #Start Server
-    $App=Start-Process -FilePath $Launcher -WorkingDirectory $ServerPath -ArgumentList $ArgumentList -PassThru
+    $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.
     Start-Sleep -Seconds 10
-    if ($App.HasExited){
+    if (-not ($App) -or $App.HasExited){
         Write-Warning "Server Failed to launch."
     } else {
-        Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server Started."
-    }
-
-    # Set the priority and affinity
-    if ($UsePriority) {
-        $App.PriorityClass=$AppPriority
-    }
-    if ($UseAffinity){
-        $App.ProcessorAffinity=$AppAffinity
+        Write-ServerMsg "Server Started."
+            # Set the priority and affinity
+        if ($Server.UsePriority) {
+            $App.PriorityClass = $Server.AppPriority
+        }
+        if ($Server.UseAffinity){
+            $App.ProcessorAffinity = $Server.AppAffinity
+        }
     }
 }
 
-Export-ModuleMember -Function * -Variable *
+Export-ModuleMember -Function Start-Server -Variable @("Server","Backups","Warnings")

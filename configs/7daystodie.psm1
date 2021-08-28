@@ -1,54 +1,31 @@
 <#
-#Change your servers settings in C:\Users\%username%\Zomboid\Server\servertest.ini
-
-Options to look for when setting your server in servertest.ini (Suggested values)
-```
-DefaultPort=16261
-MaxPlayers=64
-Open=true
-PVP=true
-Password=My server password
-PauseEmpty=true
-PingFrequency=10
-PingLimit=200
-Public=true
-PublicDescription=My server Description
-PublicName=My server name
-RCONPassword=CHANGEME
-RCONPort=27015
-SteamPort1=8766
-SteamPort2=8767
-```
-
-You need to port forward the following Ports on your router, both in TCP and UDP
-
-```
-DefaultPort=16261
-SteamPort1=8766
-SteamPort2=8767
-```
-You do not need to forward RCON.
+#Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
 #>
 
-$Name = "ProjectZomboid"
+$Name = "7DaysToDie"
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
+    #Server Configuration
+    ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
 
     #Rcon IP, usually localhost
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port in servertest.ini
-    ManagementPort = 27015
+    #Rcon Port in serverconfig.xml
+    ManagementPort = 8081
 
-    #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
-    ManagementPassword = "CHANGEME"
+    #Rcon Password as set in serverconfig.xml nothing is localhost only.
+    ManagementPassword = ""
+
+    #Server Log File
+    LogFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
 
 #---------------------------------------------------------
-# Server Installation
+# Server Installation Details
 #---------------------------------------------------------
 
     #Name of the Server Instance
@@ -58,7 +35,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 380870
+    AppID = 294420
 
     #Use Beta builds $true or $false
     Beta = $false
@@ -70,10 +47,10 @@ $ServerDetails = @{
     BetaBuildPassword = "iaccepttheconsequences"
 
     #Process name in the task manager
-    ProcessName = "java"
+    ProcessName = "7DaysToDieServer"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\ProjectZomboid64.exe"
+    Exec = ".\servers\$Name\7DaysToDieServer.exe"
 
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
     UsePriority = $true
@@ -104,6 +81,7 @@ $Server = New-Object -TypeName PsObject -Property $ServerDetails
 #---------------------------------------------------------
 # Backups
 #---------------------------------------------------------
+
 $BackupsDetails = @{
     #Do Backups
     Use = $true
@@ -118,7 +96,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\Zomboid"
+    Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -126,12 +104,13 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 #---------------------------------------------------------
 # Restart Warnings (Require RCON, Telnet or WebSocket API)
 #---------------------------------------------------------
+
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
     Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Rcon"
+    Protocol = "Telnet"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -143,16 +122,16 @@ $WarningsDetails = @{
     MessageSec = "The server will restart in % seconds !"
 
     #command to send a message.
-    CmdMessage = "servermsg"
+    CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "save"
+    CmdSave = "saveworld"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "quit"
+    CmdStop = "shutdown"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -161,19 +140,26 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-#Java Arguments
-$PZ_CLASSPATH = "java/jinput.jar;java/lwjgl.jar;java/lwjgl_util.jar;java/sqlite-jdbc-3.8.10.1.jar;java/trove-3.0.3.jar;java/uncommons-maths-1.2.3.jar;java/javacord-2.0.17-shaded.jar;java/guava-23.0.jar;java/"
-
 #Launch Arguments
-$ArgumentList = "-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer"
+$ArgumentList = "-logfile $($Server.LogFile) -configfile=$($Server.ConfigFile) -batchmode -nographics -dedicated -quit"
 
-$Launcher = "$($Server.Path)\jre64\bin\java.exe"
+#Server Launcher
+$Launcher = $Server.Exec
 
 #---------------------------------------------------------
 # Launch Function
 #---------------------------------------------------------
 
 function Start-Server {
+    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
+    $ConfigFilePath = Split-Path -Path $Server.ConfigFile
+    if (-not(Test-Path -Path $ConfigFilePath)){
+        New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
+    }
+    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
+        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
+    }
+    #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.

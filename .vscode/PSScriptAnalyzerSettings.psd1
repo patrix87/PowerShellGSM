@@ -1,6 +1,6 @@
 @{
-    Severity=@('Error','Warning')
-    ExcludeRules=@(
+    Severity = @('Error','Warning')
+    ExcludeRules = @(
         'PSUseDeclaredVarsMoreThanAssignments',
         'PSUseShouldProcessForStateChangingFunctions',
         'PSProvideCommentHelp',

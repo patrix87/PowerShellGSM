@@ -4,96 +4,80 @@
 
 [CmdletBinding()]
 param (
-    [Parameter()]
-    [string]
-    $ServerCfg
+    [Parameter(Mandatory)]
+    [string]$ServerCfg
 )
 
-#Console Output Text Color
-[string]$FgColor="Green"
-
-#Console Output Text Color for sections
-[string]$SectionColor="Blue"
-
-#Console Output Background Color
-[string]$BgColor="Black"
-
 #---------------------------------------------------------
-# Set Script Directory as Working Directory
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Setting Working Directory..."
+# Importing functions and variables.
 #---------------------------------------------------------
 
-$scriptpath=$MyInvocation.MyCommand.Path
-$dir=Split-Path -Path $scriptpath
-$dir=Resolve-Path -Path $dir
-Set-Location -Path $dir
-
-#---------------------------------------------------------
-# Import Functions and Modules
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Importing modules..."
-#---------------------------------------------------------
-
-# Core Function
-try {
-    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
-}
-catch {
-    Write-Warning "Unable to import functions."
-}
-
-# Modules
-try {
-    Get-ChildItem -Path ".\Modules" -Include "*.psm1" -Recurse | Import-Module
-}
-catch {
-    Exit-WithError -ErrorMsg "Unable to import module."
-}
-
-#---------------------------------------------------------
-# Import Variables
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Importing functions and variables from $ServerCfg ..."
-#---------------------------------------------------------
-
-# Global Variables
 try {
     Import-Module -Name ".\configs\global.psm1"
-}
-catch {
-    Exit-WithError -ErrorMsg "Unable to import global configuration."
-}
-
-# Server Variables and Functions
-try {
+    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
     Import-Module -Name ".\configs\$ServerCfg.psm1"
 }
 catch {
-    Exit-WithError -ErrorMsg "Unable to import server configuration."
+    Exit-WithError -ErrorMsg "Unable to import modules."
+    exit
 }
 
 #---------------------------------------------------------
 # Start Logging
 #---------------------------------------------------------
 
-$LogFile="$(Get-TimeStamp).txt"
+$LogFile = "$(Get-TimeStamp).txt"
 # Start Logging
-Start-Transcript -Path "$LogFolder\$LogFile" -IncludeInvocationHeader
+Start-Transcript -Path "$($Global.LogFolder)\$LogFile" -IncludeInvocationHeader
+
+#---------------------------------------------------------
+# Set Script Directory as Working Directory
+#---------------------------------------------------------
+
+Write-ScriptMsg "Setting Script Directory as Working Directory..."
+$scriptpath = $MyInvocation.MyCommand.Path
+$dir = Split-Path -Path $scriptpath
+$dir = Resolve-Path -Path $dir
+Set-Location -Path $dir
+Write-ScriptMsg "Working Directory : $(Get-Location)"
+
+#---------------------------------------------------------
+# Get server IPs
+#---------------------------------------------------------
+
+Write-ScriptMsg "Finding server IPs..."
+$ServerInternalIP = (
+    Get-NetIPConfiguration |
+    Where-Object {
+        $_.IPv4DefaultGateway -ne $null -and
+        $_.NetAdapter.Status -ne "Disconnected"
+    }
+).IPv4Address.IPAddress
+
+$ServerExternalIP = (Invoke-WebRequest ifconfig.me/ip).Content.Trim()
+
+Write-ScriptMsg "Server local IP : $ServerInternalIP"
+Write-ScriptMsg "Server external IP : $ServerExternalIP"
+
+Add-Member -InputObject $Global -Name "ServerInternalIP" -Type NoteProperty -Value $ServerInternalIP
+Add-Member -InputObject $Global -Name "ServerExternalIP" -Type NoteProperty -Value $ServerExternalIP
 
 #---------------------------------------------------------
 # Install Dependencies
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Dependencies..."
 #---------------------------------------------------------
 
-[Hashtable]$Dependencies=@{
-    SevenZip=$SevenZip
-    Mcrcon=$Mcrcon
-    SteamCMD=$SteamCMD
+Write-ScriptMsg "Verifying Dependencies..."
+$Dependencies = @{
+    SevenZip = $Global.SevenZip
+    Mcrcon = $Global.Mcrcon
+    SteamCMD = $Global.SteamCMD
 }
 
-[System.Collections.ArrayList]$MissingDependencies=@()
+[System.Collections.ArrayList]$MissingDependencies = @()
 
 foreach ($Key in $Dependencies.keys) {
-    if (!(Test-Path $Dependencies[$Key])) {
-        $null=$MissingDependencies.Add($Key)
+    if (-not(Test-Path -Path $Dependencies[$Key])) {
+        $null = $MissingDependencies.Add($Key)
     }
 }
 
@@ -102,7 +86,7 @@ if ($MissingDependencies.Count -gt 0){
     New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
 
     foreach ($Item in $MissingDependencies) {
-        $Cmd="Install-$Item"
+        $Cmd = "Install-$Item"
         &$Cmd -Application $Dependencies[$Item]
     }
 
@@ -112,68 +96,79 @@ if ($MissingDependencies.Count -gt 0){
 
 #---------------------------------------------------------
 # Install Server
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server installation..."
 #---------------------------------------------------------
 
-if (!(Test-Path $ServerExec)){
-    Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server is not installed : Installing $ServerName Server."
-    Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Installing"
-    Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully installed."
+Write-ScriptMsg "Verifying Server installation..."
+[boolean]$FreshInstall = $false
+if (-not(Test-Path -Path $Server.Exec)){
+    Write-ServerMsg "Server is not installed : Installing $($Server.Name) Server."
+    Update-Server -UpdateType "Installing"
+    Write-ServerMsg "Server successfully installed."
+    $FreshInstall = $true
 }
 
 #---------------------------------------------------------
 # If Server is running warn players then stop server
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Server State..."
 #---------------------------------------------------------
 
-If ($UseWarnings) {
-    Send-RestartWarning -ProcessName $ProcessName -Mcrcon $Mcrcon -RconIP $RconIP -RconPort $RconPort -RconPassword $RconPassword -RestartTimers $RestartTimers -RestartMessageMinutes $RestartMessageMinutes -RestartMessageSeconds $RestartMessageSeconds -MessageCmd $MessageCmd -ServerStopCmd $ServerStopCmd
+$ServerProcess = Get-Process $Server.ProcessName -ErrorAction SilentlyContinue
+Write-ScriptMsg "Verifying Server State..."
+if (-not ($ServerProcess) -or $ServerProcess.HasExited) {
+    Write-ServerMsg "Server is not running."
 } else {
-    $Server=Get-Process $ProcessName -ErrorAction SilentlyContinue
-    $Stopped=Stop-Server -Server $Server
-    if ($Stopped) {
-        Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server closed."
+    if ($Warnings.Use -and -not ($FreshInstall)) {
+        Write-ServerMsg "Server is running, warning users about upcomming restart."
+        $Stopped = Send-RestartWarning -ServerProcess $ServerProcess
     } else {
-        Exit-WithError -ErrorMsg "Unable to stop server."
+        Write-ServerMsg "Server is running, stopping server."
+        $Stopped = Stop-Server -ServerProcess $ServerProcess
+    }
+    if ($Stopped) {
+        Write-ServerMsg "Server stopped."
+    } else {
+        Exit-WithError "Unable to stop server."
     }
 }
 
 #---------------------------------------------------------
 # Backup
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Verifying Backups..."
 #---------------------------------------------------------
 
-if ($UseBackups) {
-    Backup-Server -BackupPath $BackupPath -ServerSaves $ServerSaves -SevenZip $SevenZip -BackupDays $BackupDays -BackupWeeks $BackupWeeks
+if ($Backups.Use -and -not ($FreshInstall)) {
+    Write-ScriptMsg "Verifying Backups..."
+    Backup-Server
 }
 
 #---------------------------------------------------------
 # Update
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Updating Server..."
 #---------------------------------------------------------
 
-Update-Server -ServerPath $ServerPath -SteamCMD $SteamCMD -SteamAppID $SteamAppID -Beta $Beta -BetaBuild $BetaBuild -BetaBuildPassword $BetaBuildPassword -UpdateType "Updating"
-Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Server successfully updated and/or verified."
+if (-not ($FreshInstall)) {
+    Write-ScriptMsg "Updating Server..."
+    Update-Server -UpdateType "Updating / Verifying"
+    Write-ServerMsg "Server successfully updated and/or verified."
+}
 
 #---------------------------------------------------------
 # Start Server
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Starting Server..."
 #---------------------------------------------------------
 
 try {
+    Write-ScriptMsg "Starting Server..."
     Start-Server
 }
 catch {
+    Write-Error $_
     Exit-WithError -ErrorMsg "Unable to start server."
 }
 
 #---------------------------------------------------------
 # Cleanup
-Write-Host -ForegroundColor $SectionColor -BackgroundColor $BgColor -Object "Cleaning old logs..."
 #---------------------------------------------------------
 
 try {
-    Remove-OldLog -LogFolder $LogFolder -Days 30
+    Write-ScriptMsg "Deleting logs older than $($Global.Days) days."
+    Remove-OldLog
 }
 catch {
     Exit-WithError -ErrorMsg "Unable clean old logs."
@@ -183,7 +178,7 @@ catch {
 # Stop Logging
 #---------------------------------------------------------
 
-Write-Host -ForegroundColor $FgColor -BackgroundColor $BgColor -Object "Script successfully completed."
+Write-ServerMsg "Script successfully completed."
 
 Stop-Transcript
 

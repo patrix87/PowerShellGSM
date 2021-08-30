@@ -2,7 +2,7 @@ function Update-Server {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        $UpdateType
+        [string]$UpdateType
     )
 
     if (-not(Test-Path -Path $Server.Path)){
@@ -12,14 +12,22 @@ function Update-Server {
     if($Server.Beta){
         Write-ServerMsg "$UpdateType Beta Build."
         try {
-            $Task = Start-Process $Global.SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $($Server.Path) `"+app_update $($Server.AppID) -beta $($Server.BetaBuild) -betapassword $($Server.BetaBuildPassword)`" -validate +quit" -Wait -PassThru -NoNewWindow
+            if ($Server.Validate) {
+                $Task = Start-Process $Global.SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $($Server.Path) `"+app_update $($Server.AppID) -beta $($Server.BetaBuild) -betapassword $($Server.BetaBuildPassword)`" -validate +quit" -Wait -PassThru -NoNewWindow
+            } else {
+                $Task = Start-Process $Global.SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $($Server.Path) `"+app_update $($Server.AppID) -beta $($Server.BetaBuild) -betapassword $($Server.BetaBuildPassword)`" +quit" -Wait -PassThru -NoNewWindow
+            }
         } catch {
             Exit-WithError -ErrorMsg "SteamCMD failed to complete."
         }
     } else {
         Write-ServerMsg "$UpdateType Regular Build."
         try {
-            $Task = Start-Process $Global.SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $($Server.Path) +app_update $($Server.AppID) -validate +quit" -Wait -PassThru -NoNewWindow
+            if ($Server.Validate){
+                $Task = Start-Process $Global.SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $($Server.Path) +app_update $($Server.AppID) -validate +quit" -Wait -PassThru -NoNewWindow
+            } else {
+                $Task = Start-Process $Global.SteamCMD -ArgumentList "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir $($Server.Path) +app_update $($Server.AppID) +quit" -Wait -PassThru -NoNewWindow
+            }
         } catch {
             Exit-WithError -ErrorMsg "SteamCMD failed to complete."
         }

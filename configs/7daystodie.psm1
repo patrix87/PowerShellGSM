@@ -41,10 +41,10 @@ $ServerDetails = @{
     Beta = $false
 
     #Name of the Beta Build
-    BetaBuild = "iwillbackupmysave"
+    BetaBuild = ""
 
     #Beta Build Password
-    BetaBuildPassword = "iaccepttheconsequences"
+    BetaBuildPassword = ""
 
     #Process name in the task manager
     ProcessName = "7DaysToDieServer"
@@ -74,6 +74,9 @@ $ServerDetails = @{
 
     UseAffinity = $false
     AppAffinity = 15
+
+    #Should the server validate install after installation or update *(recommended)
+    Validate = $true
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails

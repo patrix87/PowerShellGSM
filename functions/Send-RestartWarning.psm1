@@ -42,10 +42,11 @@ function Send-RestartWarning {
         }
         Write-ServerMsg "Closing server."
         $Stopped = Send-Command -Command $Warnings.CmdStop
-        Start-Sleep -Seconds 10
-        if (-Not ($Stopped)) {
-            $Stopped = Stop-Server -ServerProcess $ServerProcess
-        }
+        $ServerProcess.WaitForExit(30000)
+        Start-Sleep -Seconds 5
+    }
+    if(-not($ServerProcess.HasExited)){
+        $Stopped = Stop-Server -ServerProcess $ServerProcess
     }
     return $Stopped
 }

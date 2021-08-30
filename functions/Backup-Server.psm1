@@ -2,6 +2,10 @@ function Backup-Server {
     Write-ServerMsg "Creating Backup."
     #Create backup name from date and time
     $BackupName = Get-TimeStamp
+    #Resolve Server Saves Path
+    $Backups.Saves = Resolve-Path -Path $Backups.Saves -ErrorAction SilentlyContinue
+    #Resolve Backup Path
+    $Backups.Path = Resolve-Path -Path $Backups.Path -ErrorAction SilentlyContinue
     #Check if it's friday (Sunday is 0)
     if ((Get-Date -UFormat %u) -eq 5){
         $Type = "Weekly"
@@ -14,8 +18,6 @@ function Backup-Server {
     if (-not(Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container")){
         New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
     }
-    #Wait for server to have unlocked files
-    Start-Sleep -Seconds 5
     #Run Backup
     try {
         & $Global.SevenZip a -tzip -mx=1 "$($Backups.Path)\$Type\$BackupName.zip" $Backups.Saves

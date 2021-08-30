@@ -1,36 +1,29 @@
 <#
-#Change your servers settings in C:\Users\%username%\Zomboid\Server\servertest.ini
+#Change your servers settings in ".\servers\PixArk\ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini"
 
-Options to look for when setting your server in servertest.ini (Suggested values)
-```
-DefaultPort=16261
-MaxPlayers=64
-Open=true
-PVP=true
-Password=My server password
-PauseEmpty=true
-PingFrequency=10
-PingLimit=200
-Public=true
-PublicDescription=My server Description
-PublicName=My server name
-RCONPassword=CHANGEME
-RCONPort=27015
-SteamPort1=8766
-SteamPort2=8767
-```
+Under : [ServerSettings]
+Add/Set one of those settings :
 
-You need to port forward the following Ports on your router, both in TCP and UDP
+Pioneering :
 
-```
-DefaultPort=16261
-SteamPort1=8766
-SteamPort2=8767
-```
-You do not need to forward RCON.
+CanPVPAttack=False
+ServerPVPCanAttack=False
+
+Fury :
+
+ServerPVE=False
+CanPVPAttack=True
+ServerPVPCanAttack=False
+
+Chaos:
+
+ServerPVE=False
+CanPVPAttack=False
+ServerPVPCanAttack=True
+
 #>
 
-$Name = "ProjectZomboid"
+$Name = "PixArk"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -38,17 +31,53 @@ $Name = "ProjectZomboid"
 
 $ServerDetails = @{
 
+    #Name of the server in the Server Browser
+    SessionName = "My Pixark Server"
+
+    #Maximum Number of Players
+    MaxPlayers = 20
+
+    #Password to join the World *NO SPACES*
+    Password = "CHANGEME"
+
+    #Server Port
+    Port = 7797
+
+    #World Seed
+    Seed = 32399
+
+    #Query Port
+    QueryPort = 27515
+
+    #Cube Port
+    CubePort = 27518
+
+    #World Name *NO SPACES*
+    WorldName = "World"
+
+    #World Type : "SkyPiea_Light" for Skyward or "CubeWorld_Light" for regular
+    WorldType = "CubeWorld_Light"
+
+    #Show Floating Damage Text "True" or "False"
+    ShowFloatingDamageText = "True"
+
+    #Server Language
+    Language = "en"
+
+    #Enable Rcon "True" or "False"
+    EnableRcon = "True"
+
     #Rcon IP, usually localhost
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port in servertest.ini
-    ManagementPort = 27015
+    #Rcon Port
+    ManagementPort = 27520
 
-    #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
-    ManagementPassword = "CHANGEME"
+    #Rcon Password *NO SPACES*
+    ManagementPassword = "CHANGEME2"
 
 #---------------------------------------------------------
-# Server Installation
+# Server Installation Details
 #---------------------------------------------------------
 
     #Name of the Server Instance
@@ -58,22 +87,22 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 380870
+    AppID = 824360
 
     #Use Beta builds $true or $false
     Beta = $false
 
     #Name of the Beta Build
-    BetaBuild = "iwillbackupmysave"
+    BetaBuild = ""
 
     #Beta Build Password
-    BetaBuildPassword = "iaccepttheconsequences"
+    BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "java"
+    ProcessName = "PixArkServer"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\ProjectZomboid64.exe"
+    Exec = ".\servers\$Name\ShooterGame\Binaries\Win64\PixARKServer.exe"
 
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
     UsePriority = $true
@@ -99,7 +128,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -107,6 +136,7 @@ $Server = New-Object -TypeName PsObject -Property $ServerDetails
 #---------------------------------------------------------
 # Backups
 #---------------------------------------------------------
+
 $BackupsDetails = @{
     #Do Backups
     Use = $true
@@ -121,7 +151,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\Zomboid"
+    Saves = ".\servers\$($Server.Name)\ShooterGame\Saved"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -129,6 +159,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 #---------------------------------------------------------
 # Restart Warnings (Require RCON, Telnet or WebSocket API)
 #---------------------------------------------------------
+
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
     Use = $true
@@ -146,10 +177,10 @@ $WarningsDetails = @{
     MessageSec = "The server will restart in % seconds !"
 
     #command to send a message.
-    CmdMessage = "servermsg"
+    CmdMessage = "broadcast"
 
     #command to save the server
-    CmdSave = "save"
+    CmdSave = "saveworld"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
@@ -164,19 +195,43 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-#Java Arguments
-$PZ_CLASSPATH = "java/jinput.jar;java/lwjgl.jar;java/lwjgl_util.jar;java/sqlite-jdbc-3.8.10.1.jar;java/trove-3.0.3.jar;java/uncommons-maths-1.2.3.jar;java/javacord-2.0.17-shaded.jar;java/guava-23.0.jar;java/"
-
 #Launch Arguments
-$ArgumentList = "-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer"
+$Arguments = @(
+    "$($Server.WorldType)",
+    "?listen",
+    "?Multihome=$($Server.InternalIP)",
+    "?RCONEnabled=$($Server.EnableRcon)",
+    "?MaxPlayers=$($Server.MaxPlayers)",
+    "?Port=$($Server.Port)",
+    "?RCONPort=$($Server.ManagementPort)",
+    "?QueryPort=$($Server.QueryPort)",
+    "?ServerAdminPassword=$($Server.ManagementPassword)",
+    "?SessionName=`"$($Server.SessionName)`"",
+    "?ServerPassword=$($Server.Password)",
+    "?ShowFloatingDamageText=$($Server.ShowFloatingDamageText)",
+    "?CULTUREFORCOOKING=$($Server.Language)",
+    " -CubePort=$($Server.CubePort)",
+    " -CubeWorld=$($Server.WorldName)",
+    " -Seed=$($Server.Seed)",
+    " -forcerespawndinos"
+    " -NoHangDetection",
+    " -nosteamclient",
+    " -game",
+    " -server",
+    " -log"
+)
 
-$Launcher = "$($Server.Path)\jre64\bin\java.exe"
+$ArgumentList = $Arguments -join ""
+
+#Server Launcher
+$Launcher = $Server.Exec
 
 #---------------------------------------------------------
 # Launch Function
 #---------------------------------------------------------
 
 function Start-Server {
+    #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.

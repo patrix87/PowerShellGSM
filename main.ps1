@@ -46,7 +46,7 @@ Write-ScriptMsg "Working Directory : $(Get-Location)"
 #---------------------------------------------------------
 
 Write-ScriptMsg "Finding server IPs..."
-$ServerInternalIP = (
+$InternalIP = (
     Get-NetIPConfiguration |
     Where-Object {
         $_.IPv4DefaultGateway -ne $null -and
@@ -54,13 +54,13 @@ $ServerInternalIP = (
     }
 ).IPv4Address.IPAddress
 
-$ServerExternalIP = (Invoke-WebRequest ifconfig.me/ip).Content.Trim()
+$ExternalIP = (Invoke-WebRequest ifconfig.me/ip).Content.Trim()
 
-Write-ScriptMsg "Server local IP : $ServerInternalIP"
-Write-ScriptMsg "Server external IP : $ServerExternalIP"
+Write-ScriptMsg "Server local IP : $InternalIP"
+Write-ScriptMsg "Server external IP : $ExternalIP"
 
-Add-Member -InputObject $Global -Name "ServerInternalIP" -Type NoteProperty -Value $ServerInternalIP
-Add-Member -InputObject $Global -Name "ServerExternalIP" -Type NoteProperty -Value $ServerExternalIP
+Add-Member -InputObject $Global -Name "InternalIP" -Type NoteProperty -Value $InternalIP
+Add-Member -InputObject $Global -Name "ExternalIP" -Type NoteProperty -Value $ExternalIP
 
 #---------------------------------------------------------
 # Install Dependencies
@@ -145,8 +145,8 @@ if ($Backups.Use -and -not ($FreshInstall)) {
 
 if (-not ($FreshInstall)) {
     Write-ScriptMsg "Updating Server..."
-    Update-Server -UpdateType "Updating / Verifying"
-    Write-ServerMsg "Server successfully updated and/or verified."
+    Update-Server -UpdateType "Updating / Validating"
+    Write-ServerMsg "Server successfully updated and/or validated."
 }
 
 #---------------------------------------------------------

@@ -232,7 +232,7 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort) And $($server.CubePort) in TCP and UDP to $($Server.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort) And $($server.CubePort) in TCP and UDP to $($Global.InternalIP)"
 
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru

@@ -163,7 +163,7 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : 26900 in TCP and 26900 to 26903 in UDP to $($Server.InternalIP)"
+    Write-ScriptMsg "Port Forward : 26900 in TCP and 26900 to 26903 in UDP to $($Global.InternalIP)"
 
     #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
     $ConfigFilePath = Split-Path -Path $Server.ConfigFile

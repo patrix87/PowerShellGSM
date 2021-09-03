@@ -200,7 +200,7 @@ $Launcher = "$($Server.Path)\jre64\bin\java.exe"
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : 16261, 8766 and 8767 in TCP and UDP to $($Server.InternalIP)"
+    Write-ScriptMsg "Port Forward : 16261, 8766 and 8767 in TCP and UDP to $($Global.InternalIP)"
 
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 

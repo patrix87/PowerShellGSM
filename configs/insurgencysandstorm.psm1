@@ -1,28 +1,71 @@
 <#
-#Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
+#Change your servers settings in ".\servers\Insurgency\Saved\Config\WindowsServer"
 #>
 
-$Name = "7DaysToDie"
+$Name = "InsurgencySandstorm"
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-    #Server Configuration
-    ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
+
+    #Name of the server in the Server Browser
+    SessionName = "My Insurgency Server"
+
+    #Maximum Number of Players
+    MaxPlayers = 8
+
+    #Password to join the World *NO SPACES*
+    Password = "CHANGEME"
+
+    #Server Port
+    Port = 27102
+
+    #Query Port
+    QueryPort = 27131
+
+    #Token -> https://steamcommunity.com/dev/managegameservers
+    GSLTToken = "CHANGEME"
+
+    #GameStatToken -> https://gamestats.sandstorm.game/
+    GameStatsToken = "CHANGEME"
+
+    #Scenario
+    Scenario = "Scenario_Citadel_Survival"
+
+    #Map
+    Map = "Citadel"
+
+    #Map Cycle : Create a new text document in Insurgency/Config/Server named MapCycle.txt
+    MapCycle = "MapCycle"
+
+    #Admins : Create a new text document in Insurgency/Config/Server named Admins.txt steamID64, one per line
+    Admins = "Admins"
+
+    #Motd : Create a new text document in Insurgency/Config/Server named MOTD.txt
+    Motd = "MOTD"
+
+    #Mods comma separted -> https://sandstorm-support.newworldinteractive.com/hc/en-us/articles/360049211072-Server-Admin-Guide
+    Mods = ""
+
+    #Mutators comma separted -> https://sandstorm-support.newworldinteractive.com/hc/en-us/articles/360049211072-Server-Admin-Guide
+    Mutators = ""
+
+    #Official RuleSet
+    OfficialRulesSet = "OfficialRules"
+
+    #Enable Rcon $true or $false
+    EnableRcon = $true
 
     #Rcon IP, usually localhost
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port in serverconfig.xml
-    ManagementPort = 8081
+    #Rcon Port
+    ManagementPort = 27015
 
-    #Rcon Password as set in serverconfig.xml nothing is localhost only.
-    ManagementPassword = ""
-
-    #Server Log File
-    LogFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
+    #Rcon Password *NO SPACES*
+    ManagementPassword = "CHANGEME"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -35,7 +78,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 294420
+    AppID = 581330
 
     #Use Beta builds $true or $false
     Beta = $false
@@ -47,10 +90,10 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "7DaysToDieServer"
+    ProcessName = "InsurgencyServer"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\7DaysToDieServer.exe"
+    Exec = ".\servers\$Name\InsurgencyServer.exe"
 
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
     UsePriority = $true
@@ -76,7 +119,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -99,7 +142,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
+    Saves = ".\servers\$($Server.Name)\Insurgency\Config\Server"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -113,7 +156,7 @@ $WarningsDetails = @{
     Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Telnet"
+    Protocol = "Rcon"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -128,13 +171,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "saveworld"
+    CmdSave = "listplayers"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "shutdown"
+    CmdStop = "exit"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -144,14 +187,51 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$Arguments = @(
-    "-logfile $($Server.LogFile) ",
-    "-configfile=$($Server.ConfigFile) ",
-    "-batchmode ",
-    "-nographics ",
-    "-dedicated ",
-    "-quit"
-)
+if ($Server.EnableRcon) {
+    $Arguments = @(
+        "$($Server.Map)",
+        "?Scenario=$($Server.Scenario)",
+        "?MaxPlayers=$($Server.MaxPlayers)",
+        "?password=$($Server.Password)",
+        " -Port=$($Server.Port)",
+        " -QueryPort=$($Server.QueryPort)",
+        " -hostname=`"$($Server.SessionName)`"",
+        " -GSLTToken=$($Server.GSLTToken)",
+        " -GameStatsToken=$($Server.GameStatsToken)",
+        " -Gamestats",
+        " -MapCycle=$($Server.MapCycle)",
+        " -AdminList=$($Server.Admins)",
+        " -MOTD$($Server.Motd)",
+        " -ruleset=$($Server.OfficialRulesSet)",
+        " -CmdModList=$($Server.Mods)",
+        " -mutators=$($Server.Mutators)",
+        " -Rcon",
+        " -RconPassword=$($Server.ManagementPassword)",
+        " -RconListenPort=$($Server.ManagementPort)",
+        " -log"
+    )
+} else {
+    $Arguments = @(
+        "$($Server.Map)",
+        "?Scenario=$($Server.Scenario)",
+        "?MaxPlayers=$($Server.MaxPlayers)",
+        "?password=$($Server.Password)",
+        " -Port=$($Server.Port)",
+        " -QueryPort=$($Server.QueryPort)",
+        " -hostname=`"$($Server.SessionName)`"",
+        " -GSLTToken=$($Server.GSLTToken)",
+        " -GameStatsToken=$($Server.GameStatsToken)",
+        " -Gamestats",
+        " -MapCycle=$($Server.MapCycle)",
+        " -AdminList=$($Server.Admins)",
+        " -MOTD$($Server.Motd)",
+        " -ruleset=$($Server.OfficialRulesSet)",
+        " -CmdModList=$($Server.Mods)",
+        " -mutators=$($Server.Mutators)",
+        " -log"
+    )
+}
+
 $ArgumentList = $Arguments -join ""
 
 #Server Launcher
@@ -163,16 +243,8 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : 26900 in TCP and 26900 to 26903 in UDP to $($Server.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port) and $($server.QueryPort) in TCP and UDP to $($Server.InternalIP)"
 
-    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
-    $ConfigFilePath = Split-Path -Path $Server.ConfigFile
-    if (-not(Test-Path -Path $ConfigFilePath)){
-        New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
-    }
-    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
-        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
-    }
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 

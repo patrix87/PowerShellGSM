@@ -165,10 +165,32 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Java Arguments
-$PZ_CLASSPATH = "java/jinput.jar;java/lwjgl.jar;java/lwjgl_util.jar;java/sqlite-jdbc-3.8.10.1.jar;java/trove-3.0.3.jar;java/uncommons-maths-1.2.3.jar;java/javacord-2.0.17-shaded.jar;java/guava-23.0.jar;java/"
+$PZ_CLASSPATH_LIST = @(
+    "java/jinput.jar;",
+    "java/lwjgl.jar;",
+    "java/lwjgl_util.jar;",
+    "java/sqlite-jdbc-3.8.10.1.jar;",
+    "java/trove-3.0.3.jar;",
+    "java/uncommons-maths-1.2.3.jar;",
+    "java/javacord-2.0.17-shaded.jar;",
+    "java/guava-23.0.jar;",
+    "java/"
+)
 
+$PZ_CLASSPATH = $PZ_CLASSPATH_LIST -join ""
 #Launch Arguments
-$ArgumentList = "-Dzomboid.steam=1 -Dzomboid.znetlog=1 -XX:+UseConcMarkSweepGC -XX:-CreateMinidumpOnCrash -XX:-OmitStackTraceInFastThrow -Xms2048m -Xmx2048m -Djava.library.path=natives/;. -cp $PZ_CLASSPATH zombie.network.GameServer"
+$Arguments = @(
+    "-Dzomboid.steam=1 ",
+    "-Dzomboid.znetlog=1 ",
+    "-XX:+UseConcMarkSweepGC ",
+    "-XX:-CreateMinidumpOnCrash ",
+    "-XX:-OmitStackTraceInFastThrow ",
+    "-Xms2048m ",
+    "-Xmx2048m ",
+    "-Djava.library.path=natives/;. ",
+    "-cp $PZ_CLASSPATH zombie.network.GameServer"
+)
+$ArgumentList = $Arguments -join ""
 
 $Launcher = "$($Server.Path)\jre64\bin\java.exe"
 
@@ -177,6 +199,9 @@ $Launcher = "$($Server.Path)\jre64\bin\java.exe"
 #---------------------------------------------------------
 
 function Start-Server {
+
+    Write-ScriptMsg "Port Forward : 16261, 8766 and 8767 in TCP and UDP to $($Server.InternalIP)"
+
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
     #Wait to see if the server is stable.

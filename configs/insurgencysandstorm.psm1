@@ -119,7 +119,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $false
+    Validate = $true
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -186,53 +186,41 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-#Launch Arguments
-if ($Server.EnableRcon) {
-    $Arguments = @(
-        "$($Server.Map)",
-        "?Scenario=$($Server.Scenario)",
-        "?MaxPlayers=$($Server.MaxPlayers)",
-        "?password=$($Server.Password)",
-        " -Port=$($Server.Port)",
-        " -QueryPort=$($Server.QueryPort)",
-        " -hostname=`"$($Server.SessionName)`"",
-        " -GSLTToken=$($Server.GSLTToken)",
-        " -GameStatsToken=$($Server.GameStatsToken)",
-        " -Gamestats",
-        " -MapCycle=$($Server.MapCycle)",
-        " -AdminList=$($Server.Admins)",
-        " -MOTD$($Server.Motd)",
-        " -ruleset=$($Server.OfficialRulesSet)",
-        " -CmdModList=$($Server.Mods)",
-        " -mutators=$($Server.Mutators)",
-        " -Rcon",
-        " -RconPassword=$($Server.ManagementPassword)",
-        " -RconListenPort=$($Server.ManagementPort)",
-        " -log"
-    )
-} else {
-    $Arguments = @(
-        "$($Server.Map)",
-        "?Scenario=$($Server.Scenario)",
-        "?MaxPlayers=$($Server.MaxPlayers)",
-        "?password=$($Server.Password)",
-        " -Port=$($Server.Port)",
-        " -QueryPort=$($Server.QueryPort)",
-        " -hostname=`"$($Server.SessionName)`"",
-        " -GSLTToken=$($Server.GSLTToken)",
-        " -GameStatsToken=$($Server.GameStatsToken)",
-        " -Gamestats",
-        " -MapCycle=$($Server.MapCycle)",
-        " -AdminList=$($Server.Admins)",
-        " -MOTD$($Server.Motd)",
-        " -ruleset=$($Server.OfficialRulesSet)",
-        " -CmdModList=$($Server.Mods)",
-        " -mutators=$($Server.Mutators)",
-        " -log"
-    )
+[System.Collections.ArrayList]$Arguments = @(
+    "$($Server.Map)",
+    "?Scenario=$($Server.Scenario)",
+    "?MaxPlayers=$($Server.MaxPlayers)",
+    "?password=`"$($Server.Password)`"",
+    " -Port=$($Server.Port)",
+    " -QueryPort=$($Server.QueryPort)",
+    " -hostname=`"$($Server.SessionName)`"",
+    " -GSLTToken=`"$($Server.GSLTToken)`"",
+    " -GameStatsToken=`"$($Server.GameStatsToken)`"",
+    " -Gamestats",
+    " -MapCycle=`"$($Server.MapCycle)`"",
+    " -AdminList=`"$($Server.Admins)`"",
+    " -MOTD=`"$($Server.Motd)`"",
+    " -ruleset=`"$($Server.OfficialRulesSet)`"",
+    " -CmdModList=`"$($Server.Mods)`"",
+    " -mutators=`"$($Server.Mutators)`"",
+    " -log"
+)
+
+[System.Collections.ArrayList]$CleanedArguments=@()
+
+foreach($Argument in $Arguments){
+    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('='))){
+        $CleanedArguments.Add($Argument)
+    }
 }
 
-$ArgumentList = $Arguments -join ""
+if ($Server.EnableRcon){
+    $CleanedArguments.Add(" -Rcon")
+    $CleanedArguments.Add(" -RconPassword=`"$($Server.ManagementPassword)`"")
+    $CleanedArguments.Add(" -RconListenPort=`"$($Server.ManagementPort)`"")
+}
+
+$ArgumentList = $CleanedArguments -join ""
 
 #Server Launcher
 $Launcher = $Server.Exec

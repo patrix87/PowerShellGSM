@@ -2,6 +2,14 @@ function Backup-Server {
     Write-ServerMsg "Creating Backup."
     #Create backup name from date and time
     $BackupName = Get-TimeStamp
+    #Check if Backups Destination directory exist and create it.
+    if (-not(Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container")){
+        New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
+    }
+    #Check if Backups Source directory exist and create it.
+    if (-not(Test-Path -Path $Backups.Saves -PathType "Container")){
+        New-Item -Path $Backups.Saves -ItemType "directory" -ErrorAction SilentlyContinue
+    }
     #Resolve Server Saves Path
     $Backups.Saves = Resolve-Path -Path $Backups.Saves -ErrorAction SilentlyContinue
     #Resolve Backup Path
@@ -14,10 +22,7 @@ function Backup-Server {
         $Type = "Daily"
         $Limit = (Get-Date).AddDays(-$Backups.Days)
     }
-    #Check if directory exist and create it.
-    if (-not(Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container")){
-        New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
-    }
+
     #Run Backup
     try {
         & $Global.SevenZip a -tzip -mx=1 "$($Backups.Path)\$Type\$BackupName.zip" $Backups.Saves

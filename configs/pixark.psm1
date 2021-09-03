@@ -128,7 +128,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $false
+    Validate = $true
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails

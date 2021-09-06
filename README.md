@@ -9,7 +9,8 @@ You can create a Scheduled Task to execute the run.cmd file daily to backup, upd
 # Installation
 
 - Extract the release code in any directory.
-- Copy and rename then edit run.cmd to select your server configuration file.
+- Copy your server configuration file from /templates to /configs
+- Copy and edit launchers/run.cmd to select your server configuration file.
 - Edit your server configuration file in the configs folder.
 - Exectute your version of run.cmd
 

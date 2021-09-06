@@ -13,8 +13,8 @@ param (
 #---------------------------------------------------------
 
 if (-not (Test-Path -Path ".\configs\$ServerCfg.psm1" -PathType "Leaf")) {
-    if (Test-Path -Path ".\configs-templates\$ServerCfg.psm1" -PathType "Leaf"){
-        Copy-Item -Path ".\configs-templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
+    if (Test-Path -Path ".\templates\$ServerCfg.psm1" -PathType "Leaf"){
+        Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
     } else {
         Exit-WithError -ErrorMsg "Unable to find configuration file."
     }

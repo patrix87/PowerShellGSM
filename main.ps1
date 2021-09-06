@@ -120,6 +120,11 @@ if (-not ($FreshInstall)) {
         $Success = $false
         if ($Warnings.Use){
             $Success = Send-Command("help")
+            if ($Success) {
+                Write-ServerMsg "Server is responding to remote messages."
+            } else {
+                Write-ServerMsg "Server is not responding to remote messages."
+            }
         }
 
         #If Rcon worked, send stop warning.

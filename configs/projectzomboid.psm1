@@ -75,6 +75,9 @@ $ServerDetails = @{
     #ProjectZomboid64.exe
     Exec = ".\servers\$Name\ProjectZomboid64.exe"
 
+    #Allow force close, usefull for server without RCON and Multiple instances.
+    AllowForceClose = $true
+
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
     UsePriority = $true
     AppPriority = "High"
@@ -190,7 +193,16 @@ $Arguments = @(
     "-Djava.library.path=natives/;. ",
     "-cp $PZ_CLASSPATH zombie.network.GameServer"
 )
-$ArgumentList = $Arguments -join ""
+
+[System.Collections.ArrayList]$CleanedArguments=@()
+
+foreach($Argument in $Arguments){
+    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('='))){
+        $CleanedArguments.Add($Argument)
+    }
+}
+
+$ArgumentList = $CleanedArguments -join ""
 
 $Launcher = "$($Server.Path)\jre64\bin\java.exe"
 

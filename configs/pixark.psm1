@@ -104,6 +104,9 @@ $ServerDetails = @{
     #ProjectZomboid64.exe
     Exec = ".\servers\$Name\ShooterGame\Binaries\Win64\PixARKServer.exe"
 
+    #Allow force close, usefull for server without RCON and Multiple instances.
+    AllowForceClose = $true
+
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
     UsePriority = $true
     AppPriority = "High"
@@ -221,7 +224,15 @@ $Arguments = @(
     " -log"
 )
 
-$ArgumentList = $Arguments -join ""
+[System.Collections.ArrayList]$CleanedArguments=@()
+
+foreach($Argument in $Arguments){
+    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('='))){
+        $CleanedArguments.Add($Argument)
+    }
+}
+
+$ArgumentList = $CleanedArguments -join ""
 
 #Server Launcher
 $Launcher = $Server.Exec

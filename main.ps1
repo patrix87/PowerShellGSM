@@ -110,23 +110,39 @@ if (-not(Test-Path -Path $Server.Exec)){
 #---------------------------------------------------------
 # If Server is running warn players then stop server
 #---------------------------------------------------------
+if (-not ($FreshInstall)) {
+    $ServerProcess = Get-Process $Server.ProcessName -ErrorAction SilentlyContinue
+    Write-ScriptMsg "Verifying Server State..."
+    if (-not ($ServerProcess) -or $ServerProcess.HasExited) {
+        Write-ServerMsg "Server is not running."
+    } else {
+        #Check if it's the right server via RCON if possible.
+        $Success = $false
+        if ($Warnings.Use){
+            $Success = Send-Command("help")
+        }
 
-$ServerProcess = Get-Process $Server.ProcessName -ErrorAction SilentlyContinue
-Write-ScriptMsg "Verifying Server State..."
-if (-not ($ServerProcess) -or $ServerProcess.HasExited) {
-    Write-ServerMsg "Server is not running."
-} else {
-    if ($Warnings.Use -and -not ($FreshInstall)) {
-        Write-ServerMsg "Server is running, warning users about upcomming restart."
-        $Stopped = Send-RestartWarning -ServerProcess $ServerProcess
-    } else {
-        Write-ServerMsg "Server is running, stopping server."
-        $Stopped = Stop-Server -ServerProcess $ServerProcess
-    }
-    if ($Stopped) {
-        Write-ServerMsg "Server stopped."
-    } else {
-        Exit-WithError "Unable to stop server."
+        #If Rcon worked, send stop warning.
+        if ($Success) {
+            Write-ServerMsg "Server is running, warning users about upcomming restart."
+            $Stopped = Send-RestartWarning -ServerProcess $ServerProcess
+        } else {
+            #If Server is allow to be closed, close it.
+            if ($Server.AllowForceClose){
+                Write-ServerMsg "Server is running, stopping server."
+                $Stopped = Stop-Server -ServerProcess $ServerProcess
+            }
+        }
+
+        if ($Stopped) {
+            Write-ServerMsg "Server stopped."
+        } else {
+            if ($Server.AllowForceClose) {
+                Exit-WithError "Server to stop server."
+            } else {
+                Write-ServerMsg "Server not stopped."
+            }
+        }
     }
 }
 

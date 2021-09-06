@@ -95,6 +95,9 @@ $ServerDetails = @{
     #ProjectZomboid64.exe
     Exec = ".\servers\$Name\InsurgencyServer.exe"
 
+    #Allow force close, usefull for server without RCON and Multiple instances.
+    AllowForceClose = $true
+
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
     UsePriority = $true
     AppPriority = "High"
@@ -186,7 +189,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-[System.Collections.ArrayList]$Arguments = @(
+$Arguments = @(
     "$($Server.Map)",
     "?Scenario=$($Server.Scenario)",
     "?MaxPlayers=$($Server.MaxPlayers)",

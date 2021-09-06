@@ -45,7 +45,7 @@ function Send-RestartWarning {
         $ServerProcess.WaitForExit(30000)
         Start-Sleep -Seconds 5
     }
-    if(-not($ServerProcess.HasExited)){
+    if(-not ($ServerProcess.HasExited) -and ($Server.AllowForceClose)){
         $Stopped = Stop-Server -ServerProcess $ServerProcess
     }
     return $Stopped

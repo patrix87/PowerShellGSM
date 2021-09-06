@@ -9,7 +9,7 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "./run.cmd",
-            "cwd": "${workspaceFolder}"
+            "cwd": "./launchers"
         }
     ]
 }

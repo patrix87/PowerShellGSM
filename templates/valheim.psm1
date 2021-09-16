@@ -9,7 +9,7 @@ $Name = "Valheim"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    $UID = 5
+    UID = 5
 
     #Name of the server in the Server Browser
     SessionName = "My Valheim Server"

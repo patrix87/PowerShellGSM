@@ -40,7 +40,7 @@ $Name = "ProjectZomboid"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    $UID = 4
+    UID = 4
 
     #Rcon IP, usually localhost
     ManagementIP = "127.0.0.1"

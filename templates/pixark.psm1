@@ -33,7 +33,7 @@ $Name = "PixArk"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    $UID = 3
+    UID = 3
 
     #Name of the server in the Server Browser
     SessionName = "My Pixark Server"

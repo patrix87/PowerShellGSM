@@ -1,10 +1,6 @@
-<#
-#Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
-#>
 
 #Server Name, use the same name to share game files.
-$Name = "7DaysToDie"
-
+$Name = "Valheim"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -13,22 +9,28 @@ $Name = "7DaysToDie"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 7
+    $UID = 5
 
-    #Server Configuration
-    ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
+    #Name of the server in the Server Browser
+    SessionName = "My Valheim Server"
 
-    #Rcon IP, usually localhost
-    ManagementIP = "127.0.0.1"
+    #World name (It is also the seed)
+    World = "World"
 
-    #Rcon Port in serverconfig.xml
-    ManagementPort = 8081
+    #Password to join the World *NO SPACES*
+    Password = "CHANGEME"
 
-    #Rcon Password as set in serverconfig.xml nothing is localhost only.
+    #Server Port
+    Port = 2459
+
+    #Rcon IP (not supported by valheim yet.)
+    ManagementIP = ""
+
+    #Rcon Port
+    ManagementPort = ""
+
+    #Rcon Password
     ManagementPassword = ""
-
-    #Server Log File
-    LogFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -41,7 +43,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 294420
+    AppID = 896660
 
     #Use Beta builds $true or $false
     Beta = $false
@@ -53,10 +55,10 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "7DaysToDieServer"
+    ProcessName = "valheim_server"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\7DaysToDieServer.exe"
+    Exec = ".\servers\$Name\valheim_server.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -108,7 +110,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
+    Saves = "$Env:userprofile\AppData\LocalLow\IronGate\Valheim"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -119,10 +121,10 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Telnet"
+    Protocol = "Rcon"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -152,14 +154,18 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
+$app = Start-Process -FilePath "$serverExec" -WorkingDirectory "$serverPath" -ArgumentList "-batchmode -nographics -name $serverName -port $serverPort -world $worldName -password $serverPassword -public 1 " -PassThru
+
+
 #Launch Arguments
 $Arguments = @(
-    "-logfile $($Server.LogFile) ",
-    "-configfile=$($Server.ConfigFile) ",
     "-batchmode ",
     "-nographics ",
-    "-dedicated ",
-    "-quit"
+    "-name $($Server.SessionName) ",
+    "-port $($Server.Port) ",
+    "-world $($Server.World) ",
+    "-password $($Server.Password) ",
+    "-public 1"
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
@@ -181,16 +187,8 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : 26900 in TCP and 26900 to 26903 in UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
 
-    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
-    $ConfigFilePath = Split-Path -Path $Server.ConfigFile
-    if (-not(Test-Path -Path $ConfigFilePath)){
-        New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
-    }
-    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
-        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
-    }
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 

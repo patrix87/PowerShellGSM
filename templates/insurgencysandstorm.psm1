@@ -13,7 +13,7 @@ $Name = "InsurgencySandstorm"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    $UID = 2
+    UID = 2
 
     #Name of the server in the Server Browser
     SessionName = "My Insurgency Server"

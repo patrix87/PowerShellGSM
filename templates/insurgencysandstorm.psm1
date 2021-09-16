@@ -2,13 +2,18 @@
 #Change your servers settings in ".\servers\Insurgency\Saved\Config\WindowsServer"
 #>
 
+#Server Name, use the same name to share game files.
 $Name = "InsurgencySandstorm"
+
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
+
+    #Unique Identifier used to track processes. Must be unique to each servers.
+    $UID = 2
 
     #Name of the server in the Server Browser
     SessionName = "My Insurgency Server"
@@ -193,26 +198,26 @@ $Arguments = @(
     "$($Server.Map)",
     "?Scenario=$($Server.Scenario)",
     "?MaxPlayers=$($Server.MaxPlayers)",
-    "?password=`"$($Server.Password)`"",
-    " -Port=$($Server.Port)",
-    " -QueryPort=$($Server.QueryPort)",
-    " -hostname=`"$($Server.SessionName)`"",
-    " -GSLTToken=`"$($Server.GSLTToken)`"",
-    " -GameStatsToken=`"$($Server.GameStatsToken)`"",
-    " -Gamestats",
-    " -MapCycle=`"$($Server.MapCycle)`"",
-    " -AdminList=`"$($Server.Admins)`"",
-    " -MOTD=`"$($Server.Motd)`"",
-    " -ruleset=`"$($Server.OfficialRulesSet)`"",
-    " -CmdModList=`"$($Server.Mods)`"",
-    " -mutators=`"$($Server.Mutators)`"",
-    " -log"
+    "?password=`"$($Server.Password)`" ",
+    "-Port=$($Server.Port) ",
+    "-QueryPort=$($Server.QueryPort) ",
+    "-hostname=`"$($Server.SessionName)`" ",
+    "-GSLTToken=`"$($Server.GSLTToken)`" ",
+    "-GameStatsToken=`"$($Server.GameStatsToken)`" ",
+    "-Gamestats",
+    "-MapCycle=`"$($Server.MapCycle)`" ",
+    "-AdminList=`"$($Server.Admins)`" ",
+    "-MOTD=`"$($Server.Motd)`" ",
+    "-ruleset=`"$($Server.OfficialRulesSet)`" ",
+    "-CmdModList=`"$($Server.Mods)`" ",
+    "-mutators=`"$($Server.Mutators)`" ",
+    "-log"
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
 
 foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('='))){
+    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
         $CleanedArguments.Add($Argument)
     }
 }
@@ -239,20 +244,7 @@ function Start-Server {
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
-    #Wait to see if the server is stable.
-    Start-Sleep -Seconds 10
-    if (-not ($App) -or $App.HasExited){
-        Write-Warning "Server Failed to launch."
-    } else {
-        Write-ServerMsg "Server Started."
-            # Set the priority and affinity
-        if ($Server.UsePriority) {
-            $App.PriorityClass = $Server.AppPriority
-        }
-        if ($Server.UseAffinity){
-            $App.ProcessorAffinity = $Server.AppAffinity
-        }
-    }
+    return $App
 }
 
 Export-ModuleMember -Function Start-Server -Variable @("Server","Backups","Warnings")

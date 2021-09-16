@@ -119,7 +119,12 @@ if (-not(Test-Path -Path $Server.Exec)){
 # If Server is running warn players then stop server
 #---------------------------------------------------------
 if (-not ($FreshInstall)) {
-    $ServerProcess = Get-Process $Server.ProcessName -ErrorAction SilentlyContinue
+    $ServerPID = Get-PID
+    if ($ServerPID -eq 0) {
+        $ServerProcess = Get-Process -Name $Server.ProcessName -ErrorAction Continue
+    } else {
+        $ServerProcess = Get-Process -ID $ServerPID -ErrorAction Continue
+    }
     Write-ScriptMsg "Verifying Server State..."
     if (-not ($ServerProcess) -or $ServerProcess.HasExited) {
         Write-ServerMsg "Server is not running."
@@ -149,9 +154,12 @@ if (-not ($FreshInstall)) {
 
         if ($Stopped) {
             Write-ServerMsg "Server stopped."
+            if (-not $(Unregister-PID)) {
+                Write-ServerMsg "Failed to remove PID file."
+            }
         } else {
             if ($Server.AllowForceClose) {
-                Exit-WithError "Server to stop server."
+                Exit-WithError "Failed to stop server."
             } else {
                 Write-ServerMsg "Server not stopped."
             }
@@ -184,7 +192,18 @@ if (-not ($FreshInstall)) {
 
 try {
     Write-ScriptMsg "Starting Server..."
-    Start-Server
+    $App = Start-Server
+    #Wait to see if the server is stable.
+    Start-Sleep -Seconds 10
+    if (-not ($App) -or $App.HasExited){
+        Exit-WithError "Server Failed to launch."
+    } else {
+        Write-ServerMsg "Server Started."
+        Set-Priority -ServerProcess $App
+    }
+    if (-not $(Register-PID -ServerProcess $App)){
+        Write-ServerMsg "Failed to Register PID file."
+    }
 }
 catch {
     Write-Error $_

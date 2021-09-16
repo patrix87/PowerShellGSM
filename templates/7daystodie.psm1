@@ -2,13 +2,19 @@
 #Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
 #>
 
+#Server Name, use the same name to share game files.
 $Name = "7DaysToDie"
+
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
+
+    #Unique Identifier used to track processes. Must be unique to each servers.
+    $UID = 7
+
     #Server Configuration
     ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
 
@@ -159,7 +165,7 @@ $Arguments = @(
 [System.Collections.ArrayList]$CleanedArguments=@()
 
 foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('='))){
+    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
         $CleanedArguments.Add($Argument)
     }
 }
@@ -188,20 +194,7 @@ function Start-Server {
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
-    #Wait to see if the server is stable.
-    Start-Sleep -Seconds 10
-    if (-not ($App) -or $App.HasExited){
-        Write-Warning "Server Failed to launch."
-    } else {
-        Write-ServerMsg "Server Started."
-            # Set the priority and affinity
-        if ($Server.UsePriority) {
-            $App.PriorityClass = $Server.AppPriority
-        }
-        if ($Server.UseAffinity){
-            $App.ProcessorAffinity = $Server.AppAffinity
-        }
-    }
+    return $App
 }
 
 Export-ModuleMember -Function Start-Server -Variable @("Server","Backups","Warnings")

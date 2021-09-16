@@ -154,9 +154,6 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-$app = Start-Process -FilePath "$serverExec" -WorkingDirectory "$serverPath" -ArgumentList "-batchmode -nographics -name $serverName -port $serverPort -world $worldName -password $serverPassword -public 1 " -PassThru
-
-
 #Launch Arguments
 $Arguments = @(
     "-batchmode ",

@@ -136,6 +136,9 @@ $ServerDetails = @{
 
     #Should the server validate install after installation or update *(recommended)
     Validate = $true
+
+    #How long should it wait to check if the server is stable
+    StartupWaitTime = 10
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -239,20 +242,21 @@ foreach($Argument in $Arguments){
 $ArgumentList = $CleanedArguments -join ""
 
 #Server Launcher
-$Launcher = $Server.Exec
+$Launcher = $(Resolve-Path -Path $Server.Exec)
+$WorkingDirectory = $(Resolve-Path -Path $Server.Path)
+
+Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
 
 #---------------------------------------------------------
-# Launch Function
+# Function that runs just before the server starts.
 #---------------------------------------------------------
 
-function Start-Server {
+function Start-ServerPrep {
 
     Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort) And $($server.CubePort) in TCP and UDP to $($Global.InternalIP)"
 
-    #Start Server
-    $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
-
-    return $App
 }
 
-Export-ModuleMember -Function Start-Server -Variable @("Server","Backups","Warnings")
+Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

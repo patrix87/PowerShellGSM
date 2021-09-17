@@ -228,9 +228,10 @@ if (-not ($FreshInstall)) {
 #Try to start the server, then if it's stable, set the priority and affinity then register the PID. Exit with Error if it fails.
 try {
     Write-ScriptMsg "Starting Server..."
-    $App = Start-Server
+    Start-ServerPrep
+    $App = Start-Process -FilePath $Server.Launcher -WorkingDirectory $Server.WorkingDirectory -ArgumentList $Server.ArgumentList -PassThru
     #Wait to see if the server is stable.
-    Start-Sleep -Seconds 10
+    Start-Sleep -Seconds $Server.StartupWaitTime
     if (-not ($App) -or $App.HasExited){
         Exit-WithError "Server Failed to launch."
     } else {
@@ -266,5 +267,3 @@ catch {
 Write-ServerMsg "Script successfully completed."
 
 Stop-Transcript
-
-Start-Sleep -Seconds 5

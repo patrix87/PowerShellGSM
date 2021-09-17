@@ -1,37 +1,8 @@
 <#
-#Change your servers settings in C:\Users\%username%\Zomboid\Server\servertest.ini
-
-Options to look for when setting your server in servertest.ini (Suggested values)
-```
-DefaultPort=16261
-MaxPlayers=64
-Open=true
-PVP=true
-Password=My server password
-PauseEmpty=true
-PingFrequency=10
-PingLimit=200
-Public=true
-PublicDescription=My server Description
-PublicName=My server name
-RCONPassword=CHANGEME
-RCONPort=27015
-SteamPort1=8766
-SteamPort2=8767
-```
-
-You need to port forward the following Ports on your router, both in TCP and UDP
-
-```
-DefaultPort=16261
-SteamPort1=8766
-SteamPort2=8767
-```
-You do not need to forward RCON.
+Configure server in .\servers\Squad\SquadGame\ServerConfig\
 #>
-
 #Server Name, use the same name to share game files.
-$Name = "ProjectZomboid"
+$Name = "Squad"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -40,19 +11,31 @@ $Name = "ProjectZomboid"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 4
+    UID = 1
 
-    #Rcon IP, usually localhost
+    #Randomize First Map NONE OR ALWAYS
+    RandomMap = "ALWAYS"
+
+    #Max number of Players
+    MaxPlayers = 80
+
+    #Server Port
+    Port = 2459
+
+    #Query Port
+    QueryPort = 27165
+
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port in servertest.ini
-    ManagementPort = 27015
+    #Rcon Port
+    ManagementPort = 21114
 
-    #Rcon Password as set in servertest.ini (Do not use " " in servertest.ini)
+    #Rcon Password Change in .\servers\Squad\SquadGame\ServerConfig\Rcon.cfg
     ManagementPassword = "CHANGEME"
 
 #---------------------------------------------------------
-# Server Installation
+# Server Installation Details
 #---------------------------------------------------------
 
     #Name of the Server Instance
@@ -62,22 +45,22 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 380870
+    AppID = 403240
 
     #Use Beta builds $true or $false
     Beta = $false
 
     #Name of the Beta Build
-    BetaBuild = "iwillbackupmysave"
+    BetaBuild = ""
 
     #Beta Build Password
-    BetaBuildPassword = "iaccepttheconsequences"
+    BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "java"
+    ProcessName = "SquadGameServer"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\ProjectZomboid64.exe"
+    Exec = ".\servers\$Name\SquadGameServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -117,6 +100,7 @@ $Server = New-Object -TypeName PsObject -Property $ServerDetails
 #---------------------------------------------------------
 # Backups
 #---------------------------------------------------------
+
 $BackupsDetails = @{
     #Do Backups
     Use = $true
@@ -131,7 +115,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\Zomboid"
+    Saves = ".\servers\$Name\SquadGame\ServerConfig\"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -139,9 +123,10 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 #---------------------------------------------------------
 # Restart Warnings (Require RCON, Telnet or WebSocket API)
 #---------------------------------------------------------
+
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -156,16 +141,16 @@ $WarningsDetails = @{
     MessageSec = "The server will restart in % seconds !"
 
     #command to send a message.
-    CmdMessage = "servermsg"
+    CmdMessage = "AdminBroadcast"
 
     #command to save the server
-    CmdSave = "save"
+    CmdSave = "AdminEndMatch"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "quit"
+    CmdStop = "exit"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -174,31 +159,14 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-#Java Arguments
-$PZ_CLASSPATH_LIST = @(
-    "java/jinput.jar;",
-    "java/lwjgl.jar;",
-    "java/lwjgl_util.jar;",
-    "java/sqlite-jdbc-3.8.10.1.jar;",
-    "java/trove-3.0.3.jar;",
-    "java/uncommons-maths-1.2.3.jar;",
-    "java/javacord-2.0.17-shaded.jar;",
-    "java/guava-23.0.jar;",
-    "java/"
-)
-
-$PZ_CLASSPATH = $PZ_CLASSPATH_LIST -join ""
 #Launch Arguments
 $Arguments = @(
-    "-Dzomboid.steam=1 ",
-    "-Dzomboid.znetlog=1 ",
-    "-XX:+UseConcMarkSweepGC ",
-    "-XX:-CreateMinidumpOnCrash ",
-    "-XX:-OmitStackTraceInFastThrow ",
-    "-Xms2048m ",
-    "-Xmx2048m ",
-    "-Djava.library.path=natives/;. ",
-    "-cp $PZ_CLASSPATH zombie.network.GameServer"
+    "Multihome=$($Global.InternalIP) ",
+    "Port=$($Server.Port) ",
+    "QueryPort=$($Server.QueryPort) ",
+    "FIXEDMAXPLAYERS=$($Server.MaxPlayers) ",
+    "RANDOM $($Server.RandomMap) ",
+    "-log"
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
@@ -225,7 +193,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : 16261, 8766 and 8767 in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

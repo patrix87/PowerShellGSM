@@ -149,15 +149,15 @@ if (-not ($FreshInstall)) {
     #Get the PID from the .PID market file.
     $ServerPID = Get-PID
     #If it returned 0, it failed to get a PID
-    if ($ServerPID -ne 0) {
-        $ServerProcess = Get-Process -ID $ServerPID -ErrorAction Continue
+    if ($null -ne $ServerPID) {
+        $ServerProcess = Get-Process -ID $ServerPID -ErrorAction SilentlyContinue
     }
     #If the server process is none-existent, Get the process from the server process name.
-    if (-not $ServerProcess) {
-        $ServerProcess = Get-Process -Name $Server.ProcessName -ErrorAction Continue
+    if ($null -ne $ServerProcess) {
+        $ServerProcess = Get-Process -Name $Server.ProcessName -ErrorAction SilentlyContinue
     }
     #Check if the process was found.
-    if (-not ($ServerProcess) -or $ServerProcess.HasExited) {
+    if ($null -eq $ServerProcess) {
         Write-ServerMsg "Server is not running."
     } else {
         #Check if it's the right server via RCON if possible.

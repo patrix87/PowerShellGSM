@@ -179,8 +179,8 @@ foreach($Argument in $Arguments){
 $ArgumentList = $CleanedArguments -join ""
 
 #Server Launcher
-$Launcher = $(Resolve-Path -Path $Server.Exec)
-$WorkingDirectory = $(Resolve-Path -Path $Server.Path)
+$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
+$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
 
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher

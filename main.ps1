@@ -12,20 +12,10 @@ param (
 # Importing functions and variables.
 #---------------------------------------------------------
 
-#Check if requested config exist in the config folder, if not, copy it from the templates. Exit if fails.
-if (-not (Test-Path -Path ".\configs\$ServerCfg.psm1" -PathType "Leaf")) {
-    if (Test-Path -Path ".\templates\$ServerCfg.psm1" -PathType "Leaf"){
-        Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
-    } else {
-        Exit-WithError -ErrorMsg "Unable to find configuration file."
-    }
-}
-
-# import global config, all functions and the current server config file. Exit if fails.
+# import global config, all functions. Exit if fails.
 try {
     Import-Module -Name ".\configs\global.psm1"
     Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
-    Import-Module -Name ".\configs\$ServerCfg.psm1"
 }
 catch {
     Exit-WithError -ErrorMsg "Unable to import modules."
@@ -113,6 +103,29 @@ if ($MissingDependencies.Count -gt 0){
 }
 
 #---------------------------------------------------------
+# Importing server configuration.
+#---------------------------------------------------------
+
+Write-ScriptMsg "Importing Server Configuration..."
+#Check if requested config exist in the config folder, if not, copy it from the templates. Exit if fails.
+if (-not (Test-Path -Path ".\configs\$ServerCfg.psm1" -PathType "Leaf")) {
+    if (Test-Path -Path ".\templates\$ServerCfg.psm1" -PathType "Leaf"){
+        Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
+    } else {
+        Exit-WithError -ErrorMsg "Unable to find configuration file."
+    }
+}
+
+# import the current server config file. Exit if fails.
+try {
+    Import-Module -Name ".\configs\$ServerCfg.psm1"
+}
+catch {
+    Exit-WithError -ErrorMsg "Unable to server configuration."
+    exit
+}
+
+#---------------------------------------------------------
 # Install Server
 #---------------------------------------------------------
 
@@ -130,7 +143,7 @@ if (-not(Test-Path -Path $Server.Exec)){
 #---------------------------------------------------------
 # If Server is running warn players then stop server
 #---------------------------------------------------------
-
+Write-ScriptMsg "Verifying Server State..."
 #If the server is not freshly installed.
 if (-not ($FreshInstall)) {
     #Get the PID from the .PID market file.
@@ -144,7 +157,6 @@ if (-not ($FreshInstall)) {
         $ServerProcess = Get-Process -Name $Server.ProcessName -ErrorAction Continue
     }
     #Check if the process was found.
-    Write-ScriptMsg "Verifying Server State..."
     if (-not ($ServerProcess) -or $ServerProcess.HasExited) {
         Write-ServerMsg "Server is not running."
     } else {

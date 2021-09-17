@@ -23,6 +23,7 @@ ServerPVPCanAttack=True
 
 #>
 
+#Server Name, use the same name to share game files.
 $Name = "PixArk"
 
 #---------------------------------------------------------
@@ -30,6 +31,9 @@ $Name = "PixArk"
 #---------------------------------------------------------
 
 $ServerDetails = @{
+
+    #Unique Identifier used to track processes. Must be unique to each servers.
+    UID = 3
 
     #Name of the server in the Server Browser
     SessionName = "My Pixark Server"
@@ -212,22 +216,22 @@ $Arguments = @(
     "?SessionName=`"$($Server.SessionName)`"",
     "?ServerPassword=$($Server.Password)",
     "?ShowFloatingDamageText=$($Server.ShowFloatingDamageText)",
-    "?CULTUREFORCOOKING=$($Server.Language)",
-    " -CubePort=$($Server.CubePort)",
-    " -CubeWorld=$($Server.WorldName)",
-    " -Seed=$($Server.Seed)",
-    " -forcerespawndinos"
-    " -NoHangDetection",
-    " -nosteamclient",
-    " -game",
-    " -server",
-    " -log"
+    "?CULTUREFORCOOKING=$($Server.Language) ",
+    "-CubePort=$($Server.CubePort) ",
+    "-CubeWorld=$($Server.WorldName) ",
+    "-Seed=$($Server.Seed) ",
+    "-forcerespawndinos "
+    "-NoHangDetection ",
+    "-nosteamclient ",
+    "-game ",
+    "-server ",
+    "-log"
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
 
 foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('='))){
+    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
         $CleanedArguments.Add($Argument)
     }
 }
@@ -248,20 +252,7 @@ function Start-Server {
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
-    #Wait to see if the server is stable.
-    Start-Sleep -Seconds 10
-    if (-not ($App) -or $App.HasExited){
-        Write-Warning "Server Failed to launch."
-    } else {
-        Write-ServerMsg "Server Started."
-            # Set the priority and affinity
-        if ($Server.UsePriority) {
-            $App.PriorityClass = $Server.AppPriority
-        }
-        if ($Server.UseAffinity){
-            $App.ProcessorAffinity = $Server.AppAffinity
-        }
-    }
+    return $App
 }
 
 Export-ModuleMember -Function Start-Server -Variable @("Server","Backups","Warnings")

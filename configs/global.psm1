@@ -17,11 +17,14 @@ $GlobalDetails = @{
     #Console Output Text Color
     FgColor = "Green"
 
+    #Console Output Background Color
+    BgColor = "Black"
+
     #Console Output Text Color for sections
     SectionColor = "Blue"
 
-    #Console Output Background Color
-    BgColor = "Black"
+    #Console Output Background Color for sections
+    SectionBgColor = "Black"
 }
 
 #Create the object

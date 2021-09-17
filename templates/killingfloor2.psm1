@@ -1,10 +1,11 @@
+
 <#
-#Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
+Edit configuration in ./Servers/KillingFloor2/KFGame/Config/KF[UID].INI
+bEnabled=true to enable webadmin
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "7DaysToDie"
-
+$Name = "KillingFloor2"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -13,22 +14,43 @@ $Name = "7DaysToDie"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 7
+    UID = 6
 
-    #Server Configuration
-    ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
+    #This is the admin username for WebAdmin if you're configuring WebAdmin via Commandline
+    AdminName = "admin"
 
-    #Rcon IP, usually localhost
+    #This is the master server administrator password
+    AdminPassword = "CHANGEME"
+
+    #This is how many maximum players the server is set to support
+    MaxPlayers = 6
+
+    #This sets the server difficulty. 0 = Normal, 1 = Hard, 2 = Suicidal, 3 = Hell on Earth
+    Difficulty = 0
+
+    #This is the game port.
+    Port = 7777
+
+    #This is the query port.
+    QueryPort = 27015
+
+    #This is the web admin port. Changing this will change the port used to connect to the servers webadmin panel if that functionality is turned on.
+    WebAdminPort = 8080
+
+    #Starting map name.
+    Map = "KF-BIOTICSLAB"
+
+    #Game mode EG : KFGameContent.KFGameInfo_WeeklySurvival, KFGameContent.KFGameInfo_VersusSurvival, KFGameContent.KFGameInfo_Endless
+    GameMode = "KFGameContent.KFGameInfo_WeeklySurvival"
+
+    #Rcon IP (not supported by KF2.)
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port in serverconfig.xml
-    ManagementPort = 8081
+    #Rcon Port
+    ManagementPort = ""
 
-    #Rcon Password as set in serverconfig.xml nothing is localhost only.
+    #Rcon Password
     ManagementPassword = ""
-
-    #Server Log File
-    LogFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -41,7 +63,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 294420
+    AppID = 232130
 
     #Use Beta builds $true or $false
     Beta = $false
@@ -53,10 +75,10 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "7DaysToDieServer"
+    ProcessName = "KFServer"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\7DaysToDieServer.exe"
+    Exec = ".\servers\$Name\Binaries\Win64\KFServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -85,7 +107,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -108,7 +130,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
+    Saves = ".\servers\$Name\KFGame\Config\"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -119,10 +141,10 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Telnet"
+    Protocol = "Rcon"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -154,12 +176,15 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $Arguments = @(
-    "-logfile $($Server.LogFile) ",
-    "-configfile=$($Server.ConfigFile) ",
-    "-batchmode ",
-    "-nographics ",
-    "-dedicated ",
-    "-quit"
+    "$($Server.Map)",
+    "?Game=$($Server.GameMode)",
+    "?MaxPlayers=$($Server.MaxPlayers)",
+    "?Difficulty=$($Server.Difficulty) ",
+    "-Port=$($Server.Port) ",
+    "-QueryPort=$($Server.QueryPort) ",
+    "-WebAdminPort=$($Server.WebAdminPort) ",
+    "-Multihome=$($Global.InternalIP) ",
+    "-ConfigSubDir=KF$($Server.UID)"
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
@@ -181,16 +206,9 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : 26900 in TCP and 26900 to 26903 in UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort), 20560, 123 in UDP and $($server.WebAdminPort) in TCP to $($Global.InternalIP)"
+    Write-ScriptMsg "Once Webadmin enabled, go to http://$($Global.InternalIP):$($server.WebAdminPort) to administer this server."
 
-    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
-    $ConfigFilePath = Split-Path -Path $Server.ConfigFile
-    if (-not(Test-Path -Path $ConfigFilePath)){
-        New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
-    }
-    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
-        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
-    }
     #Start Server
     $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 

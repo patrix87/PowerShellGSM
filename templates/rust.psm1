@@ -1,10 +1,9 @@
 <#
-#Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
+Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "7DaysToDie"
-
+$Name = "Rust"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -13,22 +12,76 @@ $Name = "7DaysToDie"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 7
+    UID = 8
 
-    #Server Configuration
-    ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
+    #Name of the server
+    Hostname = "My Rust Server"
 
-    #Rcon IP, usually localhost
+    #Identity of the server
+    Identity = "RustServer01"
+
+    #Description of the server \n for new line
+    Description = "Welcome to my server"
+
+    #URL of the website of the server
+    Website = "https://example.com/"
+
+    #URL of the banner of the server (500 x 256 png or jpg)
+    Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+
+    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
+    Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+
+    #Max number of Players
+    MaxPlayers = 50
+
+    #Server Port
+    Port = 28015
+
+    #World Name
+    worldName = "Procedural Map"
+
+    #World Size
+    worldSize = 4000
+
+    #World Seed
+    Seed = 1234
+
+    #PVE mode ("True" = PVE | "False" = PVP)
+    PVE = "False"
+
+    #Save Interval
+    saveInterval = 300
+
+    #Save Interval, Max 30, recommended 10
+    TickRate = 10
+
+    #Decay Scale (1 = normal | 0 = off)
+    DecayScale = 1
+
+    #Enable or disable instant crafting ("True" = instant crafting enabled | "False" = instant crafting disabled)
+    InstantCraft = "False"
+
+    #SteamID64 of the Steam Group associated with the server to whitelist only that group.
+    SteamGroup = ""
+
+    #Enable Easy Anti-Cheat (1 = enabled | 0 = disabled)
+    EAC = 1
+
+    #Enable Valve Anti Cheat security ("True" = enabled | "False" = disabled)
+    VAC = "True"
+
+    #rcon version (0 = Source RCON | 1 = websocket)
+    rconVersion = 0
+
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port in serverconfig.xml
-    ManagementPort = 8081
+    #Rcon Port
+    ManagementPort = 28016
 
-    #Rcon Password as set in serverconfig.xml nothing is localhost only.
-    ManagementPassword = ""
-
-    #Server Log File
-    LogFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Logs\$(Get-TimeStamp).txt"
+    #Rcon Password
+    ManagementPassword = "CHANGEME"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -41,7 +94,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 294420
+    AppID = 258550
 
     #Use Beta builds $true or $false
     Beta = $false
@@ -53,10 +106,10 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "7DaysToDieServer"
+    ProcessName = "RustDedicated"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\7DaysToDieServer.exe"
+    Exec = ".\servers\$Name\RustDedicated.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -85,7 +138,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -108,7 +161,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
+    Saves = ".\servers\$Name\server\$($Server.Identity)"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -122,7 +175,7 @@ $WarningsDetails = @{
     Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Telnet"
+    Protocol = "Rcon"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -137,13 +190,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "saveworld"
+    CmdSave = "server.save"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "shutdown"
+    CmdStop = "server.stop"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -154,12 +207,34 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $Arguments = @(
-    "-logfile $($Server.LogFile) ",
-    "-configfile=$($Server.ConfigFile) ",
     "-batchmode ",
     "-nographics ",
-    "-dedicated ",
-    "-quit"
+    "+server.ip $($Global.InternalIP) ",
+    "+server.port $($Server.Port) ",
+    "+server.hostname `"$($Server.Hostname)`" ",
+    "+server.identity `"$($Server.Identity)`" ",
+    "+server.description `"$($Server.Description)`" ",
+    "+server.url `"$($Server.Website)`" ",
+    "+server.headerimage `"$($Server.Banner)`" ",
+    "+server.logoimage `"$($Server.Logo)`" ",
+    "+server.maxplayers $($Server.MaxPlayers) ",
+    "+server.level `"$($Server.worldName)`" ",
+    "+server.worldsize $($Server.worldSize) ",
+    "+server.seed $($Server.Seed) ",
+    "+server.pve $($Server.PVE) ",
+    "+decay.scale $($Server.DecayScale) ",
+    "+craft.instant $($Server.InstantCraft) ",
+    "+server.steamgroup $($Server.SteamGroup) ",
+    "+server.tickrate $($Server.TickRate) ",
+    "+server.saveinterval $($Server.saveInterval) ",
+    "+server.eac $($Server.EAC) ",
+    "+server.secure $($Server.VAC) ",
+    "+app.port $($Server.Port + 69) ",
+    "+rcon.ip $($Server.ManagementIP) ",
+    "+rcon.port $($Server.ManagementPort) ",
+    "+rcon.password `"$($Server.ManagementPassword)`" ",
+    "+rcon.web $($Server.rconVersion) ",
+    "-logfile $($Server.Identity).txt "
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
@@ -173,7 +248,8 @@ foreach($Argument in $Arguments){
 $ArgumentList = $CleanedArguments -join ""
 
 #Server Launcher
-$Launcher = $Server.Exec
+$Launcher = $(Resolve-Path -Path $Server.Exec)
+$WorkingDirectory = $(Resolve-Path -Path $Server.Path)
 
 #---------------------------------------------------------
 # Launch Function
@@ -181,18 +257,10 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : 26900 in TCP and 26900 to 26903 in UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port), $($server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
 
-    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
-    $ConfigFilePath = Split-Path -Path $Server.ConfigFile
-    if (-not(Test-Path -Path $ConfigFilePath)){
-        New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
-    }
-    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
-        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
-    }
     #Start Server
-    $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
+    $App = Start-Process -FilePath "$Launcher" -WorkingDirectory "$WorkingDirectory" -ArgumentList "$ArgumentList" -PassThru
 
     return $App
 }

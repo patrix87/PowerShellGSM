@@ -35,7 +35,9 @@ function Backup-Server {
 
     #Delete old backups
     Write-ServerMsg "Deleting old backups."
-    Get-ChildItem -Path "$($Backups.Path)\$Type" -Recurse -Force | Where-Object { -not ($_.PSIsContainer) -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force
+    Get-ChildItem -Path "$($Backups.Path)\$Type" -Recurse -Force |
+        Where-Object { -not ($_.PSIsContainer) -and $_.LastWriteTime -lt $Limit } |
+        Remove-Item -Force
 }
 
 Export-ModuleMember -Function Backup-Server

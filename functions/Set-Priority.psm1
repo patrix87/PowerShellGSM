@@ -6,10 +6,11 @@ function Set-Priority {
         $ServerProcess
     )
     try {
-        # Set the priority and affinity
+        # Set the process priority
         if ($Server.UsePriority) {
             $ServerProcess.PriorityClass = $Server.AppPriority
         }
+        # Set the process affinity
         if ($Server.UseAffinity){
             $ServerProcess.ProcessorAffinity = $Server.AppAffinity
         }

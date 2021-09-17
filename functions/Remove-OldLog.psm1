@@ -1,6 +1,10 @@
 function Remove-OldLog {
+    #define the number of days.
     $Limit = (Get-Date).AddDays(-$Global.Days)
-    Get-ChildItem -Path $Global.LogFolder -Recurse | Where-Object { -not ($_.PSIsContainer) -and $_.LastWriteTime -lt $Limit } | Remove-Item -Force -ErrorAction SilentlyContinue
+    #find and delete old files.
+    Get-ChildItem -Path $Global.LogFolder -Recurse |
+        Where-Object { -not ($_.PSIsContainer) -and $_.LastWriteTime -lt $Limit } |
+        Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
 Export-ModuleMember -Function Remove-OldLog

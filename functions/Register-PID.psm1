@@ -6,7 +6,7 @@ function Register-PID {
         $ServerProcess
     )
     try {
-        New-Item -Path ".\servers\" -Name "$($Server.UID).PID" -ItemType "file" -Value "$($ServerProcess.ID)" -ErrorAction Continue
+        New-Item -Path ".\servers\" -Name "$($Server.UID).PID" -ItemType "file" -Value "$($ServerProcess.ID)" -Force -ErrorAction Continue
     }
     catch {
         return $false

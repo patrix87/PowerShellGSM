@@ -1,11 +1,9 @@
-
 <#
-Edit configuration in ./Servers/KillingFloor2/KFGame/Config/KF[UID].INI
-bEnabled=true to enable webadmin
+Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "KillingFloor2"
+$Name = "Rust"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -14,43 +12,49 @@ $Name = "KillingFloor2"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 6
+    UID = 8
 
-    #This is the admin username for WebAdmin if you're configuring WebAdmin via Commandline
-    AdminName = "admin"
+    #Name of the server
+    Hostname = "My Rust Server"
 
-    #This is the master server administrator password
-    AdminPassword = "CHANGEME"
+    #Identity of the server
+    Identity = "RustServer01"
 
-    #This is how many maximum players the server is set to support
-    MaxPlayers = 6
+    #Max number of Players
+    MaxPlayers = 50
 
-    #This sets the server difficulty. 0 = Normal, 1 = Hard, 2 = Suicidal, 3 = Hell on Earth
-    Difficulty = 0
+    #Server Port
+    Port = 28015
 
-    #This is the game port.
-    Port = 7777
+    #Server Seed
+    Seed = "seed"
 
-    #This is the query port.
-    QueryPort = 27015
+    #World Name
+    worldName = "Procedural Map"
 
-    #This is the web admin port. Changing this will change the port used to connect to the servers webadmin panel if that functionality is turned on.
-    WebAdminPort = 8080
+    #World Size
+    worldSize = 4000
 
-    #Starting map name.
-    Map = "KF-BIOTICSLAB"
+    #Save Interval
+    saveInterval = 300
 
-    #Game mode EG : KFGameContent.KFGameInfo_WeeklySurvival, KFGameContent.KFGameInfo_VersusSurvival, KFGameContent.KFGameInfo_Endless
-    GameMode = "KFGameContent.KFGameInfo_WeeklySurvival"
+    #Save Interval, Max 30, recommended 15
+    TickRate = 15
 
-    #Rcon IP (not supported by KF2.)
+    #Enable Valve Anti-Cheat
+    VAC = "true"
+
+    #rcon version (0 = Source RCON | 1 = websocket)
+    rconVersion = 0
+
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = ""
+    ManagementPort = 28016
 
     #Rcon Password
-    ManagementPassword = ""
+    ManagementPassword = "CHANGEME"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -63,7 +67,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 232130
+    AppID = 258550
 
     #Use Beta builds $true or $false
     Beta = $false
@@ -75,10 +79,10 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "KFServer"
+    ProcessName = "RustDedicated"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\Binaries\Win64\KFServer.exe"
+    Exec = ".\servers\$Name\RustDedicated.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -130,7 +134,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name\KFGame\Config\"
+    Saves = ".\servers\$Name\server\$($Server.Identity)"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -141,7 +145,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $false
+    Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -159,13 +163,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "saveworld"
+    CmdSave = "server.save"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "shutdown"
+    CmdStop = "server.stop"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -176,15 +180,24 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $Arguments = @(
-    "$($Server.Map)",
-    "?Game=$($Server.GameMode)",
-    "?MaxPlayers=$($Server.MaxPlayers)",
-    "?Difficulty=$($Server.Difficulty) ",
-    "-Port=$($Server.Port) ",
-    "-QueryPort=$($Server.QueryPort) ",
-    "-WebAdminPort=$($Server.WebAdminPort) ",
-    "-Multihome=$($Global.InternalIP) ",
-    "-ConfigSubDir=KF$($Server.UID)"
+    "-batchmode ",
+    "+server.ip $($Global.InternalIP) ",
+    "+server.port $($Server.Port) ",
+    "+server.hostname `"$($Server.Hostname)`" ",
+    "+server.identity `"$($Server.Identity)`" ",
+    "+server.maxplayers $($Server.MaxPlayers) ",
+    "+server.level `"$($Server.worldName)`" ",
+    "+server.worldsize $($Server.worldSize) ",
+    "+server.seed $($Server.Seed) ",
+    "+server.tickrate $($Server.TickRate) ",
+    "+server.saveinterval $($Server.saveInterval) ",
+    "+server.secure $($Server.VAC) ",
+    "+app.port $($Server.Port + 69) ",
+    "+rcon.ip $($Server.ManagementIP) ",
+    "+rcon.port $($Server.ManagementPort) ",
+    "+rcon.password `"$($Server.ManagementPassword)`" ",
+    "+rcon.web $($Server.rconVersion) ",
+    "-logfile $($Server.Identity).txt "
 )
 
 [System.Collections.ArrayList]$CleanedArguments=@()
@@ -206,11 +219,10 @@ $Launcher = $Server.Exec
 
 function Start-Server {
 
-    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort), 20560, 123 in UDP and $($server.WebAdminPort) in TCP to $($Global.InternalIP)"
-    Write-ScriptMsg "Once Webadmin enabled, go to http://$($Global.InternalIP):$($server.WebAdminPort) to administer this server."
+    Write-ScriptMsg "Port Forward : $($server.Port), $($server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
 
     #Start Server
-    $App = Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
+    Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
 
     return $App
 }

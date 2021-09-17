@@ -20,14 +20,23 @@ $ServerDetails = @{
     #Identity of the server
     Identity = "RustServer01"
 
+    #Description of the server \n for new line
+    Description = "Welcome to my server"
+
+    #URL of the website of the server
+    Website = "https://example.com/"
+
+    #URL of the banner of the server (500 x 256 png or jpg)
+    Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+
+    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
+    Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+
     #Max number of Players
     MaxPlayers = 50
 
     #Server Port
     Port = 28015
-
-    #Server Seed
-    Seed = "seed"
 
     #World Name
     worldName = "Procedural Map"
@@ -35,14 +44,32 @@ $ServerDetails = @{
     #World Size
     worldSize = 4000
 
+    #World Seed
+    Seed = 1234
+
+    #PVE mode ("True" = PVE | "False" = PVP)
+    PVE = "False"
+
     #Save Interval
     saveInterval = 300
 
-    #Save Interval, Max 30, recommended 15
-    TickRate = 15
+    #Save Interval, Max 30, recommended 10
+    TickRate = 10
 
-    #Enable Valve Anti-Cheat
-    VAC = "true"
+    #Decay Scale (1 = normal | 0 = off)
+    DecayScale = 1
+
+    #Enable or disable instant crafting ("True" = instant crafting enabled | "False" = instant crafting disabled)
+    InstantCraft = "False"
+
+    #SteamID64 of the Steam Group associated with the server to whitelist only that group.
+    SteamGroup = ""
+
+    #Enable Easy Anti-Cheat (1 = enabled | 0 = disabled)
+    EAC = 1
+
+    #Enable Valve Anti Cheat security ("True" = enabled | "False" = disabled)
+    VAC = "True"
 
     #rcon version (0 = Source RCON | 1 = websocket)
     rconVersion = 0
@@ -181,16 +208,26 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #Launch Arguments
 $Arguments = @(
     "-batchmode ",
+    "-nographics ",
     "+server.ip $($Global.InternalIP) ",
     "+server.port $($Server.Port) ",
     "+server.hostname `"$($Server.Hostname)`" ",
     "+server.identity `"$($Server.Identity)`" ",
+    "+server.description `"$($Server.Description)`" ",
+    "+server.url `"$($Server.Website)`" ",
+    "+server.headerimage `"$($Server.Banner)`" ",
+    "+server.logoimage `"$($Server.Logo)`" ",
     "+server.maxplayers $($Server.MaxPlayers) ",
     "+server.level `"$($Server.worldName)`" ",
     "+server.worldsize $($Server.worldSize) ",
     "+server.seed $($Server.Seed) ",
+    "+server.pve $($Server.PVE) ",
+    "+decay.scale $($Server.DecayScale) ",
+    "+craft.instant $($Server.InstantCraft) ",
+    "+server.steamgroup $($Server.SteamGroup) ",
     "+server.tickrate $($Server.TickRate) ",
     "+server.saveinterval $($Server.saveInterval) ",
+    "+server.eac $($Server.EAC) ",
     "+server.secure $($Server.VAC) ",
     "+app.port $($Server.Port + 69) ",
     "+rcon.ip $($Server.ManagementIP) ",
@@ -211,7 +248,8 @@ foreach($Argument in $Arguments){
 $ArgumentList = $CleanedArguments -join ""
 
 #Server Launcher
-$Launcher = $Server.Exec
+$Launcher = $(Resolve-Path -Path $Server.Exec)
+$WorkingDirectory = $(Resolve-Path -Path $Server.Path)
 
 #---------------------------------------------------------
 # Launch Function
@@ -222,7 +260,7 @@ function Start-Server {
     Write-ScriptMsg "Port Forward : $($server.Port), $($server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
 
     #Start Server
-    Start-Process -FilePath $Launcher -WorkingDirectory $Server.Path -ArgumentList $ArgumentList -PassThru
+    $App = Start-Process -FilePath "$Launcher" -WorkingDirectory "$WorkingDirectory" -ArgumentList "$ArgumentList" -PassThru
 
     return $App
 }

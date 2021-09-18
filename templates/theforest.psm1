@@ -1,30 +1,9 @@
 <#
-#Change your servers settings in ".\servers\PixArk\ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini"
-
-Under : [ServerSettings]
-Add/Set one of those settings :
-
-Pioneering :
-
-CanPVPAttack=False
-ServerPVPCanAttack=False
-
-Fury :
-
-ServerPVE=False
-CanPVPAttack=True
-ServerPVPCanAttack=False
-
-Chaos:
-
-ServerPVE=False
-CanPVPAttack=False
-ServerPVPCanAttack=True
-
+    ".\servers\$Name\Multiplayer\config.cfg"
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "PixArk"
+$Name = "TheForest"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -33,55 +12,22 @@ $Name = "PixArk"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 3
+    UID = 9
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
     #Name of the server in the Server Browser
-    SessionName = "My Pixark Server"
+    ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
 
-    #Maximum Number of Players
-    MaxPlayers = 20
-
-    #Password to join the World *NO SPACES*
-    Password = "CHANGEME"
-
-    #Server Port
-    Port = 7797
-
-    #World Seed
-    Seed = 32399
-
-    #Query Port
-    QueryPort = 27515
-
-    #Cube Port
-    CubePort = 27518
-
-    #World Name *NO SPACES*
-    WorldName = "World"
-
-    #World Type : "SkyPiea_Light" for Skyward or "CubeWorld_Light" for regular
-    WorldType = "CubeWorld_Light"
-
-    #Show Floating Damage Text "True" or "False"
-    ShowFloatingDamageText = "True"
-
-    #Server Language
-    Language = "en"
-
-    #Enable Rcon "True" or "False"
-    EnableRcon = "True"
-
-    #Rcon IP, usually localhost
+    #Rcon IP (not supported by valheim yet.)
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = 27520
+    ManagementPort = ""
 
-    #Rcon Password *NO SPACES*
-    ManagementPassword = "CHANGEME2"
+    #Rcon Password
+    ManagementPassword = ""
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -94,10 +40,10 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\ShooterGame\Saved\Config\WindowsServer\"
+    ConfigFolder = "."
 
     #Steam Server App Id
-    AppID = 824360
+    AppID = 556450
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -106,10 +52,10 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Process name in the task manager
-    ProcessName = "PixArkServer"
+    ProcessName = "TheForestDedicatedServer"
 
     #ProjectZomboid64.exe
-    Exec = ".\servers\$Name\ShooterGame\Binaries\Win64\PixARKServer.exe"
+    Exec = ".\servers\$Name\TheForestDedicatedServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -164,7 +110,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\ShooterGame\Saved"
+    Saves = ".\servers\$Name\Multiplayer"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -175,7 +121,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -190,7 +136,7 @@ $WarningsDetails = @{
     MessageSec = "The server will restart in % seconds !"
 
     #command to send a message.
-    CmdMessage = "broadcast"
+    CmdMessage = "say"
 
     #command to save the server
     CmdSave = "saveworld"
@@ -199,7 +145,7 @@ $WarningsDetails = @{
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "quit"
+    CmdStop = "shutdown"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -210,28 +156,11 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "$($Server.WorldType)",
-    "?listen",
-    "?Multihome=$($Server.InternalIP)",
-    "?RCONEnabled=$($Server.EnableRcon)",
-    "?MaxPlayers=$($Server.MaxPlayers)",
-    "?Port=$($Server.Port)",
-    "?RCONPort=$($Server.ManagementPort)",
-    "?QueryPort=$($Server.QueryPort)",
-    "?ServerAdminPassword=$($Server.ManagementPassword)",
-    "?SessionName=`"$($Server.SessionName)`"",
-    "?ServerPassword=$($Server.Password)",
-    "?ShowFloatingDamageText=$($Server.ShowFloatingDamageText)",
-    "?CULTUREFORCOOKING=$($Server.Language) ",
-    "-CubePort=$($Server.CubePort) ",
-    "-CubeWorld=$($Server.WorldName) ",
-    "-Seed=$($Server.Seed) ",
-    "-forcerespawndinos "
-    "-NoHangDetection ",
+    "-batchmode ",
+    "-dedicated ",
+    "-nographics ",
     "-nosteamclient ",
-    "-game ",
-    "-server ",
-    "-log"
+    "-configfilepath `"$($Server.ConfigFile)`""
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
@@ -242,7 +171,7 @@ Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Serv
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort) And $($server.CubePort) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

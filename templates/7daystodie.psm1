@@ -5,7 +5,6 @@
 #Server Name, use the same name to share game files.
 $Name = "7DaysToDie"
 
-
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
@@ -14,6 +13,9 @@ $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
     UID = 7
+
+    #Login username used by SteamCMD
+    Login = "anonymous"
 
     #Server Configuration
     ConfigFile = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml"
@@ -40,12 +42,12 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server configuration folder
+    ConfigFolder = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\"
+
     #Steam Server App Id
     AppID = 294420
-
-    #Use Beta builds $true or $false
-    Beta = $false
-
+    
     #Name of the Beta Build
     BetaBuild = ""
 
@@ -156,7 +158,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$Arguments = @(
+$ArgumentList = @(
     "-logfile $($Server.LogFile) ",
     "-configfile=$($Server.ConfigFile) ",
     "-batchmode ",
@@ -165,23 +167,8 @@ $Arguments = @(
     "-quit"
 )
 
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -193,11 +180,11 @@ function Start-ServerPrep {
 
     #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
     $ConfigFilePath = Split-Path -Path $Server.ConfigFile
-    if (-not (Test-Path -Path $ConfigFilePath)){
+    if (-not (Test-Path -Path $ConfigFilePath -ErrorAction SilentlyContinue)){
         New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
     }
-    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){
-        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force
+    If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf" -ErrorAction SilentlyContinue)){
+        Copy-Item -Path "$($Server.Path)\serverconfig.xml" -Destination $Server.ConfigFile -Force -ErrorAction SilentlyContinue
     }
 
 }

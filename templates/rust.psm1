@@ -5,6 +5,9 @@ Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
 #Server Name, use the same name to share game files.
 $Name = "Rust"
 
+#Identity of the server
+$Identity = "RustServer01"
+
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
@@ -14,11 +17,14 @@ $ServerDetails = @{
     #Unique Identifier used to track processes. Must be unique to each servers.
     UID = 8
 
+    #Login username used by SteamCMD
+    Login = "anonymous"
+
     #Name of the server
     Hostname = "My Rust Server"
 
     #Identity of the server
-    Identity = "RustServer01"
+    Identity = $Identity
 
     #Description of the server \n for new line
     Description = "Welcome to my server"
@@ -93,11 +99,11 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server configuration folder
+    ConfigFolder = ".\servers\$Name\server\$Identity\cfg\"
+
     #Steam Server App Id
     AppID = 258550
-
-    #Use Beta builds $true or $false
-    Beta = $false
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -209,7 +215,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$Arguments = @(
+$ArgumentList = @(
     "-batchmode ",
     "-nographics ",
     "+server.ip $($Global.InternalIP) ",
@@ -239,24 +245,8 @@ $Arguments = @(
     "+rcon.web $($Server.rconVersion) ",
     "-logfile $($Server.Identity).txt "
 )
-
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

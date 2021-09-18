@@ -5,7 +5,7 @@ function Update-Server {
         [string]$UpdateType
     )
     #Create server directory if not found.
-    if (-not(Test-Path -Path $Server.Path)){
+    if (-not (Test-Path -Path $Server.Path)){
         New-Item -ItemType "directory" -Path $Server.Path -ErrorAction SilentlyContinue
     }
     #Resolve complete path of the server folder.

@@ -23,7 +23,7 @@ function Send-Command {
             #send Telnet command.
             $Result = Get-Telnet -Command "$Command `"$Message`"" -RemoteHost $Server.ManagementIP -Port $Server.ManagementPort -Password $Server.ManagementPassword
             Write-Host $Result
-            if (-not(($Result -like "*Unable to connect to host:*") -or ($Result -like "*incorrect*"))) {
+            if (-not (($Result -like "*Unable to connect to host:*") -or ($Result -like "*incorrect*"))) {
                 $Success = $true
             }
         }

@@ -3,11 +3,11 @@ function Backup-Server {
     #Create backup name from date and time
     $BackupName = Get-TimeStamp
     #Check if Backups Destination directory exist and create it.
-    if (-not(Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container")){
+    if (-not (Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container")){
         New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
     }
     #Check if Backups Source directory exist and create it.
-    if (-not(Test-Path -Path $Backups.Saves -PathType "Container")){
+    if (-not (Test-Path -Path $Backups.Saves -PathType "Container")){
         New-Item -Path $Backups.Saves -ItemType "directory" -ErrorAction SilentlyContinue
     }
     #Resolve Server Saves Path

@@ -83,7 +83,7 @@ $Dependencies = @{
 
 #For each dependency check if the excutable exist, if not, add the key of the dependency to the MissingDependencies list.
 foreach ($Key in $Dependencies.keys) {
-    if (-not(Test-Path -Path $Dependencies[$Key])) {
+    if (-not (Test-Path -Path $Dependencies[$Key])) {
         $null = $MissingDependencies.Add($Key)
     }
 }

@@ -193,7 +193,7 @@ function Start-ServerPrep {
 
     #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
     $ConfigFilePath = Split-Path -Path $Server.ConfigFile
-    if (-not(Test-Path -Path $ConfigFilePath)){
+    if (-not (Test-Path -Path $ConfigFilePath)){
         New-Item -ItemType "directory" -Path $ConfigFilePath -Force -ErrorAction SilentlyContinue
     }
     If(-not (Test-Path -Path $Server.ConfigFile -PathType "leaf")){

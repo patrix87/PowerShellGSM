@@ -43,7 +43,7 @@ $ServerDetails = @{
     ConfigFolder = ".\servers\$Name\Multiplayer\"
 
     #Steam Server App Id
-    AppID = 105610
+    AppID = 629800
 
     #Name of the Beta Build
     BetaBuild = ""

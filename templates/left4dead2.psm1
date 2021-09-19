@@ -43,7 +43,7 @@ $ServerDetails = @{
     ConfigFolder = "."
 
     #Steam Server App Id
-    AppID = 
+    AppID = 222860
 
     #Name of the Beta Build
     BetaBuild = ""

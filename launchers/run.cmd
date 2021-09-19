@@ -1,2 +1,2 @@
 cd ..
-start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "astroneer"
+start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "left4dead2"

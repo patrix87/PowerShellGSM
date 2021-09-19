@@ -1,5 +1,5 @@
 <#
-    ".\servers\$Name\Multiplayer\config.cfg"
+    Edit configuration in : .\servers\Left4Dead2\left4dead2\cfg\server.cfg
 #>
 
 #Server Name, use the same name to share game files.
@@ -17,14 +17,32 @@ $ServerDetails = @{
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server in the Server Browser
-    ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
+    #Server Host Name
+    SessionName = "My Left 4 Dead 2 Server"
 
-    #Rcon IP (not supported by valheim yet.)
+    #Game Port
+    Port = 27015
+
+    #Query Port
+    QueryPort = 27005
+
+    #Max number of players
+    MaxPlayers = 4
+
+    #Server Password
+    Password = ""
+
+    #Map
+    Map = "c1m1_hotel"
+
+    #Configuration File
+    ConfigFile = "server.cfg"
+
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = ""
+    ManagementPort = "9000"
 
     #Rcon Password
     ManagementPassword = ""
@@ -40,7 +58,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = "."
+    ConfigFolder = ".\servers\$Name\left4dead2\cfg\"
 
     #Steam Server App Id
     AppID = 222860
@@ -55,13 +73,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "TerrariaServer"
+    ProcessName = "srcds"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\TerrariaServer.exe"
+    Exec = ".\servers\$Name\srcds.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -90,7 +108,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 
     #How long should it wait to check if the server is stable
     StartupWaitTime = 10
@@ -116,7 +134,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name"
+    Saves = ".\servers\$Name\left4dead2\cfg"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -127,10 +145,10 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $false
+    Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Rcon"
+    Protocol = "Telnet"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -145,13 +163,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "saveworld"
+    CmdSave = "save"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "shutdown"
+    CmdStop = "quit"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -162,11 +180,20 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "-batchmode ",
-    "-dedicated ",
-    "-nographics ",
-    "-nosteamclient ",
-    "-configfilepath `"$($Server.ConfigFile)`""
+    "-console ",
+    "-game left4dead2 ",
+    "-secure ",
+    "-nohltv ",
+    "-netconport $($Server.ManagementPort) ",
+    "-netconpassword $($Server.ManagementPassword) ",
+    "+map $($Server.Map) ",
+    "+log on ",
+    "+maxplayers $($Server.MaxPlayers) ",
+    "+hostport $($Server.Port) ",
+    "+clientport $($Server.QueryPort) ",
+    "-ip $($Global.InternalIP) ",
+    "+hostip $($Global.ExternalIP) ",
+    "+exec $($Server.ConfigFile)"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
@@ -175,7 +202,49 @@ Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Serv
 # Function that runs just before the server starts.
 #---------------------------------------------------------
 
+$FileContentList = @(
+    "hostname `"$($Server.SessionName)`"",
+    "rcon_password `"$($Server.ManagementPassword)`"",
+    "sv_password `"$($Server.Password)`"",
+    "sv_contact `"contact@example.com`"",
+    "hostport $($Server.Port)",
+    "sv_lan 0",
+    "sv_region 0",
+    "sv_allow_lobby_connect_only 0",
+    "mp_disable_autokick 1",
+    "sv_allow_wait_command 0",
+    "sv_alternateticks 0",
+    "sv_clearhinthistory 0",
+    "sv_consistency 0",
+    "sv_pausable 0",
+    "sv_forcepreload 1",
+    "sv_pure_kick_clients 0",
+    "sv_pure 0",
+    "sv_voiceenable 1",
+    "sv_alltalk 1",
+    "log on",
+    "sv_logecho 0",
+    "sv_logfile 1",
+    "sv_log_onefile 0",
+    "sv_logbans 1",
+    "sv_logflush 0",
+    "sv_logsdir logs",
+    "exec banned_user.cfg",
+    "exec banned_ip.cfg",
+    "writeip",
+    "writeid"
+)
+
+$FileContent = ($FileContentList -join "`n")
+
 function Start-ServerPrep {
+
+
+    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
+    if (-not (Test-Path -Path ".\servers\$($Server.Name)\left4dead2\cfg\$($Server.ConfigFile)" -ErrorAction SilentlyContinue)){
+        Write-Host "Creating Config File"
+        New-Item -Path ".\servers\$($Server.Name)\left4dead2\cfg\" -Name "$($Server.ConfigFile)" -ItemType "file" -Value $FileContent
+    }
 
     Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
 

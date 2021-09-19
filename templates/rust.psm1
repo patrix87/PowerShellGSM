@@ -150,7 +150,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $false
+    Validate = $true
 
     #How long should it wait to check if the server is stable
     StartupWaitTime = 0

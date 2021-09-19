@@ -13,7 +13,7 @@ $Name = "InsurgencySandstorm"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 2
+    UID = "InsurgencySandstorm_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -97,7 +97,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "InsurgencyServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\InsurgencyServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

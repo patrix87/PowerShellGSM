@@ -8,7 +8,7 @@ $Name = "Valheim"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 5
+    UID = "Valheim_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -59,7 +59,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "valheim_server"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\valheim_server.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

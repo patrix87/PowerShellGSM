@@ -33,7 +33,7 @@ $Name = "PixArk"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 3
+    UID = "PixArk_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -108,7 +108,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "PixArkServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\ShooterGame\Binaries\Win64\PixARKServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

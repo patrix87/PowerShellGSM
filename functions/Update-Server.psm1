@@ -8,6 +8,10 @@ function Update-Server {
     if (-not (Test-Path -Path $Server.Path -ErrorAction SilentlyContinue)){
         New-Item -ItemType "directory" -Path $Server.Path -ErrorAction SilentlyContinue
     }
+    #Skip install if AppID is 0
+    if ($Server.AppID -eq 0){
+        return
+    }
     <#
     String Part if value is null or false or empty string
     if () {

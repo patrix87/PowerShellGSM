@@ -12,7 +12,7 @@ $Name = "7DaysToDie"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 7
+    UID = "7DaysToDie_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -57,7 +57,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "7DaysToDieServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\7DaysToDieServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

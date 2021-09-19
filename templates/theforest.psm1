@@ -12,12 +12,12 @@ $Name = "TheForest"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 9
+    UID = "TheForest_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server in the Server Browser
+    #Configuration File
     ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
 
     #Rcon IP (not supported by valheim yet.)
@@ -54,7 +54,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "TheForestDedicatedServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\TheForestDedicatedServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

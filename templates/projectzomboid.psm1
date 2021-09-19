@@ -40,7 +40,7 @@ $Name = "ProjectZomboid"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 4
+    UID = "ProjectZomboid_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -79,7 +79,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "java"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\ProjectZomboid64.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

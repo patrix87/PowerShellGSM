@@ -14,7 +14,7 @@ $Name = "KillingFloor2"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 6
+    UID = "KillingFloor2_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -80,7 +80,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "KFServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\Binaries\Win64\KFServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

@@ -1,5 +1,5 @@
 <#
-    ".\servers\$Name\Multiplayer\config.cfg"
+    ".\servers\$Name\serverconfig.txt"
 #>
 
 #Server Name, use the same name to share game files.
@@ -12,13 +12,35 @@ $Name = "Terraria"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 9
+    UID = "Terraria_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server in the Server Browser
-    ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
+    # Specifies the configuration file to use *(relative the the game)
+    ConfigFile = "serverconfig.txt"
+
+    # Specifies the port to listen on.
+    Port = 7777
+
+    # Sets the max number of players
+    MaxPlayers = 8
+
+    # Sets the server password
+    Password = "CHANGEME"
+
+    #Choose the world to load. Do not try to save it somewhere else, it won't work.
+    World = "$Env:userprofile\Documents\My Games\Terraria\Worlds\ServerWorld.wld"
+
+    #Should match the above world.
+    WorldName = "ServerWorld"
+
+    #Specifies the world seed when using -autocreate
+    Seed = "1234"
+
+    #Creates a world if none is found in the path specified by World.
+    #World size is specified by: 1(small), 2(medium), and 3(large).
+    AutoCreate = 2
 
     #Rcon IP (not supported by valheim yet.)
     ManagementIP = "127.0.0.1"
@@ -40,10 +62,13 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = "."
+    ConfigFolder = ".\servers\$Name"
 
-    #Steam Server App Id
-    AppID = 
+    #Server Version
+    Version = "1423"
+
+    #Steam Server App Id *0 Skip SteamCMD Installation
+    AppID = 0
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -54,7 +79,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "TerrariaServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\TerrariaServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
@@ -110,7 +135,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name"
+    Saves = "$Env:userprofile\Documents\My Games\Terraria\Worlds"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -156,11 +181,17 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "-batchmode ",
-    "-dedicated ",
-    "-nographics ",
-    "-nosteamclient ",
-    "-configfilepath `"$($Server.ConfigFile)`""
+    "-config `"$($Server.ConfigFile)`" ",
+    "-port $($Server.Port) ",
+    "-maxplayers $($Server.MaxPlayers) ",
+    "-password `"$($Server.Password)`" ",
+    "-world `"$($Server.World)`" ",
+    "-worldname `"$($Server.WorldName)`" ",
+    "-seed `"$($Server.Seed)`" ",
+    "-autocreate $($Server.AutoCreate) ",
+    "-secure ",
+    "-noupnp ",
+    "-steam "
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
@@ -170,9 +201,39 @@ Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Serv
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-
+    #If server is not installed, install it.
+    $Version = Get-Content -Path ".\servers\$($Server.Name)\Version.txt" -ErrorAction SilentlyContinue
+    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($Version -ne $Server.Version)) {
+        Write-ScriptMsg "Installing Server..."
+        #Create Temporary Download Folder
+        New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
+        #Download Microsoft XNA Framework
+        Invoke-Download -Uri "https://download.microsoft.com/download/5/3/A/53A804C8-EC78-43CD-A0F0-2FB4D45603D3/xnafx40_redist.msi" -OutFile ".\downloads\xna.msi" -ErrorAction SilentlyContinue
+        #Install Microsoft XNA
+        $Package = Resolve-Path -Path ".\downloads\xna.msi"
+        Write-Host $Package
+        Read-Host
+        Start-Process -FilePath msiexec.exe -ArgumentList "/qn /i $Package" -Verb "RunAs" -Wait
+        Write-Host "Done"
+        Read-Host
+        #Download Server Zip
+        Invoke-Download -Uri "https://terraria.org/api/download/pc-dedicated-server/terraria-server-$($Server.Version).zip" -OutFile ".\downloads\terraria.zip" -ErrorAction SilentlyContinue
+        #Extract Server to Temporary Folder
+        Expand-Archive -Path ".\downloads\terraria.zip" -DestinationPath ".\downloads\terraria\" -Force
+        #Copy Server Files to Server Directory
+        Copy-Item -Path ".\downloads\terraria\$($Server.Version)\Windows\TerrariaServer.exe" -Destination $Server.Path -Force
+        Copy-Item -Path ".\downloads\terraria\$($Server.Version)\Windows\ReLogic.Native.dll" -Destination $Server.Path -Force
+        if (-not (Test-Path -Path $Server.ConfigFile -PathType "leaf" -ErrorAction SilentlyContinue)) {
+            Copy-Item -Path ".\downloads\terraria\$($Server.Version)\Windows\serverconfig.txt" -Destination $Server.Path
+        }
+        #Cleanup
+        Remove-Item -Path ".\downloads" -Recurse -Force -ErrorAction SilentlyContinue
+        #Remove old version file
+        Remove-Item -Path ".\servers\$($Server.Name)\Version.txt" -Confirm:$false -ErrorAction SilentlyContinue
+        #Write new Version File
+        New-Item -Path ".\servers\$($Server.Name)\" -Name "Version.txt" -ItemType "file" -Value "$($Server.Version)" -Force -ErrorAction SilentlyContinue
+    }
     Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
-
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

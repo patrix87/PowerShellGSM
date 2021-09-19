@@ -11,7 +11,7 @@ $Name = "Squad"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 1
+    UID = "Squad_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -62,7 +62,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "SquadGameServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\SquadGameServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

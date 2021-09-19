@@ -3,7 +3,7 @@
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "Terraria"
+$Name = "Astroneer"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -12,7 +12,7 @@ $Name = "Terraria"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 9
+    UID = "Astroneer_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -43,7 +43,7 @@ $ServerDetails = @{
     ConfigFolder = "."
 
     #Steam Server App Id
-    AppID = 
+    AppID = 0
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -54,7 +54,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "TerrariaServer"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\TerrariaServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

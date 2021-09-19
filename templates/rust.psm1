@@ -15,7 +15,7 @@ $Identity = "RustServer01"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 8
+    UID = "Rust_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -114,7 +114,7 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "RustDedicated"
 
-    #ProjectZomboid64.exe
+    #Server Executable
     Exec = ".\servers\$Name\RustDedicated.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.

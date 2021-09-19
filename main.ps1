@@ -79,7 +79,6 @@ catch {
 
 #Parse configuration
 Read-Config
-Write-Host $global
 
 #---------------------------------------------------------
 # Install Server
@@ -132,8 +131,9 @@ if (-not $FreshInstall) {
 
 #Try to start the server, then if it's stable, set the priority and affinity then register the PID. Exit with Error if it fails.
 try {
-    Write-ScriptMsg "Starting Server..."
+    Write-ScriptMsg "Starting Server Preparation..."
     Start-ServerPrep
+    Write-ScriptMsg "Starting Server..."
     $App = Start-Process -FilePath $Server.Launcher -WorkingDirectory $Server.Path -ArgumentList $Server.Arguments -PassThru
     #Wait to see if the server is stable.
     Start-Sleep -Seconds $Server.StartupWaitTime

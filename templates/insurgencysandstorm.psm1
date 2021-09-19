@@ -100,6 +100,9 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "InsurgencyServer"
 
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
     #Server Executable
     Exec = ".\servers\$Name\InsurgencyServer.exe"
 

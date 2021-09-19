@@ -56,8 +56,7 @@ function Update-Server {
     #Run the update String
     Write-ServerMsg "$UpdateType $ValidatingString $VersionString Build."
     try {
-        #$Task = Start-Process $Global.SteamCMD -ArgumentList $Arguments -Wait -PassThru -NoNewWindow
-        & $Global.SteamCMD "+login anonymous app_update 556450 validate +quit"
+        $Task = Start-Process $Global.SteamCMD -ArgumentList $Arguments -Wait -PassThru -NoNewWindow
     }
     catch {
         Exit-WithError -ErrorMsg "SteamCMD failed to complete."

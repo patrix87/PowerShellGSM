@@ -60,6 +60,9 @@ $ServerDetails = @{
     #Process name in the task manager
     ProcessName = "7DaysToDieServer"
 
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
     #Server Executable
     Exec = ".\servers\$Name\7DaysToDieServer.exe"
 

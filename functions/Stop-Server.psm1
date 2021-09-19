@@ -1,9 +1,11 @@
 function Stop-Server {
-    #Get the PID from the .PID market file.
-    $ServerPID = Get-PID
-    #If it returned 0, it failed to get a PID
-    if ($null -ne $ServerPID) {
-        $ServerProcess = Get-Process -ID $ServerPID -ErrorAction SilentlyContinue
+    if ($Server.UsePID){
+        #Get the PID from the .PID market file.
+        $ServerPID = Get-PID
+        #If it returned 0, it failed to get a PID
+        if ($null -ne $ServerPID) {
+            $ServerProcess = Get-Process -ID $ServerPID -ErrorAction SilentlyContinue
+        }
     }
     #If the server process is none-existent, Get the process from the server process name.
     if ($null -eq $ServerProcess) {

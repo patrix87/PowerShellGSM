@@ -130,27 +130,7 @@ if (-not $FreshInstall -and $Server.AutoUpdates) {
 #---------------------------------------------------------
 
 #Try to start the server, then if it's stable, set the priority and affinity then register the PID. Exit with Error if it fails.
-try {
-    Write-ScriptMsg "Starting Server Preparation..."
-    Start-ServerPrep
-    Write-ScriptMsg "Starting Server..."
-    $App = Start-Process -FilePath $Server.Launcher -WorkingDirectory $Server.Path -ArgumentList $Server.Arguments -PassThru
-    #Wait to see if the server is stable.
-    Start-Sleep -Seconds $Server.StartupWaitTime
-    if (($null -eq $App) -or ($App.HasExited)){
-        Exit-WithError "Server Failed to launch."
-    } else {
-        Write-ServerMsg "Server Started."
-        Set-Priority -ServerProcess $App
-    }
-    if (-not (Register-PID -ServerProcess $App)){
-        Write-ServerMsg "Failed to Register PID file."
-    }
-}
-catch {
-    Write-Error $_
-    Exit-WithError -ErrorMsg "Unable to start server."
-}
+Start-Server
 
 #---------------------------------------------------------
 # Open FreshInstall Configuration folder

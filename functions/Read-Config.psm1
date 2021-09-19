@@ -13,6 +13,8 @@ function Read-Config {
 	$Global.LogFolder = (Resolve-CompletePath -Path $Global.LogFolder -ParentPath ".\")
 
     #Create Arguments
-    Add-Member -InputObject $Server -Name "Arguments" -Type NoteProperty -Value (Optimize-ArgumentList -Arguments $Server.ArgumentList)
+	if ($Server.ArgumentList.length -gt 0) {
+		Add-Member -InputObject $Server -Name "Arguments" -Type NoteProperty -Value (Optimize-ArgumentList -Arguments $Server.ArgumentList)
+	}
 }
 Export-ModuleMember -Function Read-Config

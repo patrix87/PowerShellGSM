@@ -1,5 +1,5 @@
 <#
-    ".\servers\$Name\Multiplayer\config.cfg"
+    ".\servers\TheForest\Multiplayer\config.cfg"
 #>
 
 #Server Name, use the same name to share game files.
@@ -17,8 +17,41 @@ $ServerDetails = @{
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Configuration File
-    ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
+    #Configuration File #Command line parameters overwrite matching entries defined in the config file.
+    ConfigFile = ".\Multiplayer\config.cfg"
+
+    #Steam Port
+    SteamPort = 8766
+
+    #Game Port
+    GamePort = 27015
+
+    #Query Port
+    QueryPort = 27016
+
+    #Set the server display name
+    SessionName = "My Server"
+
+    #Maximum number of players
+    MaxPlayers = 8
+
+    #Join Password
+    Password = "CHANGEME"
+
+    #Admin Password
+    AdminPassword = "CHANGEMETOO"
+
+    #Set the autosave interval in minutes, default is 15
+    AutoSaveInterval = 5
+
+    #Set Save Slot ( 1 | 2 | 3 | 4 | 5 )
+    SaveSlot = 1
+
+    #Set Continue State ("New" | "Continue")
+    InitType = "Continue"
+
+    #Set the game difficult level, default is Normal ("Peaceful" | "Normal" | "Hard")
+    Difficulty = "Normal"
 
     #Rcon IP (not supported by valheim yet.)
     ManagementIP = "127.0.0.1"
@@ -37,10 +70,10 @@ $ServerDetails = @{
     Name = $Name
 
     #Server Installation Path
-    Path = ".\servers\$Name"
+    Path = ".\servers\$Name\"
 
     #Server configuration folder
-    ConfigFolder = "."
+    ConfigFolder = ".\servers\$Name\Multiplayer"
 
     #Steam Server App Id
     AppID = 556450
@@ -50,6 +83,9 @@ $ServerDetails = @{
 
     #Beta Build Password
     BetaBuildPassword = ""
+
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $false
 
     #Process name in the task manager
     ProcessName = "TheForestDedicatedServer"
@@ -110,7 +146,8 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name\Multiplayer"
+    #Saves = "$Env:userprofile\AppData\LocalLow\SKS\TheForestDedicatedServer"
+    Saves = ".\servers\$($Server.Name)\Multiplayer"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -160,7 +197,20 @@ $ArgumentList = @(
     "-dedicated ",
     "-nographics ",
     "-nosteamclient ",
-    "-configfilepath `"$($Server.ConfigFile)`""
+    "-serverip $($Global.InternalIP) ",
+    "-serversteamport $($Server.SteamPort) ",
+    "-servergameport $($Server.GamePort) ",
+    "-serverqueryport $($Server.QueryPort) ",
+    "-servername `"$($Server.SessionName)`" ",
+    "-serverplayers $($Server.maxPlayers) ",
+    "-serverpassword `"$($Server.Password)`" ",
+    "-serverpassword_admin `"$($Server.AdminPassword)`" ",
+    "-serverautosaveinterval $($Server.AutoSaveInterval) ",
+    "-slot $($Server.SaveSlot) ",
+    "-serverautosaveinterval $($Server.InitType) ",
+    "-difficulty `"$($Server.Difficulty)`" ",
+    "-configfilepath `"$($Server.ConfigFile)`" ",
+    "-savefolderpath .\"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
@@ -171,7 +221,7 @@ Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Serv
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : 8766, 27015, 27016 in TCP and UDP to $($Global.InternalIP)"
 
 }
 

@@ -101,7 +101,7 @@ if (-not (Test-Path -Path $Server.Exec -ErrorAction SilentlyContinue)){
 Write-ScriptMsg "Verifying Server State..."
 #If the server is not freshly installed.
 if (-not $FreshInstall) {
-    Test-ServerState
+    Stop-Server
 }
 
 #---------------------------------------------------------
@@ -119,7 +119,7 @@ if ($Backups.Use -and -not $FreshInstall) {
 #---------------------------------------------------------
 
 #If not a fresh install, update and/or validate server.
-if (-not $FreshInstall) {
+if (-not $FreshInstall -and $Server.AutoUpdates) {
     Write-ScriptMsg "Updating Server..."
     Update-Server -UpdateType "Updating"
     Write-ServerMsg "Server successfully updated and/or validated."
@@ -158,6 +158,8 @@ catch {
 
 if ($FreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Container" -ErrorAction SilentlyContinue)) {
     & explorer.exe $Server.ConfigFolder
+    #Stop Server because configuration is probably bad anyway
+    Stop-Server
 }
 
 #---------------------------------------------------------

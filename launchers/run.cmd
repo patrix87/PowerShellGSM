@@ -1,2 +1,2 @@
 cd ..
-start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "terraria"
+start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "theforest"

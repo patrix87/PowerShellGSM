@@ -76,6 +76,9 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = ""
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "TerrariaServer"
 
@@ -211,11 +214,7 @@ function Start-ServerPrep {
         Invoke-Download -Uri "https://download.microsoft.com/download/5/3/A/53A804C8-EC78-43CD-A0F0-2FB4D45603D3/xnafx40_redist.msi" -OutFile ".\downloads\xna.msi" -ErrorAction SilentlyContinue
         #Install Microsoft XNA
         $Package = Resolve-Path -Path ".\downloads\xna.msi"
-        Write-Host $Package
-        Read-Host
         Start-Process -FilePath msiexec.exe -ArgumentList "/qn /i $Package" -Verb "RunAs" -Wait
-        Write-Host "Done"
-        Read-Host
         #Download Server Zip
         Invoke-Download -Uri "https://terraria.org/api/download/pc-dedicated-server/terraria-server-$($Server.Version).zip" -OutFile ".\downloads\terraria.zip" -ErrorAction SilentlyContinue
         #Extract Server to Temporary Folder

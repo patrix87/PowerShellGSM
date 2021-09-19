@@ -60,7 +60,7 @@ function Send-RestartWarning {
     }
     #if the process is still running, if allowed, stop process.
     if(-not ($ServerProcess.HasExited) -and ($Server.AllowForceClose)){
-        $Stopped = Stop-Server -ServerProcess $ServerProcess
+        $Stopped = Stop-ServerProcess -ServerProcess $ServerProcess
     }
     return $Stopped
 }

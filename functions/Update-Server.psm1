@@ -19,35 +19,45 @@ function Update-Server {
     }
     #>
     #Login String
-    $LoginString = "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous"
+    $LoginString = "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous "
     if ($Server.Login -ne "anonymous") {
-        $LoginString = "+login $($Server.Login)"
+        $LoginString = "+login $($Server.Login) "
     }
     #Validation String
-    $ValidateString = ""
+    $ValidateString = "  "
     $ValidatingString = ""
     if ($Server.Validate -ne $false){
-        $ValidateString = "-validate"
-        $ValidatingString = "and validating"
+        $ValidateString = "validate "
+        $ValidatingString = "and Validating"
     }
     #Beta Build String
-    $BetaBuildString = ""
+    $BetaBuildString = "  "
     $VersionString = "Regular"
     if ($Server.BetaBuild -ne ""){
-        $BetaBuildString = "-beta $($Server.BetaBuild)"
+        $BetaBuildString = "-beta $($Server.BetaBuild) "
         $VersionString = "Beta"
     }
     #Beta Password String
-    $BetaPasswordString = ""
+    $BetaPasswordString = "  "
     if ($Server.BetaBuildPassword -ne ""){
         $BetaPasswordString = "-betapassword $($Server.BetaBuildPassword)"
     }
-
-    $Arguments = "$LoginString +force_install_dir `"$($Server.Path)`" `"+app_update $($Server.AppID) $BetaBuildString $BetaPasswordString`" $ValidateString +quit"
+    #Generate String
+    $ArgumentList = @(
+        "$LoginString",
+        "+force_install_dir `"$($Server.Path)`" ",
+        "+app_update $($Server.AppID)",
+        "$BetaBuildString",
+        "$BetaPasswordString",
+        " $ValidateString",
+        "+quit"
+    )
+    $Arguments = Optimize-ArgumentList -Arguments $ArgumentList
     #Run the update String
     Write-ServerMsg "$UpdateType $ValidatingString $VersionString Build."
     try {
-        Start-Process $Global.SteamCMD -ArgumentList $Arguments -Wait -PassThru -NoNewWindow
+        #$Task = Start-Process $Global.SteamCMD -ArgumentList $Arguments -Wait -PassThru -NoNewWindow
+        & $Global.SteamCMD "+login anonymous app_update 556450 validate +quit"
     }
     catch {
         Exit-WithError -ErrorMsg "SteamCMD failed to complete."

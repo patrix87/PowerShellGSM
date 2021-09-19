@@ -1,41 +1,53 @@
 function Stop-Server {
-    [CmdletBinding()]
-    [OutputType([boolean])]
-    param (
-        [Parameter(Mandatory)]
-        $ServerProcess
-    )
-    #if the server is still running
-
-    Write-ServerMsg "Closing main window..."
-    #Close the main windows.
-    $ServerProcess.CloseMainWindow()
-    #Wait for exit for at most 30 seconds.
-    $ServerProcess.WaitForExit(30000)
-    #if the process exited send success message
-    if ($ServerProcess.HasExited) {
-        Write-ServerMsg "Server succesfully stopped."
-    }else{
-        Write-Warning "Trying again to stop the server..."
-        #else try to stop server with stop-process.
-        Stop-Process $ServerProcess
-        #Wait for exit for at most 30 seconds.
-        $ServerProcess.WaitForExit(30000)
-        #If process is still running, force stop-process.
-        if ($ServerProcess.HasExited) {
-            Write-Warning "Server succesfully stopped on second try."
-        }else{
-            Write-Warning "Forcefully stopping server..."
-            Stop-Process $ServerProcess -Force
+    #Get the PID from the .PID market file.
+    $ServerPID = Get-PID
+    #If it returned 0, it failed to get a PID
+    if ($null -ne $ServerPID) {
+        $ServerProcess = Get-Process -ID $ServerPID -ErrorAction SilentlyContinue
+    }
+    #If the server process is none-existent, Get the process from the server process name.
+    if ($null -eq $ServerProcess) {
+        $ServerProcess = Get-Process -Name $Server.ProcessName -ErrorAction SilentlyContinue
+    }
+    #Check if the process was found.
+    if ($null -eq $ServerProcess) {
+        Write-ServerMsg "Server is not running."
+    } else {
+        #Check if it's the right server via RCON if possible.
+        $Success = $false
+        if ($Warnings.Use){
+            $Success = Send-Command("help")
+            if ($Success) {
+                Write-ServerMsg "Server is responding to remote messages."
+            } else {
+                Write-ServerMsg "Server is not responding to remote messages."
+            }
+        }
+        #If Rcon worked, send stop warning.
+        if ($Success) {
+            Write-ServerMsg "Server is running, warning users about upcomming restart."
+            $Stopped = Send-RestartWarning -ServerProcess $ServerProcess
+        } else {
+            #If Server is allow to be closed, close it.
+            if ($Server.AllowForceClose){
+                Write-ServerMsg "Server is running, stopping server."
+                $Stopped = Stop-ServerProcess -ServerProcess $ServerProcess
+            }
+        }
+        #If the server stopped, send messages, if not check if it's normal, then stopped it, if it fails, exit with error.
+        if ($Stopped) {
+            Write-ServerMsg "Server stopped."
+        } else {
+            if ($Server.AllowForceClose) {
+                Exit-WithError "Failed to stop server."
+            } else {
+                Write-ServerMsg "Server not stopped."
+            }
         }
     }
-
-    #Safety timer for allowing the files to unlock before backup.
-    Start-Sleep -Seconds 10
-    if ($ServerProcess.HasExited) {
-        return $true
-    } else {
-        return $false
+    #Unregister the PID
+    if (-not $(Unregister-PID)) {
+        Write-ServerMsg "Failed to remove PID file."
     }
 }
 Export-ModuleMember -Function Stop-Server

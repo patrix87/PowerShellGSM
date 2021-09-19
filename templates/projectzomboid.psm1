@@ -76,6 +76,9 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = "iaccepttheconsequences"
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "java"
 

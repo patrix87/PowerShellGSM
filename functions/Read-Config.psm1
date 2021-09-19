@@ -1,40 +1,3 @@
-function Optimize-ArgumentList {
-    [CmdletBinding()]
-    [OutputType([System.Collections.ArrayList])]
-    param (
-        [Parameter(Mandatory)]
-        [array] $ArgumentList
-    )
-    #Create Server.Arguments from cleaned ArgumentList.
-    [System.Collections.ArrayList]$CleanedArguments=@()
-
-    foreach($Argument in $ArgumentList){
-        if (-not ($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-            $CleanedArguments.Add($Argument)
-        }
-    }
-    return ($CleanedArguments -join "")
-}
-
-function Resolve-CompletePath {
-    [CmdletBinding()]
-    [OutputType([string])]
-    param (
-        [Parameter(Mandatory)]
-        [string] $Path,
-        [string] $ParentPath
-    )
-    #Add the full path to the path from the config file.
-    if ($Path.StartsWith($ParentPath)){
-        return "$(Get-Location)$($Path.substring(1))"
-    }
-    $ReturnPath = Resolve-Path -LiteralPath $Path -ErrorAction SilentlyContinue
-    if ($null -eq $ReturnPath) {
-        $ReturnPath = $Path
-    }
-    return $ReturnPath
-}
-
 function Read-Config {
     #Read configuration data and improve it by parsing full paths and cleaning arguments
 
@@ -50,6 +13,6 @@ function Read-Config {
 	$Global.LogFolder = (Resolve-CompletePath -Path $Global.LogFolder -ParentPath ".\")
 
     #Create Arguments
-    Add-Member -InputObject $Server -Name "Arguments" -Type NoteProperty -Value (Optimize-ArgumentList -ArgumentList $Server.ArgumentList)
+    Add-Member -InputObject $Server -Name "Arguments" -Type NoteProperty -Value (Optimize-ArgumentList -Arguments $Server.ArgumentList)
 }
-Export-ModuleMember -Function Read-Config, Resolve-CompletePath
+Export-ModuleMember -Function Read-Config

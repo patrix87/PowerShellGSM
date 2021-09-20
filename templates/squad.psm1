@@ -124,7 +124,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name\SquadGame\ServerConfig\"
+    Saves = ".\servers\$($Server.Name)\SquadGame\ServerConfig\"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -178,7 +178,8 @@ $ArgumentList = @(
     "-log"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

@@ -240,7 +240,8 @@ $ArgumentList = @(
     "-log"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

@@ -1,5 +1,6 @@
 <#
-    ".\servers\$Name\Multiplayer\config.cfg"
+    Edit : .\servers\Starbound\storage\starbound_server.config
+    https://starbounder.org/Guide:Setting_Up_Multiplayer
 #>
 
 #Server Name, use the same name to share game files.
@@ -15,19 +16,16 @@ $ServerDetails = @{
     UID = "Starbound_1"
 
     #Login username used by SteamCMD
-    Login = "anonymous"
-
-    #Name of the server in the Server Browser
-    ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
+    Login = "Username"
 
     #Rcon IP (not supported by valheim yet.)
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = ""
+    ManagementPort = 21026
 
     #Rcon Password
-    ManagementPassword = ""
+    ManagementPassword = "Changeme"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -40,7 +38,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = "."
+    ConfigFolder = ".\servers\$Name\storage"
 
     #Steam Server App Id
     AppID = 533830
@@ -52,16 +50,16 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
-    AutoUpdates = $true
+    AutoUpdates = $false
 
     #Process name in the task manager
-    ProcessName = "TerrariaServer"
+    ProcessName = "starbound_server"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\TerrariaServer.exe"
+    Exec = ".\servers\$Name\win64\starbound_server.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -116,7 +114,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name"
+    Saves = ".\servers\$($Server.Name)\storage"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -161,15 +159,10 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$ArgumentList = @(
-    "-batchmode ",
-    "-dedicated ",
-    "-nographics ",
-    "-nosteamclient ",
-    "-configfilepath `"$($Server.ConfigFile)`""
-)
+$ArgumentList = @()
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)\win64"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -177,7 +170,8 @@ Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Serv
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : 21025 and 21026 in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Edit Server Configuration in .\servers\$Name\storage\starbound_server.config"
 
 }
 

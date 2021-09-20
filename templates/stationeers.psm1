@@ -20,7 +20,7 @@ $ServerDetails = @{
     #Name of the server in the Server Browser
     ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
 
-    #Rcon IP (not supported by valheim yet.)
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
@@ -116,7 +116,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name"
+    Saves = ".\servers\$($Server.Name)"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -161,15 +161,10 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$ArgumentList = @(
-    "-batchmode ",
-    "-dedicated ",
-    "-nographics ",
-    "-nosteamclient ",
-    "-configfilepath `"$($Server.ConfigFile)`""
-)
+$ArgumentList = @()
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

@@ -53,7 +53,7 @@ $ServerDetails = @{
     #Set the game difficult level, default is Normal ("Peaceful" | "Normal" | "Hard")
     Difficulty = "Normal"
 
-    #Rcon IP (not supported by valheim yet.)
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
@@ -216,7 +216,8 @@ $ArgumentList = @(
     "-savefolderpath .\"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

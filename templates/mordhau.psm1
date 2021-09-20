@@ -1,5 +1,8 @@
 <#
-    ".\servers\$Name\Multiplayer\config.cfg"
+    Edit configuration in : .\servers\Mordhau\Mordhau\Saved\Config\WindowsServer
+    Modify Game.ini and Engine.ini
+    Instructions here
+    https://mordhau.fandom.com/wiki/Dedicated_Server_Hosting_Guide#Configuring_and_Running_the_Server
 #>
 
 #Server Name, use the same name to share game files.
@@ -17,17 +20,29 @@ $ServerDetails = @{
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server in the Server Browser
-    ConfigFile = ".\servers\$Name\Multiplayer\config.cfg"
+    #Server Port
+    Port = 7778
 
-    #Rcon IP (not supported by valheim yet.)
+    #Query Port
+    QueryPort = 27016
+
+    #Beacon Port
+    Beaconport = 15000
+
+    #Modified Game.ini
+    GameIni = ".\servers\Mordhau\Mordhau\Saved\Config\WindowsServer\Game2.ini"
+
+    #Modified Engine.ini
+    EngineIni = ".\servers\Mordhau\Mordhau\Saved\Config\WindowsServer\Engine2.ini"
+
+    #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = ""
+    ManagementPort = 15002
 
     #Rcon Password
-    ManagementPassword = ""
+    ManagementPassword = "CHANGEME"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -40,7 +55,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\Multiplayer\"
+    ConfigFolder = ".\servers\Mordhau\Mordhau\Saved\Config\WindowsServer"
 
     #Steam Server App Id
     AppID = 629800
@@ -55,13 +70,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "TerrariaServer"
+    ProcessName = "MordhauServer-Win64-Shipping"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
-    UsePID = $true
+    UsePID = $false
 
     #Server Executable
-    Exec = ".\servers\$Name\TerrariaServer.exe"
+    Exec = ".\servers\$Name\MordhauServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -116,7 +131,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name"
+    Saves = ".\servers\$($Server.Name)\Mordhau\Saved\Config\WindowsServer"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -127,7 +142,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $false
+    Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -145,7 +160,7 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "saveworld"
+    CmdSave = "stats"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
@@ -160,16 +175,23 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
+#Addresse parsing and slash flipping
+$Server.GameIni = (Resolve-CompletePath -Path $Server.GameIni -ParentPath ".\servers\") -replace '\\','/'
+$Server.EngineIni = (Resolve-CompletePath -Path $Server.EngineIni -ParentPath ".\servers\") -replace '\\','/'
+
 #Launch Arguments
 $ArgumentList = @(
-    "-batchmode ",
-    "-dedicated ",
-    "-nographics ",
-    "-nosteamclient ",
-    "-configfilepath `"$($Server.ConfigFile)`""
+    "-Port=$($Server.Port) ",
+    "-QueryPort=$($Server.QueryPort) ",
+    "-Beaconport=$($Server.Beaconport) ",
+    "-GAMEINI=`"$($Server.GameIni)`" ",
+    "-ENGINEINI=`"$($Server.EngineIni)`" ",
+    "-log"
+
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -177,7 +199,7 @@ Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Serv
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort), $($server.Beaconport) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

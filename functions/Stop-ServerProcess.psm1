@@ -22,14 +22,13 @@ function Stop-ServerProcess {
         #Wait for exit for at most 30 seconds.
         $ServerProcess.WaitForExit($Warnings.SaveDelay * 1000)
         #If process is still running, force stop-process.
-        if ($ServerProcess.HasExited) {
+        if ($null -eq (Get-Process -ID ($ServerProcess.Id) -ErrorAction SilentlyContinue)) {
             Write-Warning "Server succesfully stopped on second try."
         }else{
             Write-Warning "Forcefully stopping server..."
             Stop-Process $ServerProcess -Force
         }
     }
-
     #Safety timer for allowing the files to unlock before backup.
     Start-Sleep -Seconds 10
     if ($ServerProcess.HasExited) {

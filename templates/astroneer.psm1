@@ -115,7 +115,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\Astroneer\Astro\Saved"
+    Saves = ".\servers\$($Server.Name)\Astro\Saved"
 
 }
 #Create the object
@@ -163,7 +163,8 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #Launch Arguments
 $ArgumentList = @()
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Server.Exec
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

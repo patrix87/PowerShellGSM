@@ -1,5 +1,5 @@
 # PowerShellGSM - PowerShell Game Server Manager
-A Modulare Powershell Shell tool to manage game servers.
+A Modular Powershell Shell tool to manage game servers.
 
 This powershell script will install, backup, update and reboot your server when executed.
 

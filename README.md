@@ -26,20 +26,21 @@ You can create a Scheduled Task to execute run.cmd daily to execute your server 
 
 # Advantages
 
-- Faster than the other available tools.
-- Lighter and more targeted backups.
-- Lighter shared game servers installation.
-- Modular.
-- Expandable.
-- Customizable.
+- Faster than the other available tools
+- Lighter and more targeted backups
+- Lighter shared game servers installation
+- Modular
+- Expandable
+- Customizable
 
 # Installation
 
-- Git clone (or extract the zip) this repository in any directory. *(Ideally C:\ but it will work anywhere)*
-- Copy your server configuration file from /templates to /configs
-- Copy and edit launchers/run.cmd to select your server configuration file.
-- Edit your server configuration file in the configs folder.
-- Exectute your version of run.cmd
+1. Git clone (or extract the zip) this repository in any directory. *(Ideally C:\ but it will work anywhere)*
+2. Copy your server configuration file from /templates to /configs
+3. Copy and edit launchers/run.cmd to select your server configuration file.
+4. Edit your server configuration file in the configs folder.
+5. Exectute your version of run.cmd
+6. Optional: create a scheduled task to run your version of run.cmd
 
 # Requirements
 

@@ -82,7 +82,7 @@ $ServerDetails = @{
     AllowForceClose = $true
 
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
-    UsePriority = $true
+    UsePriority = $false
     AppPriority = "High"
 
     <#

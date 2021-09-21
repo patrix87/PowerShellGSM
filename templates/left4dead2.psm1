@@ -247,7 +247,7 @@ function Start-ServerPrep {
         New-Item -Path ".\servers\$($Server.Name)\left4dead2\cfg\" -Name "$($Server.ConfigFile)" -ItemType "file" -Value $FileContent
     }
 
-    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

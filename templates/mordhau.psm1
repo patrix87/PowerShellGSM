@@ -175,7 +175,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-#Addresse parsing and slash flipping
+#Address parsing and slash flipping
 $Server.GameIni = (Resolve-CompletePath -Path $Server.GameIni -ParentPath ".\servers\") -replace '\\','/'
 $Server.EngineIni = (Resolve-CompletePath -Path $Server.EngineIni -ParentPath ".\servers\") -replace '\\','/'
 
@@ -199,7 +199,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort), $($server.Beaconport) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.QueryPort), $($Server.Beaconport) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

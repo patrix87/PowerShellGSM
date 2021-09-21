@@ -208,8 +208,8 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort), 20560, 123 in UDP and $($server.WebAdminPort) in TCP to $($Global.InternalIP)"
-    Write-ScriptMsg "Once Webadmin enabled, go to http://$($Global.InternalIP):$($server.WebAdminPort) to administer this server."
+    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.QueryPort), 20560, 123 in UDP and $($Server.WebAdminPort) in TCP to $($Global.InternalIP)"
+    Write-ScriptMsg "Once Webadmin enabled, go to http://$($Global.InternalIP):$($Server.WebAdminPort) to administer this server."
 
 }
 

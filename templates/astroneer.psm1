@@ -39,7 +39,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\Astroneer\Astro\Saved\Config\WindowsServer"
+    ConfigFolder = ".\servers\$Name\Astro\Saved\Config\WindowsServer"
 
     #Steam Server App Id
     AppID = 728470

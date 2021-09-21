@@ -8,6 +8,9 @@ $GlobalDetails = @{
     #SteamCMD
     SteamCMD = ".\tools\SteamCMD\steamcmd.exe"
 
+    #Java Directory
+    JavaDirectory =".\tools\java"
+
     #Path of the logs folder.
     LogFolder = ".\logs"
 

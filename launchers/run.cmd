@@ -1,2 +1,2 @@
 cd ..
-start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "stationeers"
+start powershell.exe -noprofile -executionpolicy bypass -file ".\main.ps1" -ServerCfg "paperclip"

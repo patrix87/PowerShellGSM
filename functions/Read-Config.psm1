@@ -10,6 +10,7 @@ function Read-Config {
 	$Global.SevenZip = (Resolve-CompletePath -Path $Global.SevenZip -ParentPath ".\tools\")
 	$Global.Mcrcon = (Resolve-CompletePath -Path $Global.Mcrcon -ParentPath ".\tools\")
 	$Global.SteamCMD = (Resolve-CompletePath -Path $Global.SteamCMD -ParentPath ".\tools\")
+	$Global.JavaDirectory = (Resolve-CompletePath -Path $Global.JavaDirectory -ParentPath ".\tools\")
 	$Global.LogFolder = (Resolve-CompletePath -Path $Global.LogFolder -ParentPath ".\")
 
     #Create Arguments

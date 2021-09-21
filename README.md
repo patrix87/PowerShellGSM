@@ -1,6 +1,5 @@
-# Powershell SteamCMD Server Manager
-
-Powershell script to automatically manage most SteamCMD servers
+# PowerShellGSM - PowerShell Game Server Manager
+A Modulare Powershell Shell tool to manage game servers.
 
 This powershell script will install, backup, update and reboot your server when executed.
 
@@ -29,6 +28,25 @@ A windows machine with at least Powershell 5.1 installed (Windows 10 or Windows 
 Some basic powershell knowledge.
 
 Some networking basics to configure port forwarding.
+
+# Supported Games
+
+- 7 Days to Die
+- Astroneer
+- Insurgency Sandstorm
+- Killing Floor 2
+- Left 4 Dead 2
+- Mordhau
+- Minecraft (Paperclip)
+- PixArk
+- Project Zomboid
+- Rust
+- Squad
+- Starbound
+- Stationeers
+- Terraria
+- The Forest
+- Valheim
 
 # Disclaimer
 

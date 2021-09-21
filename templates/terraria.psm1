@@ -1,12 +1,9 @@
 <#
-Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
+    ".\servers\$Name\serverconfig.txt"
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "Rust"
-
-#Identity of the server
-$Identity = "RustServer01"
+$Name = "Terraria"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -15,79 +12,44 @@ $Identity = "RustServer01"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Rust_1"
+    UID = "Terraria_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server
-    Hostname = "My Rust Server"
+    # Specifies the configuration file to use *(relative the the game)
+    ConfigFile = "serverconfig.txt"
 
-    #Identity of the server
-    Identity = $Identity
+    # Specifies the port to listen on.
+    Port = 7777
 
-    #Description of the server \n for new line
-    Description = "Welcome to my server"
+    # Sets the max number of players
+    MaxPlayers = 8
 
-    #URL of the website of the server
-    Website = "https://example.com/"
+    # Sets the server password
+    Password = "CHANGEME"
 
-    #URL of the banner of the server (500 x 256 png or jpg)
-    Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+    #Choose the world to load. Do not try to save it somewhere else, it won't work.
+    World = "$Env:userprofile\Documents\My Games\Terraria\Worlds\ServerWorld.wld"
 
-    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
-    Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+    #Should match the above world.
+    WorldName = "ServerWorld"
 
-    #Max number of Players
-    MaxPlayers = 50
+    #Specifies the world seed when using -autocreate
+    Seed = "1234"
 
-    #Server Port
-    Port = 28015
-
-    #World Name
-    worldName = "Procedural Map"
-
-    #World Size
-    worldSize = 4000
-
-    #World Seed
-    Seed = 1234
-
-    #PVE mode ("True" = PVE | "False" = PVP)
-    PVE = "False"
-
-    #Save Interval
-    saveInterval = 300
-
-    #Save Interval, Max 30, recommended 10
-    TickRate = 10
-
-    #Decay Scale (1 = normal | 0 = off)
-    DecayScale = 1
-
-    #Enable or disable instant crafting ("True" = instant crafting enabled | "False" = instant crafting disabled)
-    InstantCraft = "False"
-
-    #SteamID64 of the Steam Group associated with the server to whitelist only that group.
-    SteamGroup = ""
-
-    #Enable Easy Anti-Cheat (1 = enabled | 0 = disabled)
-    EAC = 1
-
-    #Enable Valve Anti Cheat security ("True" = enabled | "False" = disabled)
-    VAC = "True"
-
-    #rcon version (0 = Source RCON | 1 = websocket)
-    rconVersion = 0
+    #Creates a world if none is found in the path specified by World.
+    #World size is specified by: 1(small), 2(medium), and 3(large).
+    AutoCreate = 2
 
     #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = 28016
+    ManagementPort = ""
 
     #Rcon Password
-    ManagementPassword = "CHANGEME"
+    ManagementPassword = ""
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -100,10 +62,13 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\server\$Identity\cfg\"
+    ConfigFolder = ".\servers\$Name"
 
-    #Steam Server App Id
-    AppID = 258550
+    #Server Version
+    Version = "1423"
+
+    #Steam Server App Id *0 Skip SteamCMD Installation
+    AppID = 0
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -115,13 +80,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "RustDedicated"
+    ProcessName = "TerrariaServer"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\RustDedicated.exe"
+    Exec = ".\servers\$Name\TerrariaServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -153,7 +118,7 @@ $ServerDetails = @{
     Validate = $true
 
     #How long should it wait to check if the server is stable
-    StartupWaitTime = 0
+    StartupWaitTime = 10
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -176,7 +141,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\server\$($Server.Identity)"
+    Saves = "$Env:userprofile\Documents\My Games\Terraria\Worlds"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -187,7 +152,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -205,13 +170,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "server.save"
+    CmdSave = "saveworld"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "server.stop"
+    CmdStop = "shutdown"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -222,34 +187,17 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "-batchmode ",
-    "-nographics ",
-    "+server.ip $($Global.InternalIP) ",
-    "+server.port $($Server.Port) ",
-    "+server.hostname `"$($Server.Hostname)`" ",
-    "+server.identity `"$($Server.Identity)`" ",
-    "+server.description `"$($Server.Description)`" ",
-    "+server.url `"$($Server.Website)`" ",
-    "+server.headerimage `"$($Server.Banner)`" ",
-    "+server.logoimage `"$($Server.Logo)`" ",
-    "+server.maxplayers $($Server.MaxPlayers) ",
-    "+server.level `"$($Server.worldName)`" ",
-    "+server.worldsize $($Server.worldSize) ",
-    "+server.seed $($Server.Seed) ",
-    "+server.pve $($Server.PVE) ",
-    "+decay.scale $($Server.DecayScale) ",
-    "+craft.instant $($Server.InstantCraft) ",
-    "+server.steamgroup $($Server.SteamGroup) ",
-    "+server.tickrate $($Server.TickRate) ",
-    "+server.saveinterval $($Server.saveInterval) ",
-    "+server.eac $($Server.EAC) ",
-    "+server.secure $($Server.VAC) ",
-    "+app.port $($Server.Port + 69) ",
-    "+rcon.ip $($Server.ManagementIP) ",
-    "+rcon.port $($Server.ManagementPort) ",
-    "+rcon.password `"$($Server.ManagementPassword)`" ",
-    "+rcon.web $($Server.rconVersion) ",
-    "-logfile $($Server.Identity).txt "
+    "-config `"$($Server.ConfigFile)`" ",
+    "-port $($Server.Port) ",
+    "-maxplayers $($Server.MaxPlayers) ",
+    "-password `"$($Server.Password)`" ",
+    "-world `"$($Server.World)`" ",
+    "-worldname `"$($Server.WorldName)`" ",
+    "-seed `"$($Server.Seed)`" ",
+    "-autocreate $($Server.AutoCreate) ",
+    "-secure ",
+    "-noupnp ",
+    "-steam "
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
@@ -260,9 +208,35 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-
-    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
-
+    #If server is not installed, install it.
+    $Version = Get-Content -Path ".\servers\$($Server.Name)\Version.txt" -ErrorAction SilentlyContinue
+    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($Version -ne $Server.Version)) {
+        Write-ScriptMsg "Installing Server..."
+        #Create Temporary Download Folder
+        New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
+        #Download Microsoft XNA Framework
+        Invoke-Download -Uri "https://download.microsoft.com/download/5/3/A/53A804C8-EC78-43CD-A0F0-2FB4D45603D3/xnafx40_redist.msi" -OutFile ".\downloads\xna.msi" -ErrorAction SilentlyContinue
+        #Install Microsoft XNA
+        $Package = Resolve-Path -Path ".\downloads\xna.msi"
+        Start-Process -FilePath msiexec.exe -ArgumentList "/qn /i $Package" -Verb "RunAs" -Wait
+        #Download Server Zip
+        Invoke-Download -Uri "https://terraria.org/api/download/pc-dedicated-server/terraria-server-$($Server.Version).zip" -OutFile ".\downloads\terraria.zip" -ErrorAction SilentlyContinue
+        #Extract Server to Temporary Folder
+        Expand-Archive -Path ".\downloads\terraria.zip" -DestinationPath ".\downloads\terraria\" -Force
+        #Copy Server Files to Server Directory
+        Copy-Item -Path ".\downloads\terraria\$($Server.Version)\Windows\TerrariaServer.exe" -Destination $Server.Path -Force
+        Copy-Item -Path ".\downloads\terraria\$($Server.Version)\Windows\ReLogic.Native.dll" -Destination $Server.Path -Force
+        if (-not (Test-Path -Path $Server.ConfigFile -PathType "leaf" -ErrorAction SilentlyContinue)) {
+            Copy-Item -Path ".\downloads\terraria\$($Server.Version)\Windows\serverconfig.txt" -Destination $Server.Path
+        }
+        #Cleanup
+        Remove-Item -Path ".\downloads" -Recurse -Force -ErrorAction SilentlyContinue
+        #Remove old version file
+        Remove-Item -Path ".\servers\$($Server.Name)\Version.txt" -Confirm:$false -ErrorAction SilentlyContinue
+        #Write new Version File
+        New-Item -Path ".\servers\$($Server.Name)\" -Name "Version.txt" -ItemType "file" -Value "$($Server.Version)" -Force -ErrorAction SilentlyContinue
+    }
+    Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

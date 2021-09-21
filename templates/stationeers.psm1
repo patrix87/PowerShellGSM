@@ -1,12 +1,10 @@
 <#
-Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
+    Not tested but should work.
+    Edit .\servers\$Name\default.ini to configure this server
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "Rust"
-
-#Identity of the server
-$Identity = "RustServer01"
+$Name = "Stationeers"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -15,79 +13,55 @@ $Identity = "RustServer01"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Rust_1"
+    UID = "Stationeers_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server
-    Hostname = "My Rust Server"
+    #Server Name
+    SessionName = "My Stationeers Server"
 
-    #Identity of the server
-    Identity = $Identity
+    #Auto Save Interval in seconds
+    AutoSaveInterval = 300
 
-    #Description of the server \n for new line
-    Description = "Welcome to my server"
+    #Server Owner SteamID64 https://steamid.io/
+    Creator = 76561197993918508
 
-    #URL of the website of the server
-    Website = "https://example.com/"
+    #World Type
+    WorldType = "Mars"
 
-    #URL of the banner of the server (500 x 256 png or jpg)
-    Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+    #World Name *(Save name)
+    WorldName = "Mars1"
 
-    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
-    Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+    #World that will be loaded
+    LoadWorld = "MyWorld"
 
-    #Max number of Players
-    MaxPlayers = 50
+    #Game Port
+    Port = 27500
 
-    #Server Port
-    Port = 28015
+    #Steam Query Port
+    QueryPort = 27015
 
-    #World Name
-    worldName = "Procedural Map"
+    #Server Password
+    Password = "Changeme"
 
-    #World Size
-    worldSize = 4000
+    #Max Players
+    MaxPlayers = 16
 
-    #World Seed
-    Seed = 1234
+    #Clear All Interval (Will delete disconnected players)
+    ClearAllInterval = 0
 
-    #PVE mode ("True" = PVE | "False" = PVP)
-    PVE = "False"
-
-    #Save Interval
-    saveInterval = 300
-
-    #Save Interval, Max 30, recommended 10
-    TickRate = 10
-
-    #Decay Scale (1 = normal | 0 = off)
-    DecayScale = 1
-
-    #Enable or disable instant crafting ("True" = instant crafting enabled | "False" = instant crafting disabled)
-    InstantCraft = "False"
-
-    #SteamID64 of the Steam Group associated with the server to whitelist only that group.
-    SteamGroup = ""
-
-    #Enable Easy Anti-Cheat (1 = enabled | 0 = disabled)
-    EAC = 1
-
-    #Enable Valve Anti Cheat security ("True" = enabled | "False" = disabled)
-    VAC = "True"
-
-    #rcon version (0 = Source RCON | 1 = websocket)
-    rconVersion = 0
+    #Mod Folder Path
+    ModPath = ".\servers\$Name\mods"
 
     #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = 28016
+    ManagementPort = 27500
 
     #Rcon Password
-    ManagementPassword = "CHANGEME"
+    ManagementPassword = "stationeers"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -100,10 +74,10 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\server\$Identity\cfg\"
+    ConfigFolder = ".\servers\$Name"
 
     #Steam Server App Id
-    AppID = 258550
+    AppID = 600760
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -115,13 +89,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "RustDedicated"
+    ProcessName = "rocketstation_DedicatedServer"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\RustDedicated.exe"
+    Exec = ".\servers\$Name\rocketstation_DedicatedServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -153,7 +127,7 @@ $ServerDetails = @{
     Validate = $true
 
     #How long should it wait to check if the server is stable
-    StartupWaitTime = 0
+    StartupWaitTime = 10
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -176,7 +150,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\server\$($Server.Identity)"
+    Saves = ".\servers\$($Server.Name)\saves"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -187,7 +161,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false #Not quite supported.
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -202,16 +176,16 @@ $WarningsDetails = @{
     MessageSec = "The server will restart in % seconds !"
 
     #command to send a message.
-    CmdMessage = "say"
+    CmdMessage = "notice"
 
     #command to save the server
-    CmdSave = "server.save"
+    CmdSave = "save $($Server.WorldName)"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "server.stop"
+    CmdStop = "shutdown"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -220,36 +194,32 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
+#Address parsing
+if ($Server.ModPath -ne ""){
+    $Server.ModPath = (Resolve-CompletePath -Path $Server.ModPath -ParentPath ".\servers\")
+}
+$LogFilePath = (Resolve-CompletePath -Path "$($Server.Path)\$($Server.UID).txt" -ParentPath ".\servers\")
+Add-Member -InputObject $Server -Name "LogFile" -Type NoteProperty -Value $LogFilePath
+
 #Launch Arguments
 $ArgumentList = @(
     "-batchmode ",
     "-nographics ",
-    "+server.ip $($Global.InternalIP) ",
-    "+server.port $($Server.Port) ",
-    "+server.hostname `"$($Server.Hostname)`" ",
-    "+server.identity `"$($Server.Identity)`" ",
-    "+server.description `"$($Server.Description)`" ",
-    "+server.url `"$($Server.Website)`" ",
-    "+server.headerimage `"$($Server.Banner)`" ",
-    "+server.logoimage `"$($Server.Logo)`" ",
-    "+server.maxplayers $($Server.MaxPlayers) ",
-    "+server.level `"$($Server.worldName)`" ",
-    "+server.worldsize $($Server.worldSize) ",
-    "+server.seed $($Server.Seed) ",
-    "+server.pve $($Server.PVE) ",
-    "+decay.scale $($Server.DecayScale) ",
-    "+craft.instant $($Server.InstantCraft) ",
-    "+server.steamgroup $($Server.SteamGroup) ",
-    "+server.tickrate $($Server.TickRate) ",
-    "+server.saveinterval $($Server.saveInterval) ",
-    "+server.eac $($Server.EAC) ",
-    "+server.secure $($Server.VAC) ",
-    "+app.port $($Server.Port + 69) ",
-    "+rcon.ip $($Server.ManagementIP) ",
-    "+rcon.port $($Server.ManagementPort) ",
-    "+rcon.password `"$($Server.ManagementPassword)`" ",
-    "+rcon.web $($Server.rconVersion) ",
-    "-logfile $($Server.Identity).txt "
+    "-autostart ",
+    "-logfile=$($Server.LogFile) ",
+    "-servername=$($Server.SessionName) ",
+    "-autosaveinterval=$($Server.AutoSaveInterval) ",
+    "-creator=$($Server.Creator) ",
+    "-worldtype=$($Server.WorldType) ",
+    "-worldname=$($Server.WorldName) ",
+    "-loadworld=$($Server.LoadWorld) ",
+    "-gameport=$($Server.Port) ",
+    "-updateport=$($Server.QueryPort) ",
+    "-password=$($Server.Password) ",
+    "-maxplayer=$($Server.MaxPlayers) ",
+    "-clearallinterval=$($Server.ClearAllInterval) ",
+    "-modpath=$($Server.ModPath) ",
+    "-bindip=$($Global.InternalIP)"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
@@ -261,7 +231,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

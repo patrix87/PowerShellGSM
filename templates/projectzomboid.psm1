@@ -40,7 +40,10 @@ $Name = "ProjectZomboid"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 4
+    UID = "ProjectZomboid_1"
+
+    #Login username used by SteamCMD
+    Login = "anonymous"
 
     #Rcon IP, usually localhost
     ManagementIP = "127.0.0.1"
@@ -61,11 +64,11 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server configuration folder
+    ConfigFolder = "$Env:userprofile\Zomboid\Server\"
+
     #Steam Server App Id
     AppID = 380870
-
-    #Use Beta builds $true or $false
-    Beta = $false
 
     #Name of the Beta Build
     BetaBuild = "iwillbackupmysave"
@@ -73,10 +76,16 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = "iaccepttheconsequences"
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "java"
 
-    #ProjectZomboid64.exe
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
+    #Server Executable
     Exec = ".\servers\$Name\ProjectZomboid64.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
@@ -189,7 +198,7 @@ $PZ_CLASSPATH_LIST = @(
 
 $PZ_CLASSPATH = $PZ_CLASSPATH_LIST -join ""
 #Launch Arguments
-$Arguments = @(
+$ArgumentList = @(
     "-Dzomboid.steam=1 ",
     "-Dzomboid.znetlog=1 ",
     "-XX:+UseConcMarkSweepGC ",
@@ -200,24 +209,9 @@ $Arguments = @(
     "-Djava.library.path=natives/;. ",
     "-cp $PZ_CLASSPATH zombie.network.GameServer"
 )
-
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Path)\jre64\bin\java.exe"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.

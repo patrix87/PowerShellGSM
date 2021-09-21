@@ -1,12 +1,11 @@
 <#
-Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
+    Edit your configuration in .\servers\Astroneer\Astro\Saved\Config\WindowsServer
+
+    https://blog.astroneer.space/p/astroneer-dedicated-server-details/
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "Rust"
-
-#Identity of the server
-$Identity = "RustServer01"
+$Name = "Astroneer"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -15,79 +14,19 @@ $Identity = "RustServer01"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Rust_1"
+    UID = "Astroneer_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server
-    Hostname = "My Rust Server"
-
-    #Identity of the server
-    Identity = $Identity
-
-    #Description of the server \n for new line
-    Description = "Welcome to my server"
-
-    #URL of the website of the server
-    Website = "https://example.com/"
-
-    #URL of the banner of the server (500 x 256 png or jpg)
-    Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-
-    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
-    Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-
-    #Max number of Players
-    MaxPlayers = 50
-
-    #Server Port
-    Port = 28015
-
-    #World Name
-    worldName = "Procedural Map"
-
-    #World Size
-    worldSize = 4000
-
-    #World Seed
-    Seed = 1234
-
-    #PVE mode ("True" = PVE | "False" = PVP)
-    PVE = "False"
-
-    #Save Interval
-    saveInterval = 300
-
-    #Save Interval, Max 30, recommended 10
-    TickRate = 10
-
-    #Decay Scale (1 = normal | 0 = off)
-    DecayScale = 1
-
-    #Enable or disable instant crafting ("True" = instant crafting enabled | "False" = instant crafting disabled)
-    InstantCraft = "False"
-
-    #SteamID64 of the Steam Group associated with the server to whitelist only that group.
-    SteamGroup = ""
-
-    #Enable Easy Anti-Cheat (1 = enabled | 0 = disabled)
-    EAC = 1
-
-    #Enable Valve Anti Cheat security ("True" = enabled | "False" = disabled)
-    VAC = "True"
-
-    #rcon version (0 = Source RCON | 1 = websocket)
-    rconVersion = 0
-
-    #Rcon IP
+    #Rcon IP (not supported by astroneer yet.)
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = 28016
+    ManagementPort = ""
 
     #Rcon Password
-    ManagementPassword = "CHANGEME"
+    ManagementPassword = ""
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -100,10 +39,10 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\server\$Identity\cfg\"
+    ConfigFolder = ".\servers\Astroneer\Astro\Saved\Config\WindowsServer"
 
     #Steam Server App Id
-    AppID = 258550
+    AppID = 728470
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -115,19 +54,19 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "RustDedicated"
+    ProcessName = "AstroServer-Win64-Shipping"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
-    UsePID = $true
+    UsePID = $false
 
     #Server Executable
-    Exec = ".\servers\$Name\RustDedicated.exe"
+    Exec = ".\servers\$Name\AstroServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
 
     #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
-    UsePriority = $true
+    UsePriority = $false
     AppPriority = "High"
 
     <#
@@ -153,7 +92,7 @@ $ServerDetails = @{
     Validate = $true
 
     #How long should it wait to check if the server is stable
-    StartupWaitTime = 0
+    StartupWaitTime = 10
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -176,7 +115,8 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\server\$($Server.Identity)"
+    Saves = ".\servers\$($Server.Name)\Astro\Saved"
+
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -187,7 +127,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
-    Use = $true
+    Use = $false
 
     #What protocol to use : Rcon, Telnet, Websocket
     Protocol = "Rcon"
@@ -205,13 +145,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "server.save"
+    CmdSave = "saveworld"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "server.stop"
+    CmdStop = "shutdown"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -221,36 +161,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$ArgumentList = @(
-    "-batchmode ",
-    "-nographics ",
-    "+server.ip $($Global.InternalIP) ",
-    "+server.port $($Server.Port) ",
-    "+server.hostname `"$($Server.Hostname)`" ",
-    "+server.identity `"$($Server.Identity)`" ",
-    "+server.description `"$($Server.Description)`" ",
-    "+server.url `"$($Server.Website)`" ",
-    "+server.headerimage `"$($Server.Banner)`" ",
-    "+server.logoimage `"$($Server.Logo)`" ",
-    "+server.maxplayers $($Server.MaxPlayers) ",
-    "+server.level `"$($Server.worldName)`" ",
-    "+server.worldsize $($Server.worldSize) ",
-    "+server.seed $($Server.Seed) ",
-    "+server.pve $($Server.PVE) ",
-    "+decay.scale $($Server.DecayScale) ",
-    "+craft.instant $($Server.InstantCraft) ",
-    "+server.steamgroup $($Server.SteamGroup) ",
-    "+server.tickrate $($Server.TickRate) ",
-    "+server.saveinterval $($Server.saveInterval) ",
-    "+server.eac $($Server.EAC) ",
-    "+server.secure $($Server.VAC) ",
-    "+app.port $($Server.Port + 69) ",
-    "+rcon.ip $($Server.ManagementIP) ",
-    "+rcon.port $($Server.ManagementPort) ",
-    "+rcon.password `"$($Server.ManagementPassword)`" ",
-    "+rcon.web $($Server.rconVersion) ",
-    "-logfile $($Server.Identity).txt "
-)
+$ArgumentList = @()
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
 Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
@@ -261,8 +172,15 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
-
+    Write-ScriptMsg "`nPort Forward : 8777 in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "`nAdd the following lines to engine.ini `n`n[URL]`nPort=8777"
+    Write-ScriptMsg "`nIn AstroServerSettings.ini change the following lines`n`
+    `nPublicIP=$($Global.ExternalIP)`
+    `nServerName=Your server Name`
+    `nOwnerName=Your Steam Username`
+    `nOwnerGuid=Your SteamID 64`
+    `nServerPassword=CHANGEME`
+    `nConsolePassword=CHANGEMETOO`n"
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

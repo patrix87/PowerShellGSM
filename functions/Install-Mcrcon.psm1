@@ -8,7 +8,7 @@ function Install-Mcrcon {
     #Create Install Directory.
     New-Item -Path (Split-Path -Path $Application) -ItemType "directory"
     #Download zip file.
-    Invoke-WebRequest -Uri "https://github.com/Tiiffi/mcrcon/releases/download/v0.7.1/mcrcon-0.7.1-windows-x86-32.zip" -OutFile ".\downloads\mcrcon.zip" -ErrorAction SilentlyContinue
+    Invoke-Download -Uri "https://github.com/Tiiffi/mcrcon/releases/download/v0.7.1/mcrcon-0.7.1-windows-x86-32.zip" -OutFile ".\downloads\mcrcon.zip" -ErrorAction SilentlyContinue
     #Unzip file.
     Expand-Archive -Path ".\downloads\mcrcon.zip" -DestinationPath ".\downloads\mcrcon\" -Force
     #Copy executable to install directory.

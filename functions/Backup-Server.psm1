@@ -3,17 +3,13 @@ function Backup-Server {
     #Create backup name from date and time
     $BackupName = Get-TimeStamp
     #Check if Backups Destination directory exist and create it.
-    if (-not (Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container")){
+    if (-not (Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container" -ErrorAction SilentlyContinue)){
         New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
     }
     #Check if Backups Source directory exist and create it.
-    if (-not (Test-Path -Path $Backups.Saves -PathType "Container")){
+    if (-not (Test-Path -Path $Backups.Saves -PathType "Container" -ErrorAction SilentlyContinue)){
         New-Item -Path $Backups.Saves -ItemType "directory" -ErrorAction SilentlyContinue
     }
-    #Resolve Server Saves Path
-    $Backups.Saves = Resolve-Path -Path $Backups.Saves -ErrorAction SilentlyContinue
-    #Resolve Backup Path
-    $Backups.Path = Resolve-Path -Path $Backups.Path -ErrorAction SilentlyContinue
     #Check if it's friday (Sunday is 0)
     if ((Get-Date -UFormat %u) -eq 5){
         $Type = "Weekly"

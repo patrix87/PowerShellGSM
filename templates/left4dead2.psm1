@@ -1,12 +1,9 @@
 <#
-Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
+    Edit configuration in : .\servers\Left4Dead2\left4dead2\cfg\server.cfg
 #>
 
 #Server Name, use the same name to share game files.
-$Name = "Rust"
-
-#Identity of the server
-$Identity = "RustServer01"
+$Name = "Left4Dead2"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -15,79 +12,40 @@ $Identity = "RustServer01"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Rust_1"
+    UID = "Left4Dead2_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server
-    Hostname = "My Rust Server"
+    #Server Host Name
+    SessionName = "My Left 4 Dead 2 Server"
 
-    #Identity of the server
-    Identity = $Identity
+    #Game Port
+    Port = 27015
 
-    #Description of the server \n for new line
-    Description = "Welcome to my server"
+    #Query Port
+    QueryPort = 27005
 
-    #URL of the website of the server
-    Website = "https://example.com/"
+    #Max number of players
+    MaxPlayers = 4
 
-    #URL of the banner of the server (500 x 256 png or jpg)
-    Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+    #Server Password
+    Password = ""
 
-    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
-    Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+    #Map
+    Map = "c1m1_hotel"
 
-    #Max number of Players
-    MaxPlayers = 50
-
-    #Server Port
-    Port = 28015
-
-    #World Name
-    worldName = "Procedural Map"
-
-    #World Size
-    worldSize = 4000
-
-    #World Seed
-    Seed = 1234
-
-    #PVE mode ("True" = PVE | "False" = PVP)
-    PVE = "False"
-
-    #Save Interval
-    saveInterval = 300
-
-    #Save Interval, Max 30, recommended 10
-    TickRate = 10
-
-    #Decay Scale (1 = normal | 0 = off)
-    DecayScale = 1
-
-    #Enable or disable instant crafting ("True" = instant crafting enabled | "False" = instant crafting disabled)
-    InstantCraft = "False"
-
-    #SteamID64 of the Steam Group associated with the server to whitelist only that group.
-    SteamGroup = ""
-
-    #Enable Easy Anti-Cheat (1 = enabled | 0 = disabled)
-    EAC = 1
-
-    #Enable Valve Anti Cheat security ("True" = enabled | "False" = disabled)
-    VAC = "True"
-
-    #rcon version (0 = Source RCON | 1 = websocket)
-    rconVersion = 0
+    #Configuration File
+    ConfigFile = "server.cfg"
 
     #Rcon IP
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = 28016
+    ManagementPort = "9000"
 
     #Rcon Password
-    ManagementPassword = "CHANGEME"
+    ManagementPassword = ""
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -100,10 +58,10 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\server\$Identity\cfg\"
+    ConfigFolder = ".\servers\$Name\left4dead2\cfg\"
 
     #Steam Server App Id
-    AppID = 258550
+    AppID = 222860
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -115,13 +73,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "RustDedicated"
+    ProcessName = "srcds"
 
     #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\RustDedicated.exe"
+    Exec = ".\servers\$Name\srcds.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -150,10 +108,10 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 
     #How long should it wait to check if the server is stable
-    StartupWaitTime = 0
+    StartupWaitTime = 10
 }
 #Create the object
 $Server = New-Object -TypeName PsObject -Property $ServerDetails
@@ -176,7 +134,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\server\$($Server.Identity)"
+    Saves = ".\servers\$($Server.Name)\left4dead2\cfg"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -190,7 +148,7 @@ $WarningsDetails = @{
     Use = $true
 
     #What protocol to use : Rcon, Telnet, Websocket
-    Protocol = "Rcon"
+    Protocol = "Telnet"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
@@ -205,13 +163,13 @@ $WarningsDetails = @{
     CmdMessage = "say"
 
     #command to save the server
-    CmdSave = "server.save"
+    CmdSave = "save"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "server.stop"
+    CmdStop = "quit"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -222,34 +180,20 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "-batchmode ",
-    "-nographics ",
-    "+server.ip $($Global.InternalIP) ",
-    "+server.port $($Server.Port) ",
-    "+server.hostname `"$($Server.Hostname)`" ",
-    "+server.identity `"$($Server.Identity)`" ",
-    "+server.description `"$($Server.Description)`" ",
-    "+server.url `"$($Server.Website)`" ",
-    "+server.headerimage `"$($Server.Banner)`" ",
-    "+server.logoimage `"$($Server.Logo)`" ",
-    "+server.maxplayers $($Server.MaxPlayers) ",
-    "+server.level `"$($Server.worldName)`" ",
-    "+server.worldsize $($Server.worldSize) ",
-    "+server.seed $($Server.Seed) ",
-    "+server.pve $($Server.PVE) ",
-    "+decay.scale $($Server.DecayScale) ",
-    "+craft.instant $($Server.InstantCraft) ",
-    "+server.steamgroup $($Server.SteamGroup) ",
-    "+server.tickrate $($Server.TickRate) ",
-    "+server.saveinterval $($Server.saveInterval) ",
-    "+server.eac $($Server.EAC) ",
-    "+server.secure $($Server.VAC) ",
-    "+app.port $($Server.Port + 69) ",
-    "+rcon.ip $($Server.ManagementIP) ",
-    "+rcon.port $($Server.ManagementPort) ",
-    "+rcon.password `"$($Server.ManagementPassword)`" ",
-    "+rcon.web $($Server.rconVersion) ",
-    "-logfile $($Server.Identity).txt "
+    "-console ",
+    "-game left4dead2 ",
+    "-secure ",
+    "-nohltv ",
+    "-netconport $($Server.ManagementPort) ",
+    "-netconpassword $($Server.ManagementPassword) ",
+    "+map $($Server.Map) ",
+    "+log on ",
+    "+maxplayers $($Server.MaxPlayers) ",
+    "+hostport $($Server.Port) ",
+    "+clientport $($Server.QueryPort) ",
+    "-ip $($Global.InternalIP) ",
+    "+hostip $($Global.ExternalIP) ",
+    "+exec $($Server.ConfigFile)"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
@@ -259,9 +203,51 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 # Function that runs just before the server starts.
 #---------------------------------------------------------
 
+$FileContentList = @(
+    "hostname `"$($Server.SessionName)`"",
+    "rcon_password `"$($Server.ManagementPassword)`"",
+    "sv_password `"$($Server.Password)`"",
+    "sv_contact `"contact@example.com`"",
+    "hostport $($Server.Port)",
+    "sv_lan 0",
+    "sv_region 0",
+    "sv_allow_lobby_connect_only 0",
+    "mp_disable_autokick 1",
+    "sv_allow_wait_command 0",
+    "sv_alternateticks 0",
+    "sv_clearhinthistory 0",
+    "sv_consistency 0",
+    "sv_pausable 0",
+    "sv_forcepreload 1",
+    "sv_pure_kick_clients 0",
+    "sv_pure 0",
+    "sv_voiceenable 1",
+    "sv_alltalk 1",
+    "log on",
+    "sv_logecho 0",
+    "sv_logfile 1",
+    "sv_log_onefile 0",
+    "sv_logbans 1",
+    "sv_logflush 0",
+    "sv_logsdir logs",
+    "exec banned_user.cfg",
+    "exec banned_ip.cfg",
+    "writeip",
+    "writeid"
+)
+
+$FileContent = ($FileContentList -join "`n")
+
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.ManagementPort), $($Server.Port + 69) in TCP and UDP to $($Global.InternalIP)"
+
+    #Copy Config File if not created. Do not modify the one in the server directory, it will be overwriten on updates.
+    if (-not (Test-Path -Path ".\servers\$($Server.Name)\left4dead2\cfg\$($Server.ConfigFile)" -ErrorAction SilentlyContinue)){
+        Write-Host "Creating Config File"
+        New-Item -Path ".\servers\$($Server.Name)\left4dead2\cfg\" -Name "$($Server.ConfigFile)" -ItemType "file" -Value $FileContent
+    }
+
+    Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

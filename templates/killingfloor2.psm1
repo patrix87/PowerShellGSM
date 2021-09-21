@@ -14,7 +14,10 @@ $Name = "KillingFloor2"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 6
+    UID = "KillingFloor2_1"
+
+    #Login username used by SteamCMD
+    Login = "anonymous"
 
     #This is the admin username for WebAdmin if you're configuring WebAdmin via Commandline
     AdminName = "admin"
@@ -62,11 +65,11 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server Configuration
+    ConfigFolder = ".\servers\$Name\KFGame\Config\"
+
     #Steam Server App Id
     AppID = 232130
-
-    #Use Beta builds $true or $false
-    Beta = $false
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -74,10 +77,16 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = ""
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "KFServer"
 
-    #ProjectZomboid64.exe
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
+    #Server Executable
     Exec = ".\servers\$Name\Binaries\Win64\KFServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
@@ -133,7 +142,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name\KFGame\Config\"
+    Saves = ".\servers\$($Server.Name)\KFGame\Config\"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -178,7 +187,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$Arguments = @(
+$ArgumentList = @(
     "$($Server.Map)",
     "?Game=$($Server.GameMode)",
     "?MaxPlayers=$($Server.MaxPlayers)",
@@ -189,24 +198,9 @@ $Arguments = @(
     "-Multihome=$($Global.InternalIP) ",
     "-ConfigSubDir=KF$($Server.UID)"
 )
-
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -214,8 +208,8 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port), $($server.QueryPort), 20560, 123 in UDP and $($server.WebAdminPort) in TCP to $($Global.InternalIP)"
-    Write-ScriptMsg "Once Webadmin enabled, go to http://$($Global.InternalIP):$($server.WebAdminPort) to administer this server."
+    Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.QueryPort), 20560, 123 in UDP and $($Server.WebAdminPort) in TCP to $($Global.InternalIP)"
+    Write-ScriptMsg "Once Webadmin enabled, go to http://$($Global.InternalIP):$($Server.WebAdminPort) to administer this server."
 
 }
 

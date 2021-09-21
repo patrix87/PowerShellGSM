@@ -1,4 +1,3 @@
-
 #Server Name, use the same name to share game files.
 $Name = "Valheim"
 
@@ -9,7 +8,10 @@ $Name = "Valheim"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 5
+    UID = "Valheim_1"
+
+    #Login username used by SteamCMD
+    Login = "anonymous"
 
     #Name of the server in the Server Browser
     SessionName = "My Valheim Server"
@@ -24,7 +26,7 @@ $ServerDetails = @{
     Port = 2459
 
     #Rcon IP (not supported by valheim yet.)
-    ManagementIP = ""
+    ManagementIP = "127.0.0.1"
 
     #Rcon Port
     ManagementPort = ""
@@ -42,11 +44,11 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server configuration folder
+    ConfigFolder = "$Env:userprofile\AppData\LocalLow\IronGate\Valheim"
+
     #Steam Server App Id
     AppID = 896660
-
-    #Use Beta builds $true or $false
-    Beta = $false
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -54,10 +56,16 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = ""
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "valheim_server"
 
-    #ProjectZomboid64.exe
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
+    #Server Executable
     Exec = ".\servers\$Name\valheim_server.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
@@ -158,7 +166,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$Arguments = @(
+$ArgumentList = @(
     "-batchmode ",
     "-nographics ",
     "-name $($Server.SessionName) ",
@@ -167,24 +175,9 @@ $Arguments = @(
     "-password $($Server.Password) ",
     "-public 1"
 )
-
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -192,7 +185,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

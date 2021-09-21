@@ -13,7 +13,10 @@ $Name = "InsurgencySandstorm"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 2
+    UID = "InsurgencySandstorm_1"
+
+    #Login username used by SteamCMD
+    Login = "anonymous"
 
     #Name of the server in the Server Browser
     SessionName = "My Insurgency Server"
@@ -60,9 +63,6 @@ $ServerDetails = @{
     #Official RuleSet
     OfficialRulesSet = "OfficialRules"
 
-    #Enable Rcon $true or $false
-    EnableRcon = $true
-
     #Rcon IP, usually localhost
     ManagementIP = "127.0.0.1"
 
@@ -82,11 +82,11 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server configuration folder
+    ConfigFolder = ".\servers\$Name\Saved\Config\WindowsServer"
+
     #Steam Server App Id
     AppID = 581330
-
-    #Use Beta builds $true or $false
-    Beta = $false
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -94,10 +94,16 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = ""
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "InsurgencyServer"
 
-    #ProjectZomboid64.exe
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
+    #Server Executable
     Exec = ".\servers\$Name\InsurgencyServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
@@ -197,7 +203,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 # Launch Arguments
 #---------------------------------------------------------
 
-$Arguments = @(
+$ArgumentList = @(
     "$($Server.Map)",
     "?Scenario=$($Server.Scenario)",
     "?MaxPlayers=$($Server.MaxPlayers)",
@@ -214,32 +220,12 @@ $Arguments = @(
     "-ruleset=`"$($Server.OfficialRulesSet)`" ",
     "-CmdModList=`"$($Server.Mods)`" ",
     "-mutators=`"$($Server.Mutators)`" ",
+    "-Rcon -RconListenPort=`"$($Server.ManagementPort)`" -RconPassword=`"$($Server.ManagementPassword)`" ",
     "-log"
 )
-
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-if ($Server.EnableRcon){
-    $CleanedArguments.Add(" -Rcon")
-    $CleanedArguments.Add(" -RconPassword=`"$($Server.ManagementPassword)`"")
-    $CleanedArguments.Add(" -RconListenPort=`"$($Server.ManagementPort)`"")
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -247,7 +233,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port) and $($server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

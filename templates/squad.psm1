@@ -11,7 +11,10 @@ $Name = "Squad"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = 1
+    UID = "Squad_1"
+
+    #Login username used by SteamCMD
+    Login = "anonymous"
 
     #Randomize First Map NONE OR ALWAYS
     RandomMap = "ALWAYS"
@@ -44,11 +47,11 @@ $ServerDetails = @{
     #Server Installation Path
     Path = ".\servers\$Name"
 
+    #Server configuration folder
+    ConfigFolder = 
+
     #Steam Server App Id
     AppID = 403240
-
-    #Use Beta builds $true or $false
-    Beta = $false
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -56,10 +59,16 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = ""
 
+    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    AutoUpdates = $true
+
     #Process name in the task manager
     ProcessName = "SquadGameServer"
 
-    #ProjectZomboid64.exe
+    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    UsePID = $true
+
+    #Server Executable
     Exec = ".\servers\$Name\SquadGameServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
@@ -115,7 +124,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$Name\SquadGame\ServerConfig\"
+    Saves = ".\servers\$($Server.Name)\SquadGame\ServerConfig\"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -160,7 +169,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #---------------------------------------------------------
 
 #Launch Arguments
-$Arguments = @(
+$ArgumentList = @(
     "Multihome=$($Global.InternalIP) ",
     "Port=$($Server.Port) ",
     "QueryPort=$($Server.QueryPort) ",
@@ -168,24 +177,9 @@ $Arguments = @(
     "RANDOM $($Server.RandomMap) ",
     "-log"
 )
-
-[System.Collections.ArrayList]$CleanedArguments=@()
-
-foreach($Argument in $Arguments){
-    if (!($Argument.EndsWith('=""') -or $Argument.EndsWith('=') -or $Argument.EndsWith('  '))){
-        $CleanedArguments.Add($Argument)
-    }
-}
-
-$ArgumentList = $CleanedArguments -join ""
-
-#Server Launcher
-$Launcher = "$(Get-Location)$($Server.Exec.substring(1))"
-$WorkingDirectory = "$(Get-Location)$($Server.Path.substring(1))"
-
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
-Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value $Launcher
-Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value $WorkingDirectory
+Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
+Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
 
 #---------------------------------------------------------
 # Function that runs just before the server starts.
@@ -193,7 +187,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Write-ScriptMsg "Port Forward : $($server.Port) in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

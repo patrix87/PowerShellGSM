@@ -59,8 +59,8 @@ You can create pull requests for changes to this project.
 
 Please follow the current structure and formating.
 
-If you want to add support for more games, copy one of the configuration files and edit the values and launch parameters. 
-You can then create a Pull Requests to include your configuration here.
+If you want to add support for more games, copy one of the configuration files and edit the values and launch parameters.
+You can then create a pull request to include your configuration here.
 
 # Disclaimer
 

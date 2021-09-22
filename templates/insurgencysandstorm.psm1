@@ -24,7 +24,7 @@ $ServerDetails = @{
     #Maximum Number of Players
     MaxPlayers = 8
 
-    #Password to join the World *NO SPACES*
+    #Password to join the server *NO SPACES*
     Password = "CHANGEME"
 
     #Server Port

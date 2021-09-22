@@ -3,3 +3,10 @@ logs/
 tools/
 servers/
 templates/references/
+!configs/
+configs/*
+!configs/README.txt
+!launchers/
+launchers/*
+!launchers/README.txt
+!launchers/run.cmd

@@ -14,7 +14,7 @@ param (
 
 # import global config, all functions. Exit if fails.
 try {
-    Import-Module -Name ".\configs\global.psm1"
+    Import-Module -Name ".\global.psm1"
     Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
 }
 catch {

@@ -169,10 +169,10 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
     "-batchmode ",
     "-nographics ",
-    "-name $($Server.SessionName) ",
+    "-name `"$($Server.SessionName)`" ",
     "-port $($Server.Port) ",
-    "-world $($Server.World) ",
-    "-password $($Server.Password) ",
+    "-world `"$($Server.World)`" ",
+    "-password `"$($Server.Password)`" ",
     "-public 1"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList

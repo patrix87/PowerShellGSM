@@ -18,48 +18,49 @@ function Update-Server {
         String Part if value is defined
     }
     #>
-    #Login String
-    $LoginString = "+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous "
-    if ($Server.Login -ne "anonymous") {
-        $LoginString = "+login $($Server.Login) "
+    [System.Collections.ArrayList]$ArgumentList=@()
+    #Login
+    if ($Server.Login -eq "anonymous") {
+        $null = $ArgumentList.Add("@ShutdownOnFailedCommand 1`n@NoPromptForPassword 1`n@sSteamCmdForcePlatformType windows`nlogin anonymous")
+    } else {
+        $null = $ArgumentList.Add("@sSteamCmdForcePlatformType windows`nlogin $($Server.Login)")
     }
-    #Validation String
-    $ValidateString = "  "
-    $ValidatingString = ""
-    if ($Server.Validate -ne $false){
-        $ValidateString = "validate "
-        $ValidatingString = "and Validating"
-    }
-    #Beta Build String
-    $BetaBuildString = "  "
+    $null = $ArgumentList.Add("force_install_dir `"$($Server.Path)`"")
+    #Install String Building
+    [System.Collections.ArrayList]$InstallList=@()
+    $null = $InstallList.Add("app_update $($Server.AppID)")
     $VersionString = "Regular"
     if ($Server.BetaBuild -ne ""){
-        $BetaBuildString = "-beta $($Server.BetaBuild) "
         $VersionString = "Beta"
+        $null = $InstallList.Add("-beta $($Server.BetaBuild)")
     }
-    #Beta Password String
-    $BetaPasswordString = "  "
     if ($Server.BetaBuildPassword -ne ""){
-        $BetaPasswordString = "-betapassword $($Server.BetaBuildPassword)"
+        $null = $InstallList.Add("-betapassword $($Server.BetaBuildPassword)")
     }
-    #Generate String
-    $ArgumentList = @(
-        "$LoginString",
-        "+force_install_dir `"$($Server.Path)`" ",
-        "+app_update $($Server.AppID)",
-        "$BetaBuildString",
-        "$BetaPasswordString",
-        " $ValidateString",
-        "+quit"
-    )
-    $Arguments = Optimize-ArgumentList -Arguments $ArgumentList
+    if ($Server.Validate){
+        $ValidatingString = "and Validating"
+        $null = $InstallList.Add("validate")
+    }
+    #join each part of the string and add it to the list
+    $null = $ArgumentList.Add($InstallList -join " ")
+    $null = $ArgumentList.Add("quit")
+    #Join each item of the list with an LF
+    $FileContent = $ArgumentList -join "`n"
+    #Define the Script file name
+    $ScriptFile = "SteamCMD_$($Server.UID).txt"
+    #Define the full path.
+    $ScriptPath = (Resolve-CompletePath -Path ".\servers\$ScriptFile" -ParentPath ".\servers\")
+    #Create the script.
+    New-Item -Path ".\servers" -Name $ScriptFile -ItemType "file" -Value $FileContent -Force
     #Run the update String
     Write-ServerMsg "$UpdateType $ValidatingString $VersionString Build."
     try {
-        $Task = Start-Process $Global.SteamCMD -ArgumentList $Arguments -Wait -PassThru -NoNewWindow
+        $Task = Start-Process $Global.SteamCMD -ArgumentList "+runscript `"$ScriptPath`"" -Wait -PassThru -NoNewWindow
     }
     catch {
         Exit-WithError -ErrorMsg "SteamCMD failed to complete."
     }
+    #Delete the script.
+    Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
 }
 Export-ModuleMember -Function Update-Server

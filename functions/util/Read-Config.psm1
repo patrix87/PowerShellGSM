@@ -15,7 +15,7 @@ function Read-Config {
 
     #Create Arguments
 	if ($Server.ArgumentList.length -gt 0) {
-		Add-Member -InputObject $Server -Name "Arguments" -Type NoteProperty -Value (Optimize-ArgumentList -Arguments $Server.ArgumentList)
+		Add-Member -InputObject $Server -Name "Arguments" -Type NoteProperty -Value ((Optimize-ArgumentList -Arguments $Server.ArgumentList) -join "")
 	}
 }
 Export-ModuleMember -Function Read-Config

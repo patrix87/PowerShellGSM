@@ -1,5 +1,5 @@
 function Optimize-ArgumentList {
-    [OutputType([string])]
+    [OutputType([System.Collections.ArrayList])]
     param (
         [Parameter(Mandatory)]
         [array] $Arguments
@@ -13,7 +13,7 @@ function Optimize-ArgumentList {
             $null = $CleanedArguments.Add($Argument)
         }
     }
-    return ($CleanedArguments -join "")
+    return $CleanedArguments
 }
 
 Export-ModuleMember -Function Optimize-ArgumentList

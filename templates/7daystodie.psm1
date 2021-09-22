@@ -47,7 +47,7 @@ $ServerDetails = @{
 
     #Steam Server App Id
     AppID = 294420
-    
+
     #Name of the Beta Build
     BetaBuild = ""
 

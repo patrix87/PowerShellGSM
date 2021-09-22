@@ -50,7 +50,7 @@ $ServerDetails = @{
     BetaBuildPassword = ""
 
     #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
-    AutoUpdates = $false
+    AutoUpdates = $true
 
     #Process name in the task manager
     ProcessName = "starbound_server"

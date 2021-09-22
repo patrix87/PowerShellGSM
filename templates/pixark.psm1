@@ -47,17 +47,17 @@ $ServerDetails = @{
     #Password to join the server *NO SPACES*
     Password = "CHANGEME"
 
-    #Server Port
-    Port = 7797
-
     #World Seed
     Seed = 32399
 
+    #Server Port
+    Port = 27515
+
     #Query Port
-    QueryPort = 27515
+    QueryPort = 27516
 
     #Cube Port
-    CubePort = 27518
+    CubePort = 27517
 
     #World Name *NO SPACES*
     WorldName = "World"

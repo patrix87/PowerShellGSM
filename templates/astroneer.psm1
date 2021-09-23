@@ -172,6 +172,8 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "[/Script/Astro.AstroServerSettings]" -key "PublicIP" -value $Global.ExternalIP
+
     Write-ScriptMsg "`nPort Forward : 8777 in TCP and UDP to $($Global.InternalIP)"
     Write-ScriptMsg "`nAdd the following lines to engine.ini `n`n[URL]`nPort=8777"
     Write-ScriptMsg "`nIn AstroServerSettings.ini change the following lines`n`

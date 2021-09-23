@@ -32,10 +32,10 @@ $ServerDetails = @{
     #URL of the website of the server
     Website = "https://example.com/"
 
-    #URL of the banner of the server (500 x 256 png or jpg)
+    #URL of the banner of the server (1024 x 512 png or jpg)
     Banner = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
 
-    #URL of the logo image shown in the Rust+ App (128 x 128 png or jpg)
+    #URL of the logo image shown in the Rust+ App (256 x 256 png or jpg)
     Logo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
 
     #Max number of Players

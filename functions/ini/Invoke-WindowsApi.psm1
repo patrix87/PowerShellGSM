@@ -64,7 +64,7 @@ function Invoke-WindowsApi {
     }
 
     ## Define the actual P/Invoke method, adding the [Out]
-    ## attribute for any parameters that were originally [Ref] 
+    ## attribute for any parameters that were originally [Ref]
     ## parameters.
     $method = $type.DefineMethod($methodName, 'Public,HideBySig,Static,PinvokeImpl', $returnType, $parameterTypes)
     foreach($refParameter in $refParameters){

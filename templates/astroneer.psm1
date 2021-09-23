@@ -19,14 +19,41 @@ $ServerDetails = @{
     #Login username used by SteamCMD
     Login = "anonymous"
 
+    #Server Name
+    SessionName = "My Astroneer Server"
+
+    #Server Owner Username
+    OwnerName = "user"
+
+    #Server Password
+    Password = "CHANGEME"
+
+    #Game Port
+    Port = 7777
+
+    #Auto Save Interval in Seconds
+    AutoSaveGameInterval = 300
+
+    #Save Backups Interval in Seconds
+    BackupSaveGamesInterval = 7200
+
+    #Server Max Framerate
+    MaxServerFramerate = 120
+
+    #Server Max Framerate when empty
+    MaxServerIdleFramerate = 3
+
+    #Inactive Player Timeout
+    PlayerActivityTimeout = 0
+
     #Rcon IP (not supported by astroneer yet.)
     ManagementIP = "127.0.0.1"
 
     #Rcon Port
-    ManagementPort = ""
+    ManagementPort = 7778
 
     #Rcon Password
-    ManagementPassword = ""
+    ManagementPassword = "CHANGEMETOO"
 
 #---------------------------------------------------------
 # Server Installation Details
@@ -126,6 +153,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 #---------------------------------------------------------
 
 $WarningsDetails = @{
+    #I can't get that to work correctly...
     #Use Rcon to restart server softly.
     Use = $false
 
@@ -133,25 +161,25 @@ $WarningsDetails = @{
     Protocol = "Rcon"
 
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
-    Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
+    Timers = [System.Collections.ArrayList]@(15) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
 
     #message that will be sent. % is a wildcard for the timer.
-    MessageMin = "The server will restart in % minutes !"
+    MessageMin = " "
 
     #message that will be sent. % is a wildcard for the timer.
-    MessageSec = "The server will restart in % seconds !"
+    MessageSec = " "
 
     #command to send a message.
-    CmdMessage = "say"
+    CmdMessage = "DSListPlayers"
 
     #command to save the server
-    CmdSave = "saveworld"
+    CmdSave = "DSSaveGame"
 
     #How long to wait in seconds after the save command is sent.
     SaveDelay = 15
 
     #command to stop the server
-    CmdStop = "shutdown"
+    CmdStop = "DSServerShutdown"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -172,17 +200,21 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "[/Script/Astro.AstroServerSettings]" -key "PublicIP" -value $Global.ExternalIP
+    Set-IniValue -file "$($Server.ConfigFolder)\Engine.ini" -category "URL" -key "Port" -value $Server.Port
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "PublicIP" -value $Global.ExternalIP
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "ServerName" -value $Server.SessionName
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "OwnerName" -value $Server.OwnerName
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "ServerPassword" -value $Server.Password
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "AutoSaveGameInterval" -value $Server.AutoSaveGameInterval
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "BackupSaveGamesInterval" -value $Server.BackupSaveGamesInterval
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "MaxServerFramerate" -value $Server.MaxServerFramerate
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "MaxServerIdleFramerate" -value $Server.MaxServerIdleFramerate
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "PlayerActivityTimeout" -value $Server.PlayerActivityTimeout
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "ConsolePort" -value $Server.ManagementPort
+    Set-IniValue -file "$($Server.ConfigFolder)\AstroServerSettings.ini" -category "/Script/Astro.AstroServerSettings" -key "ConsolePassword" -value $Server.ManagementPassword
 
-    Write-ScriptMsg "`nPort Forward : 8777 in TCP and UDP to $($Global.InternalIP)"
-    Write-ScriptMsg "`nAdd the following lines to engine.ini `n`n[URL]`nPort=8777"
-    Write-ScriptMsg "`nIn AstroServerSettings.ini change the following lines`n`
-    `nPublicIP=$($Global.ExternalIP)`
-    `nServerName=Your server Name`
-    `nOwnerName=Your Steam Username`
-    `nOwnerGuid=Your SteamID 64`
-    `nServerPassword=CHANGEME`
-    `nConsolePassword=CHANGEMETOO`n"
+    Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
+
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

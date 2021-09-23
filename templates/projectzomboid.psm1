@@ -76,13 +76,13 @@ $ServerDetails = @{
     #Beta Build Password
     BetaBuildPassword = "iaccepttheconsequences"
 
-    #Auto-Update Enable or Disable Auto-Updates, some games don't work well with SteamCMD
+    #Set to $true if you want this server to automatically update.
     AutoUpdates = $true
 
     #Process name in the task manager
     ProcessName = "java"
 
-    #Use PID instead of Process Name, Will still use processname if the PID fails to find anything.
+    #Use PID instead of Process Name.
     UsePID = $true
 
     #Server Executable

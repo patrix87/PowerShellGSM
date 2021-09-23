@@ -6,9 +6,8 @@ function Stop-Server {
         if ($null -ne $ServerPID) {
             $ServerProcess = Get-Process -ID $ServerPID -ErrorAction SilentlyContinue
         }
-    }
-    #If the server process is none-existent, Get the process from the server process name.
-    if ($null -eq $ServerProcess) {
+    } else {
+        # Find the process by name.
         $ServerProcess = Get-Process -Name $Server.ProcessName -ErrorAction SilentlyContinue
     }
     #Check if the process was found.
@@ -48,8 +47,10 @@ function Stop-Server {
         }
     }
     #Unregister the PID
-    if (-not $(Unregister-PID)) {
-        Write-ServerMsg "Failed to remove PID file."
+    if ($Server.UsePID) {
+        if (-not $(Unregister-PID)) {
+            Write-ServerMsg "Failed to remove PID file."
+        }
     }
 }
 Export-ModuleMember -Function Stop-Server

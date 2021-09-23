@@ -9,3 +9,4 @@ configs/*
 launchers/*
 !launchers/#README.txt
 !launchers/run.cmd
+!launchers/start_all.cmd

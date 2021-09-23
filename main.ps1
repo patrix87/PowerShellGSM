@@ -137,9 +137,12 @@ Start-Server
 #---------------------------------------------------------
 
 if ($FreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Container" -ErrorAction SilentlyContinue)) {
-    & explorer.exe $Server.ConfigFolder
+    Write-Warning -Message "Stopping the Server to let you edit the configurations files."
     #Stop Server because configuration is probably bad anyway
     Stop-Server
+    & explorer.exe $Server.ConfigFolder
+    Write-Warning -Message "Launch again when the server configurations files are edited."
+    Read-Host "Press Enter to close this windows."
 }
 
 #---------------------------------------------------------

@@ -28,6 +28,9 @@ $GlobalDetails = @{
 
     #Console Output Background Color for sections
     SectionBgColor = "Black"
+
+    #Pause on errors
+    PauseOnErrors = $false
 }
 
 #Create the object

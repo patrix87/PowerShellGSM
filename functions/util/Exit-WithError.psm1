@@ -8,7 +8,9 @@ function Exit-WithError
     #Write error in red on black, stop logging, pause, exit.
     Write-Host -ForegroundColor "Red" -BackgroundColor "Black" -Object $ErrorMsg
     Stop-Transcript
-    Read-Host
+    if ($Global.PauseOnErrors){
+        Read-Host "Press Enter to close this window."
+    }
     exit
 }
 

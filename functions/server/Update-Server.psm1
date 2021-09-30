@@ -6,7 +6,7 @@ function Update-Server {
     )
     #Create server directory if not found.
     if (-not (Test-Path -Path $Server.Path -ErrorAction SilentlyContinue)){
-        New-Item -ItemType "directory" -Path $Server.Path -ErrorAction SilentlyContinue
+        $null = New-Item -ItemType "directory" -Path $Server.Path -ErrorAction SilentlyContinue
     }
     #Skip install if AppID is 0
     if ($Server.AppID -eq 0){
@@ -51,7 +51,7 @@ function Update-Server {
     #Define the full path.
     $ScriptPath = (Resolve-CompletePath -Path ".\servers\$ScriptFile" -ParentPath ".\servers\")
     #Create the script.
-    New-Item -Path ".\servers" -Name $ScriptFile -ItemType "file" -Value $FileContent -Force
+    $null = New-Item -Path ".\servers" -Name $ScriptFile -ItemType "file" -Value $FileContent -Force
     #Run the update String
     Write-ServerMsg "$UpdateType $ValidatingString $VersionString Build."
     try {
@@ -61,6 +61,6 @@ function Update-Server {
         Exit-WithError -ErrorMsg "SteamCMD failed to complete."
     }
     #Delete the script.
-    Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
+    $null = Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
 }
 Export-ModuleMember -Function Update-Server

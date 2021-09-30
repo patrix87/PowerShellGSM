@@ -14,8 +14,9 @@ function Start-Server {
             Exit-WithError "Server Failed to launch."
         } else {
             Write-ServerMsg "Server Started."
-            Set-Priority -ServerProcess $App
+            $null = Set-Priority -ServerProcess $App
         }
+        # TODO - Hunt for the correct process.
         if (-not (Register-PID -ServerProcess $App)){
             Write-ServerMsg "Failed to Register PID file."
         }

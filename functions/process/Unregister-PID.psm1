@@ -5,7 +5,7 @@ function Unregister-PID {
     )
     try {
         #Delete the PID file based on the Server UID.
-        Remove-Item -Path ".\servers\$($Server.UID).PID" -Confirm:$false -ErrorAction SilentlyContinue
+        $null = Remove-Item -Path ".\servers\$($Server.UID).PID" -Confirm:$false -ErrorAction SilentlyContinue
     }
     catch {
         return $false

@@ -5,7 +5,7 @@ function Send-RestartWarning {
         [Parameter(Mandatory)]
         $ServerProcess
     )
-    $Stopped = $false
+    $Stopped = 0
     $Failed = $false
     #Loop until the list of timers is empty
     while ($Warnings.Timers.Count -gt 0) {
@@ -54,7 +54,11 @@ function Send-RestartWarning {
         }
         #Send server stop command and wait for the process to exit for at most 60 seconds.
         Write-ServerMsg "Closing server."
-        $Stopped = Send-Command -Command $Warnings.CmdStop
+        if (Send-Command -Command $Warnings.CmdStop) {
+            $Stopped = 1
+        } else {
+            $Stopped = 0
+        }
         $ServerProcess.WaitForExit(30000)
         Start-Sleep -Seconds 5
     }

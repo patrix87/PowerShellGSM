@@ -6,9 +6,9 @@ function Install-SteamCMD {
     )
     Write-ServerMsg "Downloading SteamCMD."
     #Download file
-    Invoke-Download -Uri "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip" -OutFile ".\downloads\steamcmd.zip" -ErrorAction SilentlyContinue
+    $null = Invoke-Download -Uri "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip" -OutFile ".\downloads\steamcmd.zip" -ErrorAction SilentlyContinue
     #Unzip file in installation directory
-    Expand-Archive -Path ".\downloads\steamcmd.zip" -DestinationPath (Split-Path -Path $Application) -Force
+    $null = Expand-Archive -Path ".\downloads\steamcmd.zip" -DestinationPath (Split-Path -Path $Application) -Force
     Write-ServerMsg "SteamCMD Installed."
 }
 

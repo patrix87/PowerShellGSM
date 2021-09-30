@@ -19,7 +19,7 @@ function Install-Dependency {
     #If there is missing dependencies, create the download folder and for each missing dependency, run the installation script.
     if ($MissingDependencies.Count -gt 0){
         #Create Temporary Download Folder
-        New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
+        $null = New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
 
         foreach ($Item in $MissingDependencies) {
             $Cmd = "Install-$Item"
@@ -27,7 +27,7 @@ function Install-Dependency {
         }
 
         #Cleanup
-        Remove-Item -Path ".\downloads" -Recurse -Force -ErrorAction SilentlyContinue
+        $null = Remove-Item -Path ".\downloads" -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 

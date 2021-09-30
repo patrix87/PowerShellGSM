@@ -4,11 +4,11 @@ function Backup-Server {
     $BackupName = Get-TimeStamp
     #Check if Backups Destination directory exist and create it.
     if (-not (Test-Path -Path "$($Backups.Path)\$Type" -PathType "Container" -ErrorAction SilentlyContinue)){
-        New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
+        $null = New-Item -Path "$($Backups.Path)\$Type" -ItemType "directory" -ErrorAction SilentlyContinue
     }
     #Check if Backups Source directory exist and create it.
     if (-not (Test-Path -Path $Backups.Saves -PathType "Container" -ErrorAction SilentlyContinue)){
-        New-Item -Path $Backups.Saves -ItemType "directory" -ErrorAction SilentlyContinue
+        $null = New-Item -Path $Backups.Saves -ItemType "directory" -ErrorAction SilentlyContinue
     }
     #Check if it's friday (Sunday is 0)
     if ((Get-Date -UFormat %u) -eq 5){
@@ -31,7 +31,7 @@ function Backup-Server {
 
     #Delete old backups
     Write-ServerMsg "Deleting old backups."
-    Get-ChildItem -Path "$($Backups.Path)\$Type" -Recurse -Force |
+    $null = Get-ChildItem -Path "$($Backups.Path)\$Type" -Recurse -Force |
         Where-Object { -not ($_.PSIsContainer) -and $_.LastWriteTime -lt $Limit } |
         Remove-Item -Force
 }

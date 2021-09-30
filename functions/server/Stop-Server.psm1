@@ -36,13 +36,22 @@ function Stop-Server {
             }
         }
         #If the server stopped, send messages, if not check if it's normal, then stopped it, if it fails, exit with error.
-        if ($Stopped) {
-            Write-ServerMsg "Server stopped."
-        } else {
-            if ($Server.AllowForceClose) {
-                Exit-WithError "Failed to stop server."
-            } else {
-                Write-ServerMsg "Server not stopped."
+        switch ($Stopped) {
+            -1 {
+                Write-ServerMsg "Server not found. Unregistering PID"
+            }
+            0 {
+                if ($Server.AllowForceClose) {
+                    Exit-WithError "Failed to stop server."
+                } else {
+                    Write-ServerMsg "Server not stopped."
+                }
+            }
+            1 {
+                Write-ServerMsg "Server stopped."
+            }
+            Default {
+                Write-ServerMsg "Server state unknown."
             }
         }
     }

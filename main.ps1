@@ -40,7 +40,7 @@ Write-ScriptMsg "Setting Script Directory as Working Directory..."
 $scriptpath = $MyInvocation.MyCommand.Path
 $dir = Split-Path -Path $scriptpath
 $dir = Resolve-Path -Path $dir
-Set-Location -Path $dir
+$null = Set-Location -Path $dir
 Write-ScriptMsg "Working Directory : $(Get-Location)"
 
 #---------------------------------------------------------
@@ -63,7 +63,7 @@ Write-ScriptMsg "Importing Server Configuration..."
 #Check if requested config exist in the config folder, if not, copy it from the templates. Exit if fails.
 if (-not (Test-Path -Path ".\configs\$ServerCfg.psm1" -PathType "Leaf" -ErrorAction SilentlyContinue)) {
     if (Test-Path -Path ".\templates\$ServerCfg.psm1" -PathType "Leaf" -ErrorAction SilentlyContinue){
-        Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
+        $null = Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
     } else {
         Exit-WithError -ErrorMsg "Unable to find configuration file."
     }

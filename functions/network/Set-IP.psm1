@@ -12,7 +12,7 @@ function Set-IP {
     Write-ScriptMsg "Server external IP : $ExternalIP"
 
     #Add propreties to global.
-    Add-Member -InputObject $Global -Name "InternalIP" -Type NoteProperty -Value $InternalIP
-    Add-Member -InputObject $Global -Name "ExternalIP" -Type NoteProperty -Value $ExternalIP
+    $null = Add-Member -InputObject $Global -Name "InternalIP" -Type NoteProperty -Value $InternalIP
+    $null = Add-Member -InputObject $Global -Name "ExternalIP" -Type NoteProperty -Value $ExternalIP
 }
 Export-ModuleMember -Function Set-IP

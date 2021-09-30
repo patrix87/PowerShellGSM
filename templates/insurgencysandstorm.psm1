@@ -98,7 +98,7 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "InsurgencyServer"
+    ProcessName = "InsurgencyServer-Win64-Shipping"
 
     #Use PID instead of Process Name.
     UsePID = $true
@@ -133,7 +133,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 
     #How long should it wait to check if the server is stable
     StartupWaitTime = 10

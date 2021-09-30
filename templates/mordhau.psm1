@@ -73,7 +73,7 @@ $ServerDetails = @{
     ProcessName = "MordhauServer-Win64-Shipping"
 
     #Use PID instead of Process Name.
-    UsePID = $false
+    UsePID = $true
 
     #Server Executable
     Exec = ".\servers\$Name\MordhauServer.exe"

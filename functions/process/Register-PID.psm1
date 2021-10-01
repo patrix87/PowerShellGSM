@@ -1,6 +1,5 @@
 function Register-PID {
     [CmdletBinding()]
-    [OutputType([Bool])]
     param (
         [Parameter(Mandatory)]
         $ServerProcess
@@ -29,7 +28,7 @@ function Register-PID {
     }
     # Could not find the correct process
     if ($WrongProcess) {
-        return $false
+        return $null
     }
     $stopwatch.Stop()
     try {
@@ -37,8 +36,8 @@ function Register-PID {
         Write-ScriptMsg "Process Registered."
     }
     catch {
-        return $false
+        return $null
     }
-    return $true
+    return $ServerProcess
  }
 Export-ModuleMember -Function Register-PID

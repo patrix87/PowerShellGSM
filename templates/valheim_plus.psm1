@@ -1,5 +1,5 @@
 #Server Name, use the same name to share game files.
-$Name = "Valheim"
+$Name = "Valheim_plus"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -8,22 +8,25 @@ $Name = "Valheim"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Valheim_1"
+    UID = "Valheim_Plus"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
     #Name of the server in the Server Browser
-    SessionName = "My Valheim Server"
+    SessionName = "My Valheim Plus Server"
 
     #World name (It is also the seed)
-    World = "World"
+    World = "WorldPlus"
 
     #Password to join the World *NO SPACES*
-    Password = "CHANGEME"
+    Password = ""
 
     #Server Port
     Port = 2459
+
+    #Valheim Plus
+    ValheimPlusLink = "https://github.com/valheimPlus/ValheimPlus/releases/download/0.9.9/WindowsServer.zip"
 
     #Rcon IP (not supported by valheim yet.)
     ManagementIP = "127.0.0.1"
@@ -95,7 +98,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 
     #How long should it wait to check if the server is stable
     StartupWaitTime = 10
@@ -185,9 +188,23 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-
+    $Version = Get-Content -Path ".\servers\$($Server.Name)\Version.txt" -ErrorAction SilentlyContinue
+    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($Version -ne $Server.ValheimPlusLink)) {
+        Write-ScriptMsg "Installing Valheim Plus..."
+        #Create Temporary Download Folder
+        New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
+        #Download Server Zip
+        Invoke-Download -Uri $Server.ValheimPlusLink -OutFile ".\downloads\valheimplus.zip" -ErrorAction SilentlyContinue
+        #Extract Server to Temporary Folder
+        Expand-Archive -Path ".\downloads\valheimplus.zip" -DestinationPath $Server.Path -Force
+        #Cleanup
+        Remove-Item -Path ".\downloads" -Recurse -Force -ErrorAction SilentlyContinue
+        #Remove old version file
+        Remove-Item -Path ".\servers\$($Server.Name)\Version.txt" -Confirm:$false -ErrorAction SilentlyContinue
+        #Write new Version File
+        New-Item -Path ".\servers\$($Server.Name)\" -Name "Version.txt" -ItemType "file" -Value "$($Server.ValheimPlusLink)" -Force -ErrorAction SilentlyContinue
+    }
     Write-ScriptMsg "Port Forward : $($Server.Port) to $($Server.Port + 2) in TCP and UDP to $($Global.InternalIP)"
-
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

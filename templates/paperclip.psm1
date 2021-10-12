@@ -247,7 +247,7 @@ function Start-ServerPrep {
     }
     #If server is not installed, install it.
     $JavaVersion = Get-Content -Path ".\servers\$($Server.Name)\JavaVersion.txt" -ErrorAction SilentlyContinue
-    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($Version -ne $Server.Version)) {
+    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($JavaVersion -ne $Server.JavaVersionLink)) {
         Write-ScriptMsg "Installing Java..."
         #Create Temporary Download Folder
         New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue
@@ -264,7 +264,7 @@ function Start-ServerPrep {
         New-Item -Path ".\servers\$($Server.Name)\" -Name "JavaVersion.txt" -ItemType "file" -Value "$($Server.JavaVersionLink)" -Force -ErrorAction SilentlyContinue
     }
     $PaperclipVersion = Get-Content -Path ".\servers\$($Server.Name)\PaperVersion.txt" -ErrorAction SilentlyContinue
-    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($Version -ne $Server.Version)) {
+    if (-not (Test-Path -Path $Server.Exec -PathType "leaf" -ErrorAction SilentlyContinue) -or ($PaperclipVersion -ne $Server.PaperclipVersionLink)) {
         Write-ScriptMsg "Installing Paperclip..."
         #Create Temporary Download Folder
         New-Item -Path ".\downloads" -ItemType "directory" -ErrorAction SilentlyContinue

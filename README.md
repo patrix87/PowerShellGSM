@@ -23,6 +23,7 @@ You can create a Scheduled Task to execute run.cmd daily to execute your server 
 - Terraria
 - The Forest
 - Valheim
+- Valheim Plus
 
 # Advantages
 

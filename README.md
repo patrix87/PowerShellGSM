@@ -17,6 +17,7 @@ You can create a Scheduled Task to execute run.cmd daily to execute your server 
 - PixArk
 - Project Zomboid
 - Rust
+- Satisfactory
 - Squad
 - Starbound
 - Stationeers

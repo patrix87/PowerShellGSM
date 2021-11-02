@@ -6,7 +6,7 @@ function Set-IP {
     ).IPv4Address.IPAddress
 
     #Get current external ip from ifconfig.me
-    $ExternalIP = (Invoke-WebRequest ifconfig.me/ip).Content.Trim()
+    $ExternalIP = (Invoke-WebRequest -Uri "ifconfig.me/ip" -UseBasicParsing).Content.Trim()
 
     Write-ScriptMsg "Server local IP : $InternalIP"
     Write-ScriptMsg "Server external IP : $ExternalIP"

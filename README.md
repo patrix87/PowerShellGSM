@@ -5,6 +5,8 @@ This PowerShell script will Install, Backup, Update and Start your server when e
 
 You can create a Scheduled Task to execute run.cmd daily to execute your server maintenance.
 
+If you enable Auto-Updates in a Server configuration, a Scheduled Task will automatically be created to check for new updates every 15 minutes.
+
 # Supported Games
 
 - 7 Days to Die

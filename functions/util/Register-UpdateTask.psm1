@@ -1,6 +1,6 @@
 function Register-UpdateTask {
     $action = New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "-WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File $scriptpath -ServerCfg `"$ServerCfg`" -UpdateCheck" -WorkingDirectory $dir
-    $trigger = New-ScheduledTaskTrigger -Daily -At 12am
+    $trigger = New-ScheduledTaskTrigger -Daily -At 12am -RandomDelay (New-TimeSpan -Minutes $Global.UpdateCheckFrequency)
     $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
     $description = "Check if updates are available for $($server.Name)"
     $title = "UpdateCheck-$($server.Name)"

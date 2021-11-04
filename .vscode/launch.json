@@ -5,11 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Script",
+            "name": "PowerShell: Launch Satisfactory",
             "type": "PowerShell",
             "request": "launch",
-            "script": "./run.cmd",
-            "cwd": "./launchers"
+            "script": "${workspaceFolder}\\main.ps1",
+            "args": ["-ServerCfg \"Satisfactory\""],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell: Launch Satisfactory Update Check",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}\\main.ps1",
+            "args": ["-ServerCfg \"Satisfactory\" -UpdateCheck"],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

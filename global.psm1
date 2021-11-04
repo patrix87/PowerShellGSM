@@ -31,6 +31,9 @@ $GlobalDetails = @{
 
     #Pause on errors
     PauseOnErrors = $false
+
+    #Check for Update Frequency in Minutes
+    UpdateCheckFrequency = 15
 }
 
 #Create the object

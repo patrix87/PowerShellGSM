@@ -4,8 +4,10 @@
 
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory)]
-    [string]$ServerCfg
+    [Parameter(Mandatory=$true)]
+    [string]$ServerCfg,
+    [Parameter(Mandatory=$false)]
+    [switch]$UpdateCheck
 )
 
 #---------------------------------------------------------
@@ -80,6 +82,20 @@ catch {
 #Parse configuration
 Read-Config
 
+
+#---------------------------------------------------------
+# Checking if updates are available.
+#---------------------------------------------------------
+if ($UpdateCheck -and $server.AutoUpdates) {
+    Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
+    if (-not (Request-Update)){
+        Write-ScriptMsg "No updates are available for $($Server.Name)"
+        Exit
+    }
+    Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
+    #Run Launcher as usual if an update is required
+}
+
 #---------------------------------------------------------
 # Install Server
 #---------------------------------------------------------
@@ -123,6 +139,15 @@ if (-not $FreshInstall -and $Server.AutoUpdates) {
     Write-ScriptMsg "Updating Server..."
     Update-Server -UpdateType "Updating"
     Write-ServerMsg "Server successfully updated and/or validated."
+}
+
+#---------------------------------------------------------
+# Create Scheduled Task to monitor auto-updates
+#---------------------------------------------------------
+
+if ($Server.AutoUpdates -and -not (Get-ScheduledTask -TaskName "UpdateCheck-$($server.Name)" -ErrorAction SilentlyContinue)) {
+    Write-ScriptMsg "Registering Update Check Scheduled Task for $($Server.Name)..."
+    Register-UpdateTask
 }
 
 #---------------------------------------------------------

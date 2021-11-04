@@ -86,7 +86,7 @@ Read-Config
 #---------------------------------------------------------
 # Checking if updates are available.
 #---------------------------------------------------------
-if ($UpdateCheck -and $server.AutoUpdates) {
+if ($UpdateCheck) {
     Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
     if (-not (Request-Update)){
         Write-ScriptMsg "No updates are available for $($Server.Name)"

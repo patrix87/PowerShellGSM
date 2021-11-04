@@ -1,4 +1,11 @@
 function Request-Update {
+    $ServerProcess = Get-ServerProcess
+    if (-not ($ServerProcess)){
+        Exit-WithError -ErrorMsg "Server is not active."
+    }
+    if (-not ($Server.AutoUpdates)){
+        Exit-WithError -ErrorMsg "AutoUpdates are disabled."
+    }
     #Create server directory if not found.
     if (-not (Test-Path -Path $Server.Path -ErrorAction SilentlyContinue)){
         $null = New-Item -ItemType "directory" -Path $Server.Path -ErrorAction SilentlyContinue

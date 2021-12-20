@@ -19,13 +19,13 @@ function Update-Server {
     }
     #>
     [System.Collections.ArrayList]$ArgumentList=@()
+    $null = $ArgumentList.Add("force_install_dir `"$($Server.Path)`"")
     #Login
     if ($Server.Login -eq "anonymous") {
         $null = $ArgumentList.Add("@ShutdownOnFailedCommand 1`n@NoPromptForPassword 1`n@sSteamCmdForcePlatformType windows`nlogin anonymous")
     } else {
         $null = $ArgumentList.Add("@sSteamCmdForcePlatformType windows`nlogin $($Server.Login)")
     }
-    $null = $ArgumentList.Add("force_install_dir `"$($Server.Path)`"")
     #Install String Building
     [System.Collections.ArrayList]$InstallList=@()
     $null = $InstallList.Add("app_update $($Server.AppID)")

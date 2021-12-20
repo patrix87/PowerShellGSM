@@ -71,10 +71,10 @@ $ServerDetails = @{
     AppID = 380870
 
     #Name of the Beta Build
-    BetaBuild = "iwillbackupmysave"
+    BetaBuild = ""
 
     #Beta Build Password
-    BetaBuildPassword = "iaccepttheconsequences"
+    BetaBuildPassword = ""
 
     #Set to $true if you want this server to automatically update.
     AutoUpdates = $true
@@ -86,7 +86,7 @@ $ServerDetails = @{
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\ProjectZomboid64.exe"
+    Exec = ".\servers\$Name\StartServer64.bat"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -185,30 +185,43 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Java Arguments
 $PZ_CLASSPATH_LIST = @(
-    "java/jinput.jar;",
+    "java/istack-commons-runtime.jar;",
+    "java/jassimp.jar;",
+    "java/javacord-2.0.17-shaded.jar;",
+    "java/javax.activation-api.jar;",
+    "java/jaxb-api.jar;",
+    "java/jaxb-runtime.jar;",
     "java/lwjgl.jar;",
+    "java/lwjgl-natives-windows.jar;",
+    "java/lwjgl-glfw.jar;",
+    "java/lwjgl-glfw-natives-windows.jar;",
+    "java/lwjgl-jemalloc.jar;",
+    "java/lwjgl-jemalloc-natives-windows.jar;",
+    "java/lwjgl-opengl.jar;",
+    "java/lwjgl-opengl-natives-windows.jar;",
     "java/lwjgl_util.jar;",
-    "java/sqlite-jdbc-3.8.10.1.jar;",
+    "java/sqlite-jdbc-3.27.2.1.jar;",
     "java/trove-3.0.3.jar;",
     "java/uncommons-maths-1.2.3.jar;",
-    "java/javacord-2.0.17-shaded.jar;",
-    "java/guava-23.0.jar;",
     "java/"
 )
 
 $PZ_CLASSPATH = $PZ_CLASSPATH_LIST -join ""
 #Launch Arguments
 $ArgumentList = @(
+    "-Djava.awt.headless=true ",
     "-Dzomboid.steam=1 ",
     "-Dzomboid.znetlog=1 ",
-    "-XX:+UseConcMarkSweepGC ",
-    "-XX:-CreateMinidumpOnCrash ",
+    "-XX:+UseZGC ",
+    "-XX:-CreateCoredumpOnCrash ",
     "-XX:-OmitStackTraceInFastThrow ",
-    "-Xms2048m ",
-    "-Xmx2048m ",
-    "-Djava.library.path=natives/;. ",
-    "-cp $PZ_CLASSPATH zombie.network.GameServer"
+    "-Xms16g ",
+    "-Xmx16g ",
+    "-Djava.library.path=natives/;natives/win64/;. ",
+    "-cp $PZ_CLASSPATH zombie.network.GameServer ",
+    "-statistic 0"
 )
+
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Path)\jre64\bin\java.exe"
 Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"

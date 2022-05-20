@@ -1,0 +1,36 @@
+[
+    {
+        "ConfigFile":"satisfactory.psm1",
+        "BootOrder":1,
+        "AutoReboot":true,
+        "RebootTime":"04:00:00",
+        "Enabled":true,
+        "Name":"satisfactory",
+        "UID":"satisfactory_1",
+        "PID":0,
+        "UsePriority":true,
+        "AppPriority":"High",
+        "UseAffinity":true,
+        "AppAffinity":15,
+        "AutoUpdate":true,
+        "Validate":true,
+        "DoBackups":true
+    },
+    {
+        "ConfigFile":"satisfactory2.psm1",
+        "BootOrder":2,
+        "AutoReboot":true,
+        "RebootTime":"04:00:00",
+        "Enabled":true,
+        "Name":"satisfactory",
+        "UID":"satisfactory_2",
+        "PID":0,
+        "UsePriority":true,
+        "AppPriority":"High",
+        "UseAffinity":true,
+        "AppAffinity":7,
+        "AutoUpdate":false,
+        "Validate":false,
+        "DoBackups":false
+    }
+]

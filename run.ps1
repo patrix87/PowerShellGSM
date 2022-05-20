@@ -2,16 +2,6 @@
 # Created by and Patrix87 of https://bucherons.ca
 # Run this script to Stop->Backup->Update->Start your server.
 
-
-#Todo :
-<#
-Import servers.json
-Parse it and check for duplicated id.
-Check on Scheduled Tasks for updates and servers
-?
-
-#>
-
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$true)]

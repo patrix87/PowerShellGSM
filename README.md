@@ -27,6 +27,7 @@ If you enable Auto-Updates in a Server configuration, a Scheduled Task will auto
 - The Forest
 - Valheim
 - Valheim Plus
+- V Rising
 
 # Advantages
 

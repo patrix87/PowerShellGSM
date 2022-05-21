@@ -174,7 +174,7 @@ function Start-ServerPrep {
     if (-not (Test-Path -Path "$($Server.ConfigFolder)\Settings\" -PathType "Container" -ErrorAction SilentlyContinue)) {
         $null = Copy-Item -Path "$($Server.Path)\VRisingServer_Data\StreamingAssets\Settings\" -Destination $Server.ConfigFolder -Recurse -Force
     }
-    Write-ScriptMsg "Port Forward : 27015 to 27016 in TCP and UDP to $($Global.InternalIP)"
+    Write-ScriptMsg "Port Forward : 9876 to 9877 in TCP and UDP to $($Global.InternalIP)"
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

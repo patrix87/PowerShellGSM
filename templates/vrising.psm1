@@ -13,20 +13,8 @@ $ServerDetails = @{
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Name of the server in the Server Browser
-    ServerName = "My VRising Server"
-
-    #World name
-    SaveName = "World"
-
     #Server Persistent Data Path
     PersistentDataPath = ".\saves\VRising_1"
-
-    #Max Player
-    MaxPlayers = 60
-
-    #Admin Slots
-    AdminSlots = 4
 
     #Rcon IP (not supported by V Rising yet.)
     ManagementIP = "127.0.0.1"
@@ -170,11 +158,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "-serverName `"$($Server.ServerName)`" ",
-    "-saveName `"$($Server.SaveName)`" ",
     "-persistentDataPath `"$($Server.PersistentDataPath)`" ",
-    "-maxConnectedUsers $($Server.MaxPlayers) ",
-    "-maxConnectedAdmins `"$($Server.AdminSlots)`" ",
     "-address `"$($Server.ManagementIP)`" ",
     "-logFile `"$($Server.PersistentDataPath)\Logs\VRisingServer.log`""
 )

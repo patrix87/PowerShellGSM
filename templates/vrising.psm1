@@ -16,6 +16,9 @@ $ServerDetails = @{
     #Server Persistent Data Path
     PersistentDataPath = ".\saves\VRising_1"
 
+    #Admin List (same for all servers.)
+    Admins = @("steamidshere","anothersteamid")
+
     #Rcon IP (not supported by V Rising yet.)
     ManagementIP = "127.0.0.1"
 
@@ -172,9 +175,10 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
     if (-not (Test-Path -Path "$($Server.ConfigFolder)\Settings\" -PathType "Container" -ErrorAction SilentlyContinue)) {
-        $null = Copy-Item -Path "$($Server.Path)\VRisingServer_Data\StreamingAssets\Settings\" -Destination $Server.ConfigFolder -Recurse -Force
+        $null = Copy-Item -Path "$($Server.Path)\VRisingServer_Data\StreamingAssets\Settings\" -Destination "$($Server.ConfigFolder)\Settings\" -Recurse -Force
     }
-    Write-ScriptMsg "Port Forward : 9876 to 9877 in TCP and UDP to $($Global.InternalIP)"
+    Set-Content -Path "$($Server.Path)\VRisingServer_Data\StreamingAssets\Settings\adminlist.txt" -Value $ServerDetails.Admins
+    Write-ScriptMsg "Port Forward : Port and QueryPort ports configured in $($Server.ConfigFolder)\Settings\ServerHostSettings.json in TCP and UDP to $($Global.InternalIP)"
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

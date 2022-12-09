@@ -5,19 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell: Launch Satisfactory",
+            "name": "PowerShell: Launch Icarus",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\main.ps1",
-            "args": ["-ServerCfg \"Satisfactory\""],
+            "args": ["-ServerCfg \"Icarus\""],
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "PowerShell: Launch Satisfactory Update Check",
+            "name": "PowerShell: Launch Icarus Update Check",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}\\main.ps1",
-            "args": ["-ServerCfg \"Satisfactory\" -UpdateCheck"],
+            "args": ["-ServerCfg \"Icarus\" -UpdateCheck"],
             "cwd": "${workspaceFolder}"
         }
     ]

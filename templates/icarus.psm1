@@ -74,7 +74,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\Saved\Config\WindowsServer\"
+    ConfigFolder = ".\servers\$Name\Icarus\Saved\Config\WindowsServer\"
 
     #Steam Server App Id
     AppID = 2089300
@@ -89,13 +89,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "IcarusDedicatedServer"
+    ProcessName = "IcarusServer-Win64-Shipping"
 
     #Use PID instead of Process Name.
-    UsePID = $true
+    UsePID = $false
 
     #Server Executable
-    Exec = ".\servers\$Name\IcarusDedicatedServer.exe"
+    Exec = ".\servers\$Name\IcarusServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -124,7 +124,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $true
+    Validate = $false
 
     #How long should it wait to check if the server is stable
     StartupWaitTime = 10
@@ -138,7 +138,7 @@ $Server = New-Object -TypeName PsObject -Property $ServerDetails
 
 $BackupsDetails = @{
     #Do Backups
-    Use = $true
+    Use = $false
 
     #Backup Folder
     Path = ".\backups\$($Server.Name)"
@@ -160,6 +160,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 # Restart Warnings (Require RCON, Telnet or WebSocket API)
 #---------------------------------------------------------
 
+# Not supported by Icarus.
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
     Use = $false
@@ -201,6 +202,7 @@ $ArgumentList = @(
     "-PORT=$($Server.Port) ",
     "-QueryPort=$($Server.QueryPort) ",
 	"-SteamServerName=$($Server.SessionName) "
+	"-Log"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
@@ -211,14 +213,9 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-
-    Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
-
-}
-
-function Start-ServerPrep {
-
-    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "SessionName" -value $Global.ExternalIP
+	New-Item -Path $Server.ConfigFolder -ItemType "directory" -ErrorAction SilentlyContinue
+	Invoke-Download -Uri "https://raw.githubusercontent.com/RocketWerkz/IcarusDedicatedServer/main/ServerSettings.ini" -OutFile "$($Server.ConfigFolder)\ServerSettings.ini" -ErrorAction SilentlyContinue
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "SessionName" -value $Global.SessionName
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "JoinPassword" -value $Server.Password
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "MaxPlayers" -value $Server.MaxPlayers
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AdminPassword" -value $Server.ManagementPassword
@@ -229,8 +226,6 @@ function Start-ServerPrep {
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ResumeProspect" -value $Server.ResumeProspect
 
     Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
-
 }
-
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

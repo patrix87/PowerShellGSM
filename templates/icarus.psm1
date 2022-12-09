@@ -1,8 +1,8 @@
 <#
-Configure server in .\servers\Squad\SquadGame\ServerConfig\
+Configure server in .\servers\$Name\Saved\Config\WindowsServer\ServerSettings.ini
 #>
 #Server Name, use the same name to share game files.
-$Name = "Squad"
+$Name = "Icarus"
 
 #---------------------------------------------------------
 # Server Configuration
@@ -11,30 +11,56 @@ $Name = "Squad"
 $ServerDetails = @{
 
     #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Squad_1"
+    UID = "Icarus_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
 
-    #Randomize First Map NONE OR ALWAYS
-    RandomMap = "ALWAYS"
+	#Session Name
+	SessionName = "My Icarus Server"
 
     #Max number of Players
-    MaxPlayers = 80
+    MaxPlayers = 8
+
+	#Password
+	Password = "CHANGEME"
+
+	#When the server starts up, if no players join within this time, the server will shutdown and return to lobby. During this window the game will be paused.
+	# Values of < 0 will cause the server to run indefinitely.
+	# A value of 0 will cause the server to shutdown immediately.
+	# Values of > 0 will wait that time in seconds.
+	# Default value is 300 seconds (5 minutes).
+	# NOTE: Only use low values if you want to use the lobby to start prospects each time.
+	ShutdownIfNotJoinedFor = "300"
+
+	#When the server becomes empty the server will shutdown and return to lobby after this time (in seconds). During this window the game will be paused.
+	# Values of < 0 will cause the server to run indefinitely.
+	# A value of 0 will cause the server to shutdown immediately.
+	# Values of > 0 will wait that time in seconds.
+	ShutdownIfEmptyFor = "300"
+
+	#If true anyone who joins the lobby can create a new prospect or load an existing one.
+	AllowNonAdminsToLaunchProspects = "false"
+
+	#If true anyone who joins the lobby can delete prospects from the server.
+	AllowNonAdminsToDeleteProspects = "false"
+
+	#If true, automatically resume the last prospect on startup.
+	ResumeProspect = "true"
 
     #Server Port
-    Port = 2459
+    Port = 17777
 
     #Query Port
-    QueryPort = 27165
+    QueryPort = 27015
 
     #Rcon IP
     ManagementIP = "127.0.0.1"
 
-    #Rcon Port
-    ManagementPort = 21114
+    #Rcon Port ???
+    ManagementPort = 27015
 
-    #Rcon Password Change in .\servers\Squad\SquadGame\ServerConfig\Rcon.cfg
+    #Rcon Password
     ManagementPassword = "CHANGEME"
 
 #---------------------------------------------------------
@@ -48,10 +74,10 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\Squad\SquadGame\ServerConfig\"
+    ConfigFolder = ".\servers\$Name\Saved\Config\WindowsServer\"
 
     #Steam Server App Id
-    AppID = 403240
+    AppID = 2089300
 
     #Name of the Beta Build
     BetaBuild = ""
@@ -63,13 +89,13 @@ $ServerDetails = @{
     AutoUpdates = $true
 
     #Process name in the task manager
-    ProcessName = "SquadGameServer"
+    ProcessName = "IcarusDedicatedServer"
 
     #Use PID instead of Process Name.
     UsePID = $true
 
     #Server Executable
-    Exec = ".\servers\$Name\SquadGameServer.exe"
+    Exec = ".\servers\$Name\IcarusDedicatedServer.exe"
 
     #Allow force close, usefull for server without RCON and Multiple instances.
     AllowForceClose = $true
@@ -124,7 +150,8 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\SquadGame\ServerConfig\"
+    Saves = ".\servers\$($Server.Name)\Saved\PlayerData\DedicatedServer\"
+
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -170,12 +197,10 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-    "Multihome=$($Global.InternalIP) ",
-    "Port=$($Server.Port) ",
-    "QueryPort=$($Server.QueryPort) ",
-    "FIXEDMAXPLAYERS=$($Server.MaxPlayers) ",
-    "RANDOM $($Server.RandomMap) ",
-    "-log"
+    "-MULTIHOME=$($Global.InternalIP) ",
+    "-PORT=$($Server.Port) ",
+    "-QueryPort=$($Server.QueryPort) ",
+	"-SteamServerName=$($Server.SessionName) "
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
@@ -190,5 +215,22 @@ function Start-ServerPrep {
     Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
 
 }
+
+function Start-ServerPrep {
+
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "SessionName" -value $Global.ExternalIP
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "JoinPassword" -value $Server.Password
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "MaxPlayers" -value $Server.MaxPlayers
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AdminPassword" -value $Server.ManagementPassword
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ShutdownIfNotJoinedFor" -value $Server.ShutdownIfNotJoinedFor
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ShutdownIfEmptyFor" -value $Server.ShutdownIfEmptyFor
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AllowNonAdminsToLaunchProspects" -value $Server.AllowNonAdminsToLaunchProspects
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AllowNonAdminsToDeleteProspects" -value $Server.AllowNonAdminsToDeleteProspects
+    Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ResumeProspect" -value $Server.ResumeProspect
+
+    Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
+
+}
+
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server","Backups","Warnings")

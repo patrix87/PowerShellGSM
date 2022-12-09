@@ -31,13 +31,13 @@ $ServerDetails = @{
 	# Values of > 0 will wait that time in seconds.
 	# Default value is 300 seconds (5 minutes).
 	# NOTE: Only use low values if you want to use the lobby to start prospects each time.
-	ShutdownIfNotJoinedFor = "300"
+	ShutdownIfNotJoinedFor = "-1"
 
 	#When the server becomes empty the server will shutdown and return to lobby after this time (in seconds). During this window the game will be paused.
 	# Values of < 0 will cause the server to run indefinitely.
 	# A value of 0 will cause the server to shutdown immediately.
 	# Values of > 0 will wait that time in seconds.
-	ShutdownIfEmptyFor = "300"
+	ShutdownIfEmptyFor = "-1"
 
 	#If true anyone who joins the lobby can create a new prospect or load an existing one.
 	AllowNonAdminsToLaunchProspects = "false"
@@ -124,7 +124,7 @@ $ServerDetails = @{
     AppAffinity = 15
 
     #Should the server validate install after installation or update *(recommended)
-    Validate = $false
+    Validate = $true
 
     #How long should it wait to check if the server is stable
     StartupWaitTime = 10
@@ -138,7 +138,7 @@ $Server = New-Object -TypeName PsObject -Property $ServerDetails
 
 $BackupsDetails = @{
     #Do Backups
-    Use = $false
+    Use = $true
 
     #Backup Folder
     Path = ".\backups\$($Server.Name)"
@@ -150,7 +150,7 @@ $BackupsDetails = @{
     Weeks = 4
 
     #Folder to include in backup
-    Saves = ".\servers\$($Server.Name)\Saved\PlayerData\DedicatedServer\"
+    Saves = ".\servers\$($Server.Name)\Icarus\Saved\"
 
 }
 #Create the object
@@ -161,6 +161,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 #---------------------------------------------------------
 
 # Not supported by Icarus.
+
 $WarningsDetails = @{
     #Use Rcon to restart server softly.
     Use = $false
@@ -201,8 +202,9 @@ $ArgumentList = @(
     "-MULTIHOME=$($Global.InternalIP) ",
     "-PORT=$($Server.Port) ",
     "-QueryPort=$($Server.QueryPort) ",
-	"-SteamServerName=$($Server.SessionName) "
-	"-Log"
+	"-SteamServerName=`"$($Server.SessionName)`" ",
+	"-Log ",
+	"-NOSTEAM"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
@@ -213,8 +215,11 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-	New-Item -Path $Server.ConfigFolder -ItemType "directory" -ErrorAction SilentlyContinue
-	Invoke-Download -Uri "https://raw.githubusercontent.com/RocketWerkz/IcarusDedicatedServer/main/ServerSettings.ini" -OutFile "$($Server.ConfigFolder)\ServerSettings.ini" -ErrorAction SilentlyContinue
+	if (-not (Test-Path -Path "$($Server.ConfigFolder)ServerSettings.ini" -PathType "leaf" -ErrorAction SilentlyContinue))
+	{
+		New-Item -Path $Server.ConfigFolder -ItemType "directory" -ErrorAction SilentlyContinue
+		Invoke-Download -Uri "https://raw.githubusercontent.com/RocketWerkz/IcarusDedicatedServer/main/ServerSettings.ini" -OutFile "$($Server.ConfigFolder)ServerSettings.ini" -ErrorAction SilentlyContinue
+	}
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "SessionName" -value $Global.SessionName
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "JoinPassword" -value $Server.Password
     Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "MaxPlayers" -value $Server.MaxPlayers

@@ -11,6 +11,7 @@ If you enable Auto-Updates in a Server configuration, a Scheduled Task will auto
 
 - 7 Days to Die
 - Astroneer
+- Icarus
 - Insurgency Sandstorm
 - Killing Floor 2
 - Left 4 Dead 2

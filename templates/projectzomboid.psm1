@@ -158,11 +158,11 @@ $WarningsDetails = @{
     #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
     Timers = [System.Collections.ArrayList]@(240,50,10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
 
-    #message that will be sent. % is a wildcard for the timer.
-    MessageMin = "The server will restart in % minutes !"
-
-    #message that will be sent. % is a wildcard for the timer.
-    MessageSec = "The server will restart in % seconds !"
+	#message that will be sent. % is a wildcard for the timer.
+	MessageMin = "`\`"The server will restart in % minutes !`\`""
+	
+	#message that will be sent. % is a wildcard for the timer.
+	MessageSec = "`\`"The server will restart in % seconds !`\`""
 
     #command to send a message.
     CmdMessage = "servermsg"

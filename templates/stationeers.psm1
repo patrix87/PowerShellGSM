@@ -3,17 +3,14 @@
     Edit .\servers\$Name\default.ini to configure this server
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "Stationeers"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Stationeers_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -208,7 +205,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 if ($Server.ModPath -ne ""){
     $Server.ModPath = (Resolve-CompletePath -Path $Server.ModPath -ParentPath ".\servers\")
 }
-$LogFilePath = (Resolve-CompletePath -Path "$($Server.Path)\$($Server.UID).txt" -ParentPath ".\servers\")
+$LogFilePath = (Resolve-CompletePath -Path "$($Server.Path)\$($Server.Name).txt" -ParentPath ".\servers\")
 Add-Member -InputObject $Server -Name "LogFile" -Type NoteProperty -Value $LogFilePath
 
 #Launch Arguments

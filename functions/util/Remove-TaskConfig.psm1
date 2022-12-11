@@ -5,7 +5,7 @@ function Remove-TaskConfig {
     )
     try {
         #Delete the INI file based on the Server UID.
-        $null = Remove-Item -Path ".\servers\$($Server.UID).INI" -Confirm:$false -ErrorAction SilentlyContinue
+        $null = Remove-Item -Path ".\servers\$($Server.Name).INI" -Confirm:$false -ErrorAction SilentlyContinue
 		Write-ScriptMsg "Task Config Removed."
     }
     catch {

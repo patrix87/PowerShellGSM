@@ -36,7 +36,7 @@ $GlobalDetails = @{
     UpdateCheckFrequency = 15
 
 	#Check if the server is alive Frequency in Minutes
-	AliveCheckFrequency = 5
+	AliveCheckFrequency = 2
 
 	#Should be lower or equal to the two above
 	TaskCheckFrequency = 2

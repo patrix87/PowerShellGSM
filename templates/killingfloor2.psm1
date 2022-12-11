@@ -4,17 +4,14 @@ Edit configuration in ./Servers/KillingFloor2/KFGame/Config/KF[UID].INI
 bEnabled=true to enable webadmin
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "KillingFloor2"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "KillingFloor2_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -206,7 +203,7 @@ $ArgumentList = @(
     "-QueryPort=$($Server.QueryPort) ",
     "-WebAdminPort=$($Server.WebAdminPort) ",
     "-Multihome=$($Global.InternalIP) ",
-    "-ConfigSubDir=KF$($Server.UID)"
+    "-ConfigSubDir=KF$($Server.Name)"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"

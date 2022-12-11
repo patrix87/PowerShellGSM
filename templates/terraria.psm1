@@ -2,17 +2,14 @@
     ".\servers\$Name\serverconfig.txt"
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "Terraria"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Terraria_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

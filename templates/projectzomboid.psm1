@@ -30,17 +30,14 @@ SteamPort2=8767
 You do not need to forward RCON.
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "ProjectZomboid"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "ProjectZomboid_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

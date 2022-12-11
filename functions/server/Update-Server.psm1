@@ -47,7 +47,7 @@ function Update-Server {
     #Join each item of the list with an LF
     $FileContent = $ArgumentList -join "`n"
     #Define the Script file name
-    $ScriptFile = "SteamCMD_$($Server.UID).txt"
+    $ScriptFile = "SteamCMD_$($Server.Name).txt"
     #Define the full path.
     $ScriptPath = (Resolve-CompletePath -Path ".\servers\$ScriptFile" -ParentPath ".\servers\")
     #Create the script.

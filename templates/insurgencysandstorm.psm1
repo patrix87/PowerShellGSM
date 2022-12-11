@@ -2,8 +2,8 @@
 #Change your servers settings in ".\servers\Insurgency\Saved\Config\WindowsServer"
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "InsurgencySandstorm"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 
 #---------------------------------------------------------
@@ -11,9 +11,6 @@ $Name = "InsurgencySandstorm"
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "InsurgencySandstorm_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

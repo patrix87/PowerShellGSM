@@ -4,7 +4,7 @@ function Lock-Process {
     param (
     )
 	try {
-        $null = New-Item -Path ".\servers\" -Name "$($Server.UID).LOCK" -ItemType "file" -Force -ErrorAction SilentlyContinue
+        $null = New-Item -Path ".\servers\" -Name "$($Server.Name).LOCK" -ItemType "file" -Force -ErrorAction SilentlyContinue
         Write-ScriptMsg "Process Locked."
     }
     catch {

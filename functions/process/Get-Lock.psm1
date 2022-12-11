@@ -3,7 +3,7 @@ function Get-Lock {
     [OutputType([boolean])]
     param (
     )
-	if ((Test-Path -Path ".\servers\$($Server.UID).LOCK" -PathType "Leaf" -ErrorAction SilentlyContinue)) {
+	if ((Test-Path -Path ".\servers\$($Server.Name).LOCK" -PathType "Leaf" -ErrorAction SilentlyContinue)) {
 		return $true
 	}
 	return $false

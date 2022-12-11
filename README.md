@@ -1,11 +1,14 @@
 # PowerShellGSM - PowerShell Game Server Manager
 A Modular PowerShell tool to manage game servers.
 
-This PowerShell script will Install, Backup, Update and Start your server when executed.
+This PowerShell script will take care of:
+- Installation
+- Backups
+- Updates
+- Monitoring
+- Restarts
 
-You can create a Scheduled Task to execute run.cmd daily to execute your server maintenance.
-
-If you enable Auto-Updates in a Server configuration, a Scheduled Task will automatically be created to check for new updates every 15 minutes.
+Once started it registers a schedule task to check on your server status.
 
 # Supported Games
 
@@ -34,7 +37,6 @@ If you enable Auto-Updates in a Server configuration, a Scheduled Task will auto
 
 - Faster than the other available tools
 - Lighter and more targeted backups
-- Lighter shared game servers installation
 - Modular
 - Expandable
 - Customizable

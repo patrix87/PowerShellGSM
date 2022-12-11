@@ -5,17 +5,14 @@
     https://mordhau.fandom.com/wiki/Dedicated_Server_Hosting_Guide#Configuring_and_Running_the_Server
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "Mordhau"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Mordhau_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

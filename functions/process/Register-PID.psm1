@@ -32,7 +32,7 @@ function Register-PID {
     }
     $stopwatch.Stop()
     try {
-        $null = New-Item -Path ".\servers\" -Name "$($Server.UID).PID" -ItemType "file" -Value "$($ServerProcess.ID)" -Force -ErrorAction SilentlyContinue
+        $null = New-Item -Path ".\servers\" -Name "$($Server.Name).PID" -ItemType "file" -Value "$($ServerProcess.ID)" -Force -ErrorAction SilentlyContinue
         Write-ScriptMsg "Process Registered."
     }
     catch {

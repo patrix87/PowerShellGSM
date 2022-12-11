@@ -2,17 +2,14 @@
     Edit configuration in : .\servers\Left4Dead2\left4dead2\cfg\server.cfg
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "Left4Dead2"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Left4Dead2_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

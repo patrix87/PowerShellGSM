@@ -2,20 +2,14 @@
 Edit configuration in ".\servers\Rust\server\[Identity]\cfg\serverauto.cfg"
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "Rust"
-
-#Identity of the server
-$Identity = "RustServer01"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "Rust_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"
@@ -24,7 +18,7 @@ $ServerDetails = @{
     Hostname = "My Rust Server"
 
     #Identity of the server
-    Identity = $Identity
+    Identity = $Name
 
     #Description of the server \n for new line
     Description = "Welcome to my server"
@@ -100,7 +94,7 @@ $ServerDetails = @{
     Path = ".\servers\$Name"
 
     #Server configuration folder
-    ConfigFolder = ".\servers\$Name\server\$Identity\cfg\"
+    ConfigFolder = ".\servers\$Name\server\$Name\cfg\"
 
     #Steam Server App Id
     AppID = 258550

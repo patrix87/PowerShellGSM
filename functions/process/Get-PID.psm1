@@ -5,7 +5,7 @@ function Get-PID {
     )
     try {
         #Read the process ID from the PID file named by the UID defined in the server cfg file.
-        $ServerPID = Get-Content -Path ".\servers\$($Server.UID).PID" -ErrorAction SilentlyContinue
+        $ServerPID = Get-Content -Path ".\servers\$($Server.Name).PID" -ErrorAction SilentlyContinue
     }
     catch {
         return $null

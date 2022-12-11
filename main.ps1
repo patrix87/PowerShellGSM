@@ -21,7 +21,7 @@ try {
 }
 catch {
     Exit-WithError -ErrorMsg "Unable to import modules."
-    exit
+    Exit
 }
 
 #---------------------------------------------------------
@@ -65,7 +65,9 @@ Write-ScriptMsg "Importing Server Configuration..."
 #Check if requested config exist in the config folder, if not, copy it from the templates. Exit if fails.
 #In the case of an update check or alive check, remove the check if the configuration is deleted.
 if (-not (Test-Path -Path ".\configs\$ServerCfg.psm1" -PathType "Leaf" -ErrorAction SilentlyContinue)) {
+	$Server = New-Object -TypeName PsObject -Property @{Name=$ServerCfg}
 	if($Task){
+		Write-ScriptMsg "Server Configuration no longer exists, unregistering Tasks..."
 		Unregister-Task
 		Exit
 	}
@@ -89,50 +91,58 @@ Read-Config
 
 #Check if script is already running
 if(Get-Lock){
-	exit
+	Write-ScriptMsg "Process is locked, exiting."
+	Exit
 }
 
 #Locking Script to avoid double run
-Lock-Process
+$null = Lock-Process
 
 #---------------------------------------------------------
 # Checking Scheduled Task
 #---------------------------------------------------------
 if ($Task) {
 	$FullRunRequired = $false
-    Write-ScriptMsg "Running Tasks for $($Server.UID) ..."
-	$TasksSchedule = Get-TaskConfig
-
-	if(($Server.AutoRestartOnCrash) -and (($TasksSchedule.NextAlive) -lt (Get-Date))){
+    Write-ScriptMsg "Running Tasks for $($ServerCfg) ..."
+	$TasksSchedule = (Get-TaskConfig)
+	if(($Server.AutoRestartOnCrash) -and (($TasksSchedule.NextAlive) -le (Get-Date))){
 		Write-ScriptMsg "Checking Alive State"
 		if(-not (Get-ServerProcess)) {
 			Write-ScriptMsg "Server is Dead, Restarting..."
-			Update-TaskConfig -Alive
 			$FullRunRequired = $true
 		} else {
 			Write-ScriptMsg "Server is Alive"
 		}
+		Update-TaskConfig -Alive
+	} else {
+		Write-ScriptMsg "Too soon for Alive check"
 	}
 
-	if(($Server.AutoUpdates) -and (($TasksSchedule.NextUpdate) -lt (Get-Date))){
-		Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.UID)..."
+	if(($Server.AutoUpdates) -and (($TasksSchedule.NextUpdate) -le (Get-Date))){
+		Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
 		if (Request-Update){
-			Write-ScriptMsg "Updates are available for $($Server.UID), Proceeding with update process..."
+			Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
 			$FullRunRequired = $true
-			Update-TaskConfig -Update
 		} else {
-			Write-ScriptMsg "No updates are available for $($Server.UID)"
+			Write-ScriptMsg "No updates are available for $($Server.Name)"
 		}
+		Update-TaskConfig -Update
+	} else {
+		Write-ScriptMsg "Too soon for Update check"
 	}
 
-	Write-ScriptMsg "Checking if server $($Server.UID) is due for restart"
-	if(($Server.AutoRestart) -and (($TasksSchedule.NextRestart) -lt (Get-Date))){
+	if(($Server.AutoRestart) -and (($TasksSchedule.NextRestart) -le (Get-Date))){
+		Write-ScriptMsg "Server is due for Restart"
 		$FullRunRequired = $true
 		Update-TaskConfig -Restart
+	} else {
+		Write-ScriptMsg "Too soon for Restart"
 	}
 
 	if(-not $FullRunRequired) {
-		exit
+		$null = Unlock-Process
+		Write-ScriptMsg "No tasks ready, exiting."
+		Exit
 	}
     #Run Launcher as usual
 }
@@ -186,8 +196,8 @@ if (-not $FreshInstall -and $Server.AutoUpdates) {
 # Register Scheduled Task
 #---------------------------------------------------------
 
-if ($Server.AutoUpdates -and -not (Get-ScheduledTask -TaskName "Tasks-$($server.UID)" -ErrorAction SilentlyContinue)) {
-    Write-ScriptMsg "Registering Scheduled Tasks Check for $($Server.UID)..."
+if (($Server.AutoUpdates -or $Server.AutoRestartOnCrash -or $Server.AutoRestart) -and -not (Get-ScheduledTask -TaskName "Tasks-$($server.Name)" -ErrorAction SilentlyContinue)) {
+    Write-ScriptMsg "Registering Scheduled Tasks Check for $($Server.Name)..."
     Register-Task
 }
 
@@ -229,7 +239,7 @@ catch {
 # Unlock Process
 #---------------------------------------------------------
 
-Unlock-Process
+$null = Unlock-Process
 
 Write-ServerMsg "Script successfully completed."
 
@@ -237,4 +247,4 @@ Write-ServerMsg "Script successfully completed."
 # Stop Logging
 #---------------------------------------------------------
 
-Stop-Transcript
+$null = Stop-Transcript

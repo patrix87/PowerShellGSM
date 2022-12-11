@@ -1,11 +1,4 @@
 function Request-Update {
-    $ServerProcess = Get-ServerProcess
-    if (-not ($ServerProcess)){
-        Exit-WithError -ErrorMsg "Server is not active."
-    }
-    if (-not ($Server.AutoUpdates)){
-        Exit-WithError -ErrorMsg "AutoUpdates are disabled."
-    }
     #Create server directory if not found.
     if (-not (Test-Path -Path $Server.Path -ErrorAction SilentlyContinue)){
         $null = New-Item -ItemType "directory" -Path $Server.Path -ErrorAction SilentlyContinue
@@ -29,9 +22,9 @@ function Request-Update {
     #Join each item of the list with an LF
     $FileContent = $ArgumentList -join "`n"
     #Define the Script file name
-    $ScriptFile = "SteamCMD_Update_$($Server.UID).txt"
+    $ScriptFile = "SteamCMD_Update_$($Server.Name).txt"
     #Define the Script file name
-    $UpdateReturnFile = "SteamCMD_Update_$($Server.UID)_Return.txt"
+    $UpdateReturnFile = "SteamCMD_Update_$($Server.Name)_Return.txt"
     #Define the full path.
     $ScriptPath = (Resolve-CompletePath -Path ".\servers\$ScriptFile" -ParentPath ".\servers\")
     #Create the script.

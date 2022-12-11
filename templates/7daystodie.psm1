@@ -2,17 +2,14 @@
 #Change your servers settings in C:\Users\%username%\AppData\Roaming\7DaysToDie\Saves\serverconfig.xml
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "7DaysToDie"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "7DaysToDie_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

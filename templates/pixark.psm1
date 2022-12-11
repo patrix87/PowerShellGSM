@@ -23,17 +23,14 @@ ServerPVPCanAttack=True
 
 #>
 
-#Server Name, use the same name to share game files.
-$Name = "PixArk"
+#Server Name, Always Match the Launcher and config file name.
+$Name = $ServerCfg
 
 #---------------------------------------------------------
 # Server Configuration
 #---------------------------------------------------------
 
 $ServerDetails = @{
-
-    #Unique Identifier used to track processes. Must be unique to each servers.
-    UID = "PixArk_1"
 
     #Login username used by SteamCMD
     Login = "anonymous"

@@ -88,6 +88,16 @@ $ServerDetails = @{
     #Set to $true if you want this server to automatically update.
     AutoUpdates = $true
 
+	#Set to $true if you want this server to automatically restart on crash.
+	AutoRestartOnCrash = $true
+
+	#Set to $true if you want this server to automatically restart at set hour.
+	AutoRestart = $true
+
+	#The time at which the server will restart daily.
+	#(Hour, Minute, Seconds)
+	AutoRestartTime = @(3,0,0)
+
     #Process name in the task manager
     ProcessName = "IcarusServer-Win64-Shipping"
 

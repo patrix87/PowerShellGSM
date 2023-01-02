@@ -43,12 +43,13 @@ Once started it registers a schedule task to check on your server status.
 
 # Installation
 
-1. Git clone (or extract the zip) this repository in any directory. *(Ideally C:\ but it will work anywhere)*
-2. Copy your server configuration file from /templates to /configs
-3. Copy and edit launchers/run.cmd to select your server configuration file.
-4. Edit your server configuration file in the configs folder.
-5. Exectute your version of run.cmd
-6. Optional: create a scheduled task to run your version of run.cmd
+1. Git clone (or extract the zip of) this repository in any directory. *(Ideally C:\ but it will work anywhere)*
+2. Copy your server configuration file from `templates` to `configs`
+    EG: copy `icarus.psm1` from the `templates` folder to the `configs` folder.
+3. Then your configuration and setup your server.
+4. Copy and rename `launchers/run.cmd` to select your server configuration file. 
+    EG: copy and rename `run.cmd` to `icarus.cmd` to start `icarus.psm1` Icarus server.
+5. Launch your server with your `.cmd` file in the `launchers` folder.
 
 # Requirements
 

@@ -23,7 +23,7 @@ $ServerDetails = @{
     Port = 2459
 
     #Valheim Plus
-    ValheimPlusLink = "https://github.com/valheimPlus/ValheimPlus/releases/download/0.9.9/WindowsServer.zip"
+    ValheimPlusLink = "https://github.com/valheimPlus/ValheimPlus/releases/download/0.9.9.11/WindowsServer.zip"
 
     #Rcon IP (not supported by valheim yet.)
     ManagementIP = "127.0.0.1"

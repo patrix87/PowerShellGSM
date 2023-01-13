@@ -57,7 +57,9 @@ Once started it registers a schedule task to check on your server status.
 8. To disable a server, rename it's config file from the configs folder to something else.
 
 ## Automated Installation Script
+
 By [@BananaAcid](https://github.com/BananaAcid/)
+
 https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae
 
 # Requirements

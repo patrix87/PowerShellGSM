@@ -43,6 +43,8 @@ Once started it registers a schedule task to check on your server status.
 
 # Installation
 
+## Manual
+
 1. Git clone (or extract the zip of) this repository in any directory. *(Ideally C:\ but it will work anywhere)*
 2. Copy your server configuration file from `templates` to `configs`
     EG: copy `icarus.psm1` from the `templates` folder to the `configs` folder.
@@ -53,6 +55,9 @@ Once started it registers a schedule task to check on your server status.
 6. The powershell window will open, install the server then stop the server and close to let you edit server files.
 7. On the second launch it will start the server and configure the scheduled task to keep the server running and updated.
 8. To disable a server, rename it's config file from the configs folder to something else.
+
+## Installation Script by @BananaAcid
+https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae
 
 # Requirements
 

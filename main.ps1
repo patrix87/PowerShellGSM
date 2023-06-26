@@ -29,9 +29,9 @@ catch {
 #---------------------------------------------------------
 
 #Define Logfile by TimeStamp-ServerCfg.
-$LogFile = "$(Get-TimeStamp)-$($ServerCfg).txt"
+$LogFile = "$($Global.LogFolder)\$(Get-TimeStamp)-$($ServerCfg).txt"
 # Start Logging
-Start-Transcript -Path "$($Global.LogFolder)\$LogFile" -IncludeInvocationHeader
+Start-Transcript -Path $LogFile -IncludeInvocationHeader
 $NoLogs = $false
 
 #---------------------------------------------------------

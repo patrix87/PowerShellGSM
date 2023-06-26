@@ -154,8 +154,12 @@ if ($Task) {
   if (-not $FullRunRequired) {
     $null = Unlock-Process
     Write-ScriptMsg "No tasks ready, exiting."
-    $NoLogs = $true
-    Exit
+    #Close the log.
+    $null = Stop-Transcript
+    if (-not ($Global.LogEmptyRun)) {
+      $null = Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue
+    }
+    exit
   }
   #Run Launcher as usual
 }

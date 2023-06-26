@@ -6,7 +6,7 @@ function Unlock-Process {
   try {
     #Delete the LOCK file based on the Server UID.
     $null = Remove-Item -Path ".\servers\$($Server.Name).LOCK" -Confirm:$false -ErrorAction SilentlyContinue
-    Write-ScriptMsg "Process Unlocked."
+    Write-ScriptMsg "Unlocking Process."
   }
   catch {
     return $false

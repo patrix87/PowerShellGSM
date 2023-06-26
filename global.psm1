@@ -43,6 +43,9 @@ $GlobalDetails = @{
 
   #Log run without actions
   LogEmptyRun          = $false
+
+  #Lock Timeout in miuntes
+  LockTimeout          = 10
 }
 
 #Create the object

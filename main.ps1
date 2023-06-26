@@ -32,6 +32,7 @@ catch {
 $LogFile = "$(Get-TimeStamp)-$($ServerCfg).txt"
 # Start Logging
 Start-Transcript -Path "$($Global.LogFolder)\$LogFile" -IncludeInvocationHeader
+$NoLogs = $false
 
 #---------------------------------------------------------
 # Set Script Directory as Working Directory
@@ -106,6 +107,11 @@ if ($Task) {
   $FullRunRequired = $false
   Write-ScriptMsg "Running Tasks for $($ServerCfg) ..."
   $TasksSchedule = (Get-TaskConfig)
+  if (-not ($Server.AutoRestartOnCrash) -and (-not ($Server.AutoUpdates)) -and (-not ($Server.AutoRestart))) {
+    Write-ScriptMsg "No Tasks to run, unregistering Tasks..."
+    Unregister-Task
+    Exit
+  }
   if (($Server.AutoRestartOnCrash) -and (($TasksSchedule.NextAlive) -le (Get-Date))) {
     Write-ScriptMsg "Checking Alive State"
     if (-not (Get-ServerProcess)) {
@@ -148,6 +154,7 @@ if ($Task) {
   if (-not $FullRunRequired) {
     $null = Unlock-Process
     Write-ScriptMsg "No tasks ready, exiting."
+    $NoLogs = $true
     Exit
   }
   #Run Launcher as usual
@@ -254,3 +261,6 @@ Write-ServerMsg "Script successfully completed."
 #---------------------------------------------------------
 
 $null = Stop-Transcript
+if ($NoLogs -and -not ($Global.LogEmptyRun)) {
+  Remove-Item -Path $Global.LogFile -Force -ErrorAction SilentlyContinue
+}

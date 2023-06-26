@@ -40,6 +40,9 @@ $GlobalDetails = @{
 
   #Should be lower or equal to the two above
   TaskCheckFrequency   = 5
+
+  #Log run without actions
+  LogEmptyRun          = $false
 }
 
 #Create the object

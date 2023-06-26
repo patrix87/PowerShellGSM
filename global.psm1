@@ -48,7 +48,7 @@ $GlobalDetails = @{
   LockTimeout          = 10
 
   #Max download retries
-  MaxDownloadRetries   = 5
+  MaxDownloadRetries   = 10
 }
 
 #Create the object

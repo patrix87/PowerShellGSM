@@ -262,5 +262,5 @@ Write-ServerMsg "Script successfully completed."
 
 $null = Stop-Transcript
 if ($NoLogs -and -not ($Global.LogEmptyRun)) {
-  Remove-Item -Path $Global.LogFile -Force -ErrorAction SilentlyContinue
+  $null = Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue
 }

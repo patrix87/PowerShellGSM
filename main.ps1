@@ -4,10 +4,10 @@
 
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$true)]
-    [string]$ServerCfg,
-    [Parameter(Mandatory=$false)]
-    [switch]$Task
+  [Parameter(Mandatory = $true)]
+  [string]$ServerCfg,
+  [Parameter(Mandatory = $false)]
+  [switch]$Task
 )
 
 #---------------------------------------------------------
@@ -16,12 +16,12 @@ param (
 
 # import global config, all functions. Exit if fails.
 try {
-    Import-Module -Name ".\global.psm1"
-    Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
+  Import-Module -Name ".\global.psm1"
+  Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
 }
 catch {
-    Exit-WithError -ErrorMsg "Unable to import modules."
-    Exit
+  Exit-WithError -ErrorMsg "Unable to import modules."
+  Exit
 }
 
 #---------------------------------------------------------
@@ -65,34 +65,35 @@ Write-ScriptMsg "Importing Server Configuration..."
 #Check if requested config exist in the config folder, if not, copy it from the templates. Exit if fails.
 #In the case of an update check or alive check, remove the check if the configuration is deleted.
 if (-not (Test-Path -Path ".\configs\$ServerCfg.psm1" -PathType "Leaf" -ErrorAction SilentlyContinue)) {
-	$Server = New-Object -TypeName PsObject -Property @{Name=$ServerCfg}
-	if($Task){
-		Write-ScriptMsg "Server Configuration no longer exists, unregistering Tasks..."
-		Unregister-Task
-		Exit
-	}
-    if (Test-Path -Path ".\templates\$ServerCfg.psm1" -PathType "Leaf" -ErrorAction SilentlyContinue){
-        $null = Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
-    } else {
-        Exit-WithError -ErrorMsg "Unable to find configuration file."
-    }
+  $Server = New-Object -TypeName PsObject -Property @{Name = $ServerCfg }
+  if ($Task) {
+    Write-ScriptMsg "Server Configuration no longer exists, unregistering Tasks..."
+    Unregister-Task
+    Exit
+  }
+  if (Test-Path -Path ".\templates\$ServerCfg.psm1" -PathType "Leaf" -ErrorAction SilentlyContinue) {
+    $null = Copy-Item -Path ".\templates\$ServerCfg.psm1" -Destination ".\configs\$ServerCfg.psm1" -ErrorAction SilentlyContinue
+  }
+  else {
+    Exit-WithError -ErrorMsg "Unable to find configuration file."
+  }
 }
 
 # import the current server config file. Exit if fails.
 try {
-    Import-Module -Name ".\configs\$ServerCfg.psm1"
+  Import-Module -Name ".\configs\$ServerCfg.psm1"
 }
 catch {
-    Exit-WithError -ErrorMsg "Unable to import server configuration."
+  Exit-WithError -ErrorMsg "Unable to import server configuration."
 }
 
 #Parse configuration
 Read-Config
 
 #Check if script is already running
-if(Get-Lock){
-	Write-ScriptMsg "Process is locked, exiting."
-	Exit
+if (Get-Lock) {
+  Write-ScriptMsg "Process is locked, exiting."
+  Exit
 }
 
 #Locking Script to avoid double run
@@ -102,49 +103,54 @@ $null = Lock-Process
 # Checking Scheduled Task
 #---------------------------------------------------------
 if ($Task) {
-	$FullRunRequired = $false
-    Write-ScriptMsg "Running Tasks for $($ServerCfg) ..."
-	$TasksSchedule = (Get-TaskConfig)
-	if(($Server.AutoRestartOnCrash) -and (($TasksSchedule.NextAlive) -le (Get-Date))){
-		Write-ScriptMsg "Checking Alive State"
-		if(-not (Get-ServerProcess)) {
-			Write-ScriptMsg "Server is Dead, Restarting..."
-			$FullRunRequired = $true
-		} else {
-			Write-ScriptMsg "Server is Alive"
-		}
-		Update-TaskConfig -Alive
-	} else {
-		Write-ScriptMsg "Too soon for Alive check"
-	}
+  $FullRunRequired = $false
+  Write-ScriptMsg "Running Tasks for $($ServerCfg) ..."
+  $TasksSchedule = (Get-TaskConfig)
+  if (($Server.AutoRestartOnCrash) -and (($TasksSchedule.NextAlive) -le (Get-Date))) {
+    Write-ScriptMsg "Checking Alive State"
+    if (-not (Get-ServerProcess)) {
+      Write-ScriptMsg "Server is Dead, Restarting..."
+      $FullRunRequired = $true
+    }
+    else {
+      Write-ScriptMsg "Server is Alive"
+    }
+    Update-TaskConfig -Alive
+  }
+  else {
+    Write-ScriptMsg "Too soon for Alive check"
+  }
 
-	if(($Server.AutoUpdates) -and (($TasksSchedule.NextUpdate) -le (Get-Date))){
-		Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
-		if (Request-Update){
-			Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
-			$FullRunRequired = $true
-		} else {
-			Write-ScriptMsg "No updates are available for $($Server.Name)"
-		}
-		Update-TaskConfig -Update
-	} else {
-		Write-ScriptMsg "Too soon for Update check"
-	}
+  if (($Server.AutoUpdates) -and (($TasksSchedule.NextUpdate) -le (Get-Date))) {
+    Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
+    if (Request-Update) {
+      Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
+      $FullRunRequired = $true
+    }
+    else {
+      Write-ScriptMsg "No updates are available for $($Server.Name)"
+    }
+    Update-TaskConfig -Update
+  }
+  else {
+    Write-ScriptMsg "Too soon for Update check"
+  }
 
-	if(($Server.AutoRestart) -and (($TasksSchedule.NextRestart) -le (Get-Date))){
-		Write-ScriptMsg "Server is due for Restart"
-		$FullRunRequired = $true
-		Update-TaskConfig -Restart
-	} else {
-		Write-ScriptMsg "Too soon for Restart"
-	}
+  if (($Server.AutoRestart) -and (($TasksSchedule.NextRestart) -le (Get-Date))) {
+    Write-ScriptMsg "Server is due for Restart"
+    $FullRunRequired = $true
+    Update-TaskConfig -Restart
+  }
+  else {
+    Write-ScriptMsg "Too soon for Restart"
+  }
 
-	if(-not $FullRunRequired) {
-		$null = Unlock-Process
-		Write-ScriptMsg "No tasks ready, exiting."
-		Exit
-	}
-    #Run Launcher as usual
+  if (-not $FullRunRequired) {
+    $null = Unlock-Process
+    Write-ScriptMsg "No tasks ready, exiting."
+    Exit
+  }
+  #Run Launcher as usual
 }
 
 #---------------------------------------------------------
@@ -155,11 +161,11 @@ Write-ScriptMsg "Verifying Server installation..."
 #Flag of a fresh installation in the current instance.
 $FreshInstall = $false
 #If the server executable is missing, run SteamCMD and install the server.
-if (-not (Test-Path -Path $Server.Exec -ErrorAction SilentlyContinue)){
-    Write-ServerMsg "Server is not installed : Installing $($Server.Name) Server."
-    Update-Server -UpdateType "Installing"
-    Write-ServerMsg "Server successfully installed."
-    $FreshInstall = $true
+if (-not (Test-Path -Path $Server.Exec -ErrorAction SilentlyContinue)) {
+  Write-ServerMsg "Server is not installed : Installing $($Server.Name) Server."
+  Update-Server -UpdateType "Installing"
+  Write-ServerMsg "Server successfully installed."
+  $FreshInstall = $true
 }
 
 #---------------------------------------------------------
@@ -168,7 +174,7 @@ if (-not (Test-Path -Path $Server.Exec -ErrorAction SilentlyContinue)){
 Write-ScriptMsg "Verifying Server State..."
 #If the server is not freshly installed.
 if (-not $FreshInstall) {
-    Stop-Server
+  Stop-Server
 }
 
 #---------------------------------------------------------
@@ -177,8 +183,8 @@ if (-not $FreshInstall) {
 
 #If not a fresh install and Backups are enabled, run backups.
 if ($Backups.Use -and -not $FreshInstall) {
-    Write-ScriptMsg "Verifying Backups..."
-    Backup-Server
+  Write-ScriptMsg "Verifying Backups..."
+  Backup-Server
 }
 
 #---------------------------------------------------------
@@ -187,9 +193,9 @@ if ($Backups.Use -and -not $FreshInstall) {
 
 #If not a fresh install, update and/or validate server.
 if (-not $FreshInstall -and $Server.AutoUpdates) {
-    Write-ScriptMsg "Updating Server..."
-    Update-Server -UpdateType "Updating"
-    Write-ServerMsg "Server successfully updated and/or validated."
+  Write-ScriptMsg "Updating Server..."
+  Update-Server -UpdateType "Updating"
+  Write-ServerMsg "Server successfully updated and/or validated."
 }
 
 #---------------------------------------------------------
@@ -197,8 +203,8 @@ if (-not $FreshInstall -and $Server.AutoUpdates) {
 #---------------------------------------------------------
 
 if (($Server.AutoUpdates -or $Server.AutoRestartOnCrash -or $Server.AutoRestart) -and -not (Get-ScheduledTask -TaskName "Tasks-$($server.Name)" -ErrorAction SilentlyContinue)) {
-    Write-ScriptMsg "Registering Scheduled Tasks Check for $($Server.Name)..."
-    Register-Task
+  Write-ScriptMsg "Registering Scheduled Tasks Check for $($Server.Name)..."
+  Register-Task
 }
 
 #---------------------------------------------------------
@@ -213,12 +219,12 @@ Start-Server
 #---------------------------------------------------------
 
 if ($FreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Container" -ErrorAction SilentlyContinue)) {
-    Write-Warning -Message "Stopping the Server to let you edit the configurations files."
-    #Stop Server because configuration is probably bad anyway
-    Stop-Server
-    & explorer.exe $Server.ConfigFolder
-    Write-Warning -Message "Launch again when the server configurations files are edited."
-    Read-Host "Press Enter to close this windows."
+  Write-Warning -Message "Stopping the Server to let you edit the configurations files."
+  #Stop Server because configuration is probably bad anyway
+  Stop-Server
+  & explorer.exe $Server.ConfigFolder
+  Write-Warning -Message "Launch again when the server configurations files are edited."
+  Read-Host "Press Enter to close this windows."
 }
 
 #---------------------------------------------------------
@@ -227,11 +233,11 @@ if ($FreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Containe
 
 #Remove old log files.
 try {
-    Write-ScriptMsg "Deleting logs older than $($Global.Days) days."
-    Remove-OldLog
+  Write-ScriptMsg "Deleting logs older than $($Global.Days) days."
+  Remove-OldLog
 }
 catch {
-    Exit-WithError -ErrorMsg "Unable clean old logs."
+  Exit-WithError -ErrorMsg "Unable clean old logs."
 }
 
 

@@ -17,19 +17,19 @@ ie:
 #>
 
 function Set-IniValue {
-    param(
-        $file,
-        $category,
-        $key,
-        $value
-    )
+  param(
+    $file,
+    $category,
+    $key,
+    $value
+  )
 
-    # Prepare the parameter types and parameter values for the Invoke-WindowsApi script
-    $parameterTypes = [string], [string], [string], [string]
-    $parameters = [string] $category, [string] $key, [string] $value, [string] $file
+  # Prepare the parameter types and parameter values for the Invoke-WindowsApi script
+  $parameterTypes = [string], [string], [string], [string]
+  $parameters = [string] $category, [string] $key, [string] $value, [string] $file
 
-    # Invoke the API
-    [void] (Invoke-WindowsApi "kernel32.dll" ([UInt32]) "WritePrivateProfileString" $parameterTypes $parameters)
+  # Invoke the API
+  [void] (Invoke-WindowsApi "kernel32.dll" ([UInt32]) "WritePrivateProfileString" $parameterTypes $parameters)
 }
 
 Export-ModuleMember -Function Set-IniValue

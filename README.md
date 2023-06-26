@@ -1,7 +1,9 @@
 # PowerShellGSM - PowerShell Game Server Manager
+
 A Modular PowerShell tool to manage game servers.
 
 This PowerShell script will take care of:
+
 - Installation
 - Backups
 - Updates
@@ -45,12 +47,12 @@ Once started it registers a schedule task to check on your server status.
 
 ## Manual
 
-1. Git clone (or extract the zip of) this repository in any directory. *(Ideally C:\ but it will work anywhere)*
+1. Git clone (or extract the zip of) this repository in any directory. _(Ideally C:\ but it will work anywhere)_
 2. Copy your server configuration file from `templates` to `configs`
-    EG: copy `icarus.psm1` from the `templates` folder to the `configs` folder.
+   EG: copy `icarus.psm1` from the `templates` folder to the `configs` folder.
 3. Then your configuration and setup your server.
-4. Copy and rename `launchers/run.cmd` to select your server configuration file. 
-    EG: copy and rename `run.cmd` to `icarus.cmd` to start `icarus.psm1` Icarus server.
+4. Copy and rename `launchers/run.cmd` to select your server configuration file.
+   EG: copy and rename `run.cmd` to `icarus.cmd` to start `icarus.psm1` Icarus server.
 5. Launch your server with your `.cmd` file in the `launchers` folder.
 6. The powershell window will open, install the server then stop the server and close to let you edit server files.
 7. On the second launch it will start the server and configure the scheduled task to keep the server running and updated.

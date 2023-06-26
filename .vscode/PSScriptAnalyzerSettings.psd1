@@ -1,11 +1,11 @@
 @{
-    Severity = @('Error','Warning')
-    ExcludeRules = @(
-        'PSUseDeclaredVarsMoreThanAssignments',
-        'PSUseShouldProcessForStateChangingFunctions',
-        'PSProvideCommentHelp',
-        'PSAvoidUsingConvertToSecureStringWithPlainText',
-        'PSAvoidUsingWriteHost',
-        'PSAvoidUsingPlainTextForPassword'
-    )
+  Severity = @('Error','Warning')
+  ExcludeRules = @(
+    'PSUseDeclaredVarsMoreThanAssignments',
+    'PSUseShouldProcessForStateChangingFunctions',
+    'PSProvideCommentHelp',
+    'PSAvoidUsingConvertToSecureStringWithPlainText',
+    'PSAvoidUsingWriteHost',
+    'PSAvoidUsingPlainTextForPassword'
+  )
 }

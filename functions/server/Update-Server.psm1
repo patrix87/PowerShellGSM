@@ -56,7 +56,22 @@ function Update-Server {
   #Run the update String
   Write-ServerMsg "$UpdateType $ValidatingString $VersionString Build."
   try {
-    $Task = Start-Process $Global.SteamCMD -ArgumentList "+runscript `"$ScriptPath`"" -Wait -PassThru -NoNewWindow
+    $ExitCode = -1
+    $Retries = 0
+    while ($ExitCode -ne 0 -and $Retries -lt $Global.MaxDownloadRetries) {
+      $Task = Start-Process $Global.SteamCMD -ArgumentList "+runscript `"$ScriptPath`"" -Wait -PassThru -NoNewWindow
+      $ExitCode = $Task.ExitCode
+      if ($ExitCode -ne 0) {
+        Write-ServerMsg "SteamCMD failed to complete. Retrying..."
+        $Retries++
+      }
+      else {
+        Write-ServerMsg "SteamCMD completed successfully."
+      }
+    }
+    if ($Retries -eq $Global.MaxDownloadRetries) {
+      Exit-WithError -ErrorMsg "SteamCMD failed to complete after $Global.MaxDownloadRetries retries."
+    }
   }
   catch {
     Exit-WithError -ErrorMsg "SteamCMD failed to complete."

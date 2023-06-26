@@ -46,6 +46,9 @@ $GlobalDetails = @{
 
   #Lock Timeout in miuntes
   LockTimeout          = 10
+
+  #Max download retries
+  MaxDownloadRetries   = 5
 }
 
 #Create the object

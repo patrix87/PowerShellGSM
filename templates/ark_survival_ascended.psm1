@@ -193,13 +193,13 @@ $ArgumentList = @(
   "?listen",
   "?SessionName=`"$($Server.SessionName)`"",
   "?ServerPassword=`"$($Server.Password)`"",
-  "?ServerAdminPassword=`"$($Server.ManagementPassword)`"",
   "?Port=$($Server.Port)",
   "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)",
-  "?MaxPlayers=$($Server.MaxPlayers)"
+  "?MaxPlayers=$($Server.MaxPlayers)",
+  "?ServerAdminPassword=`"$($Server.ManagementPassword)`""
 )
 
 if ($Server.BattlEye -eq "False") {

@@ -57,7 +57,7 @@ Once started it registers a schedule task to check on your server status.
 5. Launch your server with your `.cmd` file in the `launchers` folder.
 6. The powershell window will open, install the server then stop the server and close to let you edit server files.
 7. On the second launch it will start the server and configure the scheduled task to keep the server running and updated.
-8. To disable a server, rename it's config file from the configs folder to something else.
+8. To disable a server, rename it's config file from the configs folder to something else and disable the Scheduled Task from the Task Scheduler.
 
 ## Automated Installation Script
 

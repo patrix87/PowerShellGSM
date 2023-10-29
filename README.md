@@ -15,6 +15,7 @@ Once started it registers a schedule task to check on your server status.
 # Supported Games
 
 - 7 Days to Die
+- Ark: Survival Ascended
 - Astroneer
 - Icarus
 - Insurgency Sandstorm

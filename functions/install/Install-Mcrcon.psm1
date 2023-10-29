@@ -12,7 +12,7 @@ function Install-Mcrcon {
   #Unzip file.
   $null = Expand-Archive -Path ".\downloads\mcrcon.zip" -DestinationPath ".\downloads\mcrcon\" -Force
   #Copy executable to install directory.
-  $null = Copy-Item -Path ".\downloads\mcrcon\mcrcon-0.7.2-windows-x86-64\mcrcon.exe" -Destination $Application -Force
+  $null = Copy-Item -Path ".\downloads\mcrcon\mcrcon.exe" -Destination $Application -Force
   Write-ServerMsg "Mcrcon Installed."
 }
 

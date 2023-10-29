@@ -20,10 +20,10 @@ $ServerDetails = @{
   Password               = "CHANGEME"
 
   #Server Port
-  Port                   = 27515
+  Port                   = 7777
 
   #Query Port
-  QueryPort              = 27516
+  QueryPort              = 27015
 
   #World Name *NO SPACES*
   WorldName              = "TheIsland_WP"
@@ -38,7 +38,7 @@ $ServerDetails = @{
   ManagementIP           = "127.0.0.1"
 
   #Rcon Port
-  ManagementPort         = 27520
+  ManagementPort         = 27020
 
   #Rcon / Admin Password *NO SPACES*
   ManagementPassword     = "CHANGEME2"
@@ -212,7 +212,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-  Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
+  Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.Port+1) and $($Server.QueryPort) in UDP to $($Global.InternalIP)"
 
 }
 

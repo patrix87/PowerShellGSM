@@ -28,6 +28,9 @@ $ServerDetails = @{
   #World Name *NO SPACES*
   WorldName              = "TheIsland_WP"
 
+  #Enable PVE "True" or "False"
+  ServerPVE              = "True"
+
   #Enable BattlEye "True" or "False"
   BattlEye               = "False"
 
@@ -166,16 +169,16 @@ $WarningsDetails = @{
   MessageSec = "The server will restart in % seconds !"
 
   #command to send a message.
-  CmdMessage = "broadcast"
+  CmdMessage = "ServerChat"
 
   #command to save the server
-  CmdSave    = "saveworld"
+  CmdSave    = "SaveWorld"
 
   #How long to wait in seconds after the save command is sent.
   SaveDelay  = 15
 
   #command to stop the server
-  CmdStop    = "quit"
+  CmdStop    = "DoExit"
 }
 #Create the object
 $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
@@ -189,12 +192,13 @@ $ArgumentList = @(
   "$($Server.WorldName)",
   "?listen",
   "?SessionName=`"$($Server.SessionName)`"",
-  "?ServerPassword=$($Server.Password)",
-  "?ServerAdminPassword=$($Server.ManagementPassword)",
+  "?ServerPassword=`"$($Server.Password)`"",
+  "?ServerAdminPassword=`"$($Server.ManagementPassword)`"",
   "?Port=$($Server.Port)",
   "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
+  "?ServerPVE=$($Server.ServerPVE)",
   "?MaxPlayers=$($Server.MaxPlayers)"
 )
 
@@ -212,7 +216,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-  Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.Port+1) and $($Server.QueryPort) in UDP to $($Global.InternalIP)"
+  Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.Port+1) and $($Server.QueryPort) in TCP & UDP to $($Global.InternalIP)"
 
 }
 

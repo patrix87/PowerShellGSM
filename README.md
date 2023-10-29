@@ -53,7 +53,9 @@ Once started it registers a schedule task to check on your server status.
    EG: copy `icarus.psm1` from the `templates` folder to the `configs` folder.
 3. Then edit this configuration file with Notepad++ or VSCode or whatever you like.
 4. Then Copy and rename `launchers/run.cmd` to select your server configuration file.
+
    EG: copy and rename `run.cmd` to `icarus.cmd` to start the `icarus.psm1` Icarus server.
+
    _The `launchers` filename from the must match the `configs` filename._
 5. Launch your server by double clikcing on your `icarus.cmd` file from the `launchers` folder.
 6. The powershell window will open, install the server then **stop the server** to let you edit server files.

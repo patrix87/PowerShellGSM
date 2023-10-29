@@ -50,6 +50,7 @@ Once started it registers a schedule task to check on your server status.
 
 1. Git clone (or extract the zip of) this repository in any directory. _(Ideally C:\ but it will work anywhere unless the path is too long)_
 2. Copy your server configuration file you want from the `templates` folder to `configs` folder
+
    EG: copy `icarus.psm1` from the `templates` folder to the `configs` folder.
 3. Then edit this configuration file with Notepad++ or VSCode or whatever you like.
 4. Then Copy and rename `launchers/run.cmd` to select your server configuration file.

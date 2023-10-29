@@ -16,7 +16,7 @@ $ServerDetails = @{
   Login              = "anonymous"
 
   #Server Name
-  SessionName        = "My Stationeers Server"
+  SessionName        = "PowerShellGSM Stationeers Server"
 
   #Auto Save Interval in seconds
   AutoSaveInterval   = 300

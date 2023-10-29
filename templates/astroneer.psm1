@@ -17,7 +17,7 @@ $ServerDetails = @{
   Login                   = "anonymous"
 
   #Server Name
-  SessionName             = "My Astroneer Server"
+  SessionName             = "PowerShellGSM Astroneer Server"
 
   #Server Owner Username
   OwnerName               = "user"

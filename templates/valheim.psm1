@@ -11,7 +11,7 @@ $ServerDetails = @{
   Login              = "anonymous"
 
   #Name of the server in the Server Browser
-  SessionName        = "My Valheim Server"
+  SessionName        = "PowerShellGSM Valheim Server"
 
   #World name (It is also the seed)
   World              = "World"

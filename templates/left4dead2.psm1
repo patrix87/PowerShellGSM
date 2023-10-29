@@ -15,7 +15,7 @@ $ServerDetails = @{
   Login              = "anonymous"
 
   #Server Host Name
-  SessionName        = "My Left 4 Dead 2 Server"
+  SessionName        = "PowerShellGSM Left 4 Dead 2 Server"
 
   #Game Port
   Port               = 27015

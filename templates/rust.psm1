@@ -15,7 +15,7 @@ $ServerDetails = @{
   Login              = "anonymous"
 
   #Name of the server
-  Hostname           = "My Rust Server"
+  Hostname           = "PowerShellGSM Rust Server"
 
   #Identity of the server
   Identity           = $Name

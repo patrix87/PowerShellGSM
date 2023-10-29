@@ -14,7 +14,7 @@ $ServerDetails = @{
   Login                           = "anonymous"
 
   #Session Name
-  SessionName                     = "My Icarus Server"
+  SessionName                     = "PowerShellGSM Icarus Server"
 
   #Max number of Players
   MaxPlayers                      = 8

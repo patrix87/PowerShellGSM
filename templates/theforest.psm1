@@ -27,7 +27,7 @@ $ServerDetails = @{
   QueryPort          = 27016
 
   #Set the server display name
-  SessionName        = "My Server"
+  SessionName        = "PowerShellGSM The Forest Server"
 
   #Maximum number of players
   MaxPlayers         = 8

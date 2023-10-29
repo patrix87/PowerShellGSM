@@ -36,7 +36,7 @@ $ServerDetails = @{
   Login                  = "anonymous"
 
   #Name of the server in the Server Browser
-  SessionName            = "My Pixark Server"
+  SessionName            = "PowerShellGSM Pixark Server"
 
   #Maximum Number of Players
   MaxPlayers             = 20

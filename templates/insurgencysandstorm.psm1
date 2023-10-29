@@ -16,7 +16,7 @@ $ServerDetails = @{
   Login              = "anonymous"
 
   #Name of the server in the Server Browser
-  SessionName        = "My Insurgency Server"
+  SessionName        = "PowerShellGSM Insurgency Server"
 
   #Maximum Number of Players
   MaxPlayers         = 8

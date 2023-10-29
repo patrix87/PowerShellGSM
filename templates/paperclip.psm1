@@ -15,7 +15,7 @@ $ServerDetails = @{
   Login                = "anonymous"
 
   # Server Name
-  SessionName          = "My Minecraft Server"
+  SessionName          = "PowerShellGSM Minecraft Server"
 
   # Message of the day, also shows in server browser
   MOTD                 = "\u00A76My Server - \u00A7AMinecraft 1.17.1"

@@ -13,8 +13,17 @@ $ServerDetails = @{
   #Name of the server in the Server Browser
   SessionName            = "PowerShellGSM Ark Ascended Server"
 
-  #Maximum Number of Players !!! Currently not working, even if you change directly in the config file: ".\servers\$Name\ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini" !!!
-  MaxPlayers             = 70
+  # Commaseparated list of mod IDs - Remove if you don't need (From #Launch Arguments section aswell)
+  Mods                   = "123456"
+  
+  # Extra parameters - Remove if you don't need (From #Launch Arguments section aswell)
+  ExtraParams            = "-NoTransferFromFiltering -servergameloginincludetribelogs -servergamelog -automanagedmods"
+  
+  # Savegame folder
+  SaveFolder             = "save_island"
+
+  #Maximum Number of Players
+  MaxPlayers             = 64
 
   #Password to join the server *NO SPACES*
   Password               = "CHANGEME"
@@ -32,7 +41,7 @@ $ServerDetails = @{
   ServerPVE              = "True"
 
   #Enable BattlEye "True" or "False"
-  BattlEye               = "False"
+  BattlEye               = "True"
 
   #Enable Rcon "True" or "False"
   EnableRcon             = "True"
@@ -93,7 +102,7 @@ $ServerDetails = @{
   #Allow force close, usefull for server without RCON and Multiple instances.
   AllowForceClose        = $true
 
-  #Process Priority Realtime, High, AboveNormal, Normal, BelowNormal, Low
+  #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
   UsePriority            = $true
   AppPriority            = "High"
 
@@ -191,7 +200,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
   "$($Server.WorldName)",
   "?listen",
-  "?SessionName=`"$($Server.SessionName)`"",
+  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"",
   "?ServerPassword=`"$($Server.Password)`"",
   "?ServerAdminPassword=`"$($Server.ManagementPassword)`"",
   "?Port=$($Server.Port)",
@@ -199,7 +208,10 @@ $ArgumentList = @(
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)",
-  "?MaxPlayers=$($Server.MaxPlayers)"
+  "?MaxPlayers=$($Server.MaxPlayers)",
+  "?AltSaveDirectoryName=$($Server.SaveFolder)",
+  " -mods=$($Server.Mods)",
+  " $($Server.ExtraParams)"
 )
 
 if ($Server.BattlEye -eq "False") {

@@ -34,6 +34,13 @@ $ServerDetails = @{
   #Enable BattlEye "True" or "False"
   BattlEye               = "False"
 
+  #Enable Mods "True" or "False"
+  EnableMods               = "False"
+
+  #Mods to install "928621,928597"
+  #Find mod IDs either in your GameUserSettings.ini from your single playr or at https://curseforge.com/ark-survival-ascended/mods
+  EnableMods               = ""
+
   #Enable Rcon "True" or "False"
   EnableRcon             = "True"
 
@@ -204,6 +211,10 @@ $ArgumentList = @(
 
 if ($Server.BattlEye -eq "False") {
   $ArgumentList += " -NoBattlEye"
+}
+
+if ($Server.EnableMods -eq "True") {
+  $ArgumentList += " -mods=`"$($Server.Mods)`""
 }
 
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList

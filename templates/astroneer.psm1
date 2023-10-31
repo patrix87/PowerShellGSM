@@ -99,7 +99,7 @@ $ServerDetails = @{
   #Allow force close, usefull for server without RCON and Multiple instances.
   AllowForceClose         = $true
 
-  #Process Priority Realtime, High, Above normal, Normal, Below normal, Low
+  #Process Priority Realtime, High, AboveNormal, Normal, BelowNormal, Low
   UsePriority             = $true
   AppPriority             = "High"
 

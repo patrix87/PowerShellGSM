@@ -13,8 +13,8 @@ $ServerDetails = @{
   #Name of the server in the Server Browser
   SessionName            = "PowerShellGSM Ark Ascended Server"
 
-  #Maximum Number of Players
-  MaxPlayers             = 64
+  #Maximum Number of Players !!! Currently not working, even if you change directly in the config file: ".\servers\$Name\ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini" !!!
+  MaxPlayers             = 70
 
   #Password to join the server *NO SPACES*
   Password               = "CHANGEME"

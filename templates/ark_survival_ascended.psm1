@@ -13,15 +13,6 @@ $ServerDetails = @{
   #Name of the server in the Server Browser
   SessionName            = "PowerShellGSM Ark Ascended Server"
 
-  # Commaseparated list of mod IDs - Remove if you don't need (From #Launch Arguments section aswell)
-  Mods                   = "123456"
-  
-  # Extra parameters - Remove if you don't need (From #Launch Arguments section aswell)
-  ExtraParams            = "-NoTransferFromFiltering -servergameloginincludetribelogs -servergamelog -automanagedmods"
-  
-  # Savegame folder
-  SaveFolder             = "save_island"
-
   #Maximum Number of Players
   MaxPlayers             = 64
 
@@ -42,6 +33,15 @@ $ServerDetails = @{
 
   #Enable BattlEye "True" or "False"
   BattlEye               = "True"
+
+  # Savegame Folder - Leave blank for default.
+  SaveFolder             = ""
+
+  # Comma Separated list of Mod/Project IDs from https://www.curseforge.com/ark-survival-ascended (no spaces) - Use empty string "" if you use no mods.
+  Mods                   = ""
+
+  # Extra parameters - Leave blank for default.
+  ExtraParams            = "-NoTransferFromFiltering -ServerGameLogIncludeTribeLogs -ServerGameLog -AutoManagedMods"
 
   #Enable Rcon "True" or "False"
   EnableRcon             = "True"
@@ -200,7 +200,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
   "$($Server.WorldName)",
   "?listen",
-  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"",
+  "?SessionName=`"$($Server.SessionName)`"",
   "?ServerPassword=`"$($Server.Password)`"",
   "?ServerAdminPassword=`"$($Server.ManagementPassword)`"",
   "?Port=$($Server.Port)",
@@ -208,14 +208,24 @@ $ArgumentList = @(
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)",
-  "?MaxPlayers=$($Server.MaxPlayers)",
-  "?AltSaveDirectoryName=$($Server.SaveFolder)",
-  " -mods=$($Server.Mods)",
-  " $($Server.ExtraParams)"
+  "?MaxPlayers=$($Server.MaxPlayers)"
+
 )
+
+if ($Server.SaveFolder) {
+  $ArgumentList += "?AltSaveDirectoryName=$($Server.SaveFolder)"
+}
+
+if ($Server.Mods) {
+  $ArgumentList += " -Mods=$($Server.Mods)"
+}
 
 if ($Server.BattlEye -eq "False") {
   $ArgumentList += " -NoBattlEye"
+}
+
+if ($Server.ExtraParams) {
+  $ArgumentList += " " + $Server.ExtraParams
 }
 
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList

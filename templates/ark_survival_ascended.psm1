@@ -13,8 +13,8 @@ $ServerDetails = @{
   #Name of the server in the Server Browser
   SessionName            = "PowerShellGSM Ark Ascended Server"
 
-  #Maximum Number of Players !!! Currently not working, even if you change directly in the config file: ".\servers\$Name\ShooterGame\Saved\Config\WindowsServer\GameUserSettings.ini" !!!
-  MaxPlayers             = 70
+  #Maximum Number of Players
+  MaxPlayers             = 64
 
   #Password to join the server *NO SPACES*
   Password               = "CHANGEME"
@@ -32,7 +32,16 @@ $ServerDetails = @{
   ServerPVE              = "True"
 
   #Enable BattlEye "True" or "False"
-  BattlEye               = "False"
+  BattlEye               = "True"
+
+  # Savegame Folder - Leave blank for default.
+  SaveFolder             = ""
+
+  # Comma Separated list of Mod/Project IDs from https://www.curseforge.com/ark-survival-ascended (no spaces) - Use empty string "" if you use no mods.
+  Mods                   = ""
+
+  # Extra parameters - Leave blank for default.
+  ExtraParams            = "-NoTransferFromFiltering -ServerGameLogIncludeTribeLogs -ServerGameLog -AutoManagedMods"
 
   #Enable Rcon "True" or "False"
   EnableRcon             = "True"
@@ -191,19 +200,33 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
   "$($Server.WorldName)",
   "?listen",
-  "?SessionName=`"$($Server.SessionName)`"",
-  "?ServerPassword=`"$($Server.Password)`"",
-  "?ServerAdminPassword=`"$($Server.ManagementPassword)`"",
+  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Triple double-quotes here. (normal for now)
   "?Port=$($Server.Port)",
   "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)",
-  "?MaxPlayers=$($Server.MaxPlayers)"
+  "?MaxPlayers=$($Server.MaxPlayers)",
+  "?ServerPassword=`"`"$($Server.Password)`"`"", #No triple quotes here. (normal for now)
+  "?ServerAdminPassword=`"`"`"$($Server.ManagementPassword)`"`"`"" #Triple double-quotes here. Leave at the end for some reasons. (normal for now)
 )
+
+if ($Server.SaveFolder) {
+  $ArgumentList += "?AltSaveDirectoryName=$($Server.SaveFolder)"
+}
+
+$ArgumentList += " -WinLiveMaxPlayers=$($Server.MaxPlayers)" #Fix MaxPlayers not working.
+
+if ($Server.Mods) {
+  $ArgumentList += " -Mods=$($Server.Mods)"
+}
 
 if ($Server.BattlEye -eq "False") {
   $ArgumentList += " -NoBattlEye"
+}
+
+if ($Server.ExtraParams) {
+  $ArgumentList += " " + $Server.ExtraParams
 }
 
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList

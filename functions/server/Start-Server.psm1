@@ -7,9 +7,11 @@ function Start-Server {
     $timestamp = Get-Date
     Add-Member -InputObject $Server -Name "StartTime" -Type NoteProperty -Value $timestamp
     if ($Server.Arguments.length -gt 0) {
+      Write-ServerMsg "Starting Server $($Server.Launcher) with Arguments: $($Server.Arguments)"
       $ServerProcess = Start-Process -FilePath $Server.Launcher -WorkingDirectory $($Server.WorkingDirectory) -ArgumentList $Server.Arguments -PassThru
     }
     else {
+      Write-ServerMsg "Starting Server $($Server.Launcher) with no Arguments."
       $ServerProcess = Start-Process -FilePath $Server.Launcher -WorkingDirectory $($Server.WorkingDirectory) -PassThru
     }
     #Wait to see if the server is stable.

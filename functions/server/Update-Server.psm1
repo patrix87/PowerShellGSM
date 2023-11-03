@@ -12,13 +12,8 @@ function Update-Server {
   if ($Server.AppID -eq 0) {
     return
   }
-  <#
-  String Part if value is null or false or empty string
-  if () {
-    String Part if value is defined
-  }
-  #>
   [System.Collections.ArrayList]$ArgumentList = @()
+  #Server Directory
   $null = $ArgumentList.Add("force_install_dir `"$($Server.Path)`"")
   #Login
   if ($Server.Login -eq "anonymous") {
@@ -27,23 +22,24 @@ function Update-Server {
   else {
     $null = $ArgumentList.Add("@sSteamCmdForcePlatformType windows`nlogin $($Server.Login)")
   }
-  #Install String Building
-  [System.Collections.ArrayList]$InstallList = @()
-  $null = $InstallList.Add("app_update $($Server.AppID)")
+  #Action String Construction
+  [System.Collections.ArrayList]$ActionList = @()
+  $null = $ActionList.Add("app_update $($Server.AppID)")
   $VersionString = "Regular"
   if ($Server.BetaBuild -ne "") {
     $VersionString = "Beta"
-    $null = $InstallList.Add("-beta $($Server.BetaBuild)")
+    $null = $ActionList.Add("-beta $($Server.BetaBuild)")
   }
   if ($Server.BetaBuildPassword -ne "") {
-    $null = $InstallList.Add("-betapassword $($Server.BetaBuildPassword)")
+    $null = $ActionList.Add("-betapassword $($Server.BetaBuildPassword)")
   }
   if ($Server.Validate) {
     $ValidatingString = "and Validating"
-    $null = $InstallList.Add("validate")
+    $null = $ActionList.Add("validate")
   }
   #join each part of the string and add it to the list
-  $null = $ArgumentList.Add($InstallList -join " ")
+  $null = $ArgumentList.Add($ActionList -join " ")
+  #Quit to close the script once it is done.
   $null = $ArgumentList.Add("quit")
   #Join each item of the list with an LF
   $FileContent = $ArgumentList -join "`n"

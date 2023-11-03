@@ -200,8 +200,8 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
   "$($Server.WorldName)",
   "?listen",
-  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Triple double-quotes here.
-  "?ServerPassword=`"`"$($Server.Password)`"`"",
+  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Yes, triple double quotes are needed only here.
+  "?ServerPassword=`"$($Server.Password)`"",
   "?Port=$($Server.Port)",
   "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
@@ -215,7 +215,7 @@ if ($Server.SaveFolder) {
 }
 
 if ($Server.ManagementPassword) {
-  $ArgumentList += "?ServerAdminPassword=`"`"$($Server.ManagementPassword)`"`"" #Fix Server Admin Password Issues.
+  $ArgumentList += "?ServerAdminPassword=`"$($Server.ManagementPassword)`"" #Fix Server Admin Password Issues.
 }
 
 $ArgumentList += " -WinLiveMaxPlayers=$($Server.MaxPlayers)" #Fix MaxPlayers not working.

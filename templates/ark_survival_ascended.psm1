@@ -10,13 +10,13 @@ $ServerDetails = @{
   #Login username used by SteamCMD
   Login                  = "anonymous"
 
-  #Name of the server in the Server Browser
+  #Name of the server in the Server Browser *No Question Mark*
   SessionName            = "PowerShellGSM Ark Ascended Server"
 
   #Maximum Number of Players
   MaxPlayers             = 64
 
-  #Password to join the server *NO SPACES*
+  #Password to join the server *NO SPACES or Question Mark*
   Password               = "CHANGEME"
 
   #Server Port
@@ -25,7 +25,7 @@ $ServerDetails = @{
   #Query Port
   QueryPort              = 27015
 
-  #World Name *NO SPACES*
+  #World Name *NO SPACES or Question Mark*
   WorldName              = "TheIsland_WP"
 
   #Enable PVE "True" or "False"
@@ -52,7 +52,7 @@ $ServerDetails = @{
   #Rcon Port
   ManagementPort         = 27020
 
-  #Rcon / Admin Password *NO SPACES*
+  #Rcon / Admin Password *NO SPACES or Question Mark*
   ManagementPassword     = "CHANGEME2"
 
   #---------------------------------------------------------
@@ -200,19 +200,22 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
   "$($Server.WorldName)",
   "?listen",
-  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Triple double-quotes here. (normal for now)
+  "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Triple double-quotes here.
+  "?ServerPassword=`"`"$($Server.Password)`"`"",
   "?Port=$($Server.Port)",
   "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)",
-  "?MaxPlayers=$($Server.MaxPlayers)",
-  "?ServerPassword=`"`"$($Server.Password)`"`"", #No triple quotes here. (normal for now)
-  "?ServerAdminPassword=`"`"`"$($Server.ManagementPassword)`"`"`"" #Triple double-quotes here. Leave at the end for some reasons. (normal for now)
+  "?MaxPlayers=$($Server.MaxPlayers)"
 )
 
 if ($Server.SaveFolder) {
   $ArgumentList += "?AltSaveDirectoryName=$($Server.SaveFolder)"
+}
+
+if ($Server.ManagementPassword) {
+  $ArgumentList += "?ServerAdminPassword=`"`"$($Server.ManagementPassword)`"`"" #Fix Server Admin Password Issues.
 }
 
 $ArgumentList += " -WinLiveMaxPlayers=$($Server.MaxPlayers)" #Fix MaxPlayers not working.

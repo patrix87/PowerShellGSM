@@ -18,23 +18,27 @@ function Request-Update {
     $null = $ArgumentList.Add("@sSteamCmdForcePlatformType windows`nlogin $($Server.Login)")
   }
   $null = $ArgumentList.Add("app_info_update 1")
+
   #Action String Construction
   [System.Collections.ArrayList]$ActionList = @()
   $null = $ActionList.Add("app_status $($Server.AppID)")
-  $VersionString = "Regular"
-  if ($Server.BetaBuild -ne "") {
+  $VersionString = "Public"
+  if ($Server.BetaBuild) {
     $VersionString = "Beta"
     $null = $ActionList.Add("-beta $($Server.BetaBuild)")
   }
-  if ($Server.BetaBuildPassword -ne "") {
+  if ($Server.BetaBuildPassword) {
     $null = $ActionList.Add("-betapassword $($Server.BetaBuildPassword)")
   }
   #join each part of the string and add it to the list
   $null = $ArgumentList.Add($ActionList -join " ")
+
+  $null = $ArgumentList.Add("app_info_print $($Server.AppID)")
   #Quit to close the script once it is done.
   $null = $ArgumentList.Add("quit")
   #Join each item of the list with an LF
   $FileContent = $ArgumentList -join "`n"
+
   #Define the Script file name
   $ScriptFile = "SteamCMD_Update_$($Server.Name).txt"
   #Define the Script file name
@@ -50,14 +54,33 @@ function Request-Update {
   catch {
     Exit-WithError -ErrorMsg "SteamCMD failed to complete."
   }
+
+  #Get Branch name
+  $BranchName = "public"
+  if($Server.BetaBuild){
+    $BranchName = $Server.BetaBuild
+  }
+
   #Parse the file for the update status
-  $State = Select-String -Path ".\servers\$UpdateReturnFile" -Pattern " - install state:"
+  $SteamCMDResult = Get-Content -Path ".\servers\$UpdateReturnFile" -Raw
+  $InstallState = $($SteamCMDResult | Select-String -Pattern "install state:([\w ,]*)").Matches.Groups[1].Value.Trim()
+  Write-ServerMsg "Install State: $InstallState"
+  $LocalBuildID = $($SteamCMDResult | Select-String -Pattern "BuildID (\d+)" -CaseSensitive).Matches.Groups[1].Value.Trim()
+  Write-ServerMsg "Local Build ID: $LocalBuildID"
+  $RemoteBuildID = $($SteamCMDResult | Select-String -Pattern "`"$BranchName`"\s*\{\s*`"buildid`"\s*`"(\d+)").Matches.Groups[1].Value.Trim()
+  Write-ServerMsg "Remote Build ID: $RemoteBuildID"
+
   #Delete the script and update return file.
   $null = Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
   #$null = Rename-Item -Path $ScriptPath -NewName "$ScriptFile.$(Get-TimeStamp).txt" -ErrorAction SilentlyContinue
   $null = Remove-Item -Path ".\servers\$UpdateReturnFile" -Confirm:$false -ErrorAction SilentlyContinue
   #$null = Rename-Item -Path ".\servers\$UpdateReturnFile" -NewName "$UpdateReturnFile.$(Get-TimeStamp).txt" -ErrorAction SilentlyContinue
-  if ($State.Line -match "Update Required") {
+
+  #Return true if the server needs to be updated.
+  if ($InstallState -match "Update Required") {
+    return $true
+  }
+  if ($LocalBuildID -ne $RemoteBuildID) {
     return $true
   }
   return $false

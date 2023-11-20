@@ -45,7 +45,7 @@ $GlobalDetails = @{
   LogEmptyRun          = $false
 
   #Lock Timeout in miuntes
-  LockTimeout          = 10
+  LockTimeout          = 30
 
   #Max download retries
   MaxDownloadRetries   = 10

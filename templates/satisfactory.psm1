@@ -71,7 +71,7 @@ $ServerDetails = @{
   AutoRestartTime    = @(3, 0, 0)
 
   #Process name in the task manager
-  ProcessName        = "UE4Server-Win64-Shipping"
+  ProcessName        = "UnrealServer-Win64-Shipping"
 
   #Use PID instead of Process Name.
   UsePID             = $true
@@ -180,7 +180,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 $ArgumentList = @(
   "-Port=$($Server.Port) ",
   "-ServerQueryPort=$($Server.QueryPort) ",
-  "-BeaconPort=$($Server.Beaconport) "
+  "-BeaconPort=$($Server.Beaconport) ",
   "-log ",
   "-unattended"
 

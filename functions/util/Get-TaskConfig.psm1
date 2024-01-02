@@ -1,6 +1,6 @@
 function Get-TaskConfig {
   Write-ScriptMsg "Getting Tasks Schedule..."
-  $EmptyDate = (Get-Date).AddDay(-1).ToString($Global.DateTimeFormat)
+  $EmptyDate = (Get-Date).AddYears(-1).ToString($Global.DateTimeFormat)
   $NextAlive = Get-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextAlive"
   if([string]::IsNullOrEmpty($NextAlive)) {
     $NextAlive = $EmptyDate

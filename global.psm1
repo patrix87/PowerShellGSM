@@ -49,6 +49,9 @@ $GlobalDetails = @{
 
   #Max download retries
   MaxDownloadRetries   = 10
+    
+  # Define the DateTimeFormat 
+  DateTimeFormat       = "yyyy-MM-dd HH:mm:ss"
 }
 
 #Create the object

@@ -112,7 +112,7 @@ if ($Task) {
     Unregister-Task
     Exit
   }
-  if (($Server.AutoRestartOnCrash) -and ((New-TimeSpan -Start (Get-Date) -End $TasksSchedule.NextAlive) -le 0)) {
+  if (($Server.AutoRestartOnCrash) -and ($TasksSchedule.NextAlive -le (Get-Date).ToString($Global.DateTimeFormat))) {
     Write-ScriptMsg "Checking Alive State"
     if (-not (Get-ServerProcess)) {
       Write-ScriptMsg "Server is Dead, Restarting..."
@@ -127,7 +127,7 @@ if ($Task) {
     Write-ScriptMsg "Too soon for Alive check"
   }
 
-  if (($Server.AutoUpdates) -and ((New-TimeSpan -Start (Get-Date) -End $TasksSchedule.NextUpdate) -le 0)) {
+  if (($Server.AutoUpdates) -and ($TasksSchedule.NextUpdate -le (Get-Date).ToString($Global.DateTimeFormat))) {
     Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
     if (Request-Update) {
       Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
@@ -142,7 +142,7 @@ if ($Task) {
     Write-ScriptMsg "Too soon for Update check"
   }
 
-  if (($Server.AutoRestart) -and ((New-TimeSpan -Start (Get-Date) -End $TasksSchedule.NextRestart) -le 0)) {
+  if (($Server.AutoRestart) -and ($TasksSchedule.NextRestart -le (Get-Date).ToString($Global.DateTimeFormat))) {
     Write-ScriptMsg "Server is due for Restart"
     $FullRunRequired = $true
     Update-TaskConfig -Restart

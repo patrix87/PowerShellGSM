@@ -17,6 +17,7 @@ Once started it registers a schedule task to check on your server status.
 - 7 Days to Die
 - Ark: Survival Ascended
 - Astroneer
+- Conan Exiles
 - Icarus
 - Insurgency Sandstorm
 - Killing Floor 2

@@ -73,6 +73,8 @@ function Update-Server {
     Exit-WithError -ErrorMsg "SteamCMD failed to complete."
   }
   #Delete the script.
-  $null = Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
+  if (-not $Global.Debug){
+    $null = Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
+  }
 }
 Export-ModuleMember -Function Update-Server

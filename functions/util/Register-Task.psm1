@@ -1,7 +1,7 @@
 function Register-Task {
   $action = New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "-WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File $scriptpath -ServerCfg `"$ServerCfg`" -Task" -WorkingDirectory $dir
-  $trigger = New-ScheduledTaskTrigger -Daily -At 12am -RandomDelay (New-TimeSpan -Minutes $Global.TaskCheckFrequency)
-  $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
+  $trigger = New-ScheduledTaskTrigger -Daily -At 12am
+  $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 3)
   $description = "Run Tasks for $($server.Name)"
   $title = "Tasks-$($server.Name)"
   $task = New-ScheduledTask -Description $description -Action $action -Trigger $trigger -Settings $settings

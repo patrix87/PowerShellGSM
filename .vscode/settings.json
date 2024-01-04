@@ -1,10 +1,4 @@
 {
   "powershell.scriptAnalysis.settingsPath": ".vscode\\PSScriptAnalyzerSettings.psd1",
   "powershell.scriptAnalysis.enable": true,
-  "files.exclude": {
-    "**/backups": true,
-    "**/logs": true,
-    "**/tools": true,
-    "**/servers": true
-  }
 }

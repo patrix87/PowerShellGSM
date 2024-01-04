@@ -4,7 +4,7 @@ function Start-Server {
     Start-ServerPrep
     Write-ScriptMsg "Starting Server..."
     #Create a Timestamp
-    $timestamp = Get-Date
+    $timestamp = Get-TimeStamp
     Add-Member -InputObject $Server -Name "StartTime" -Type NoteProperty -Value $timestamp
     if ($Server.Arguments.length -gt 0) {
       Write-ServerMsg "Starting Server $($Server.Launcher) with Arguments: $($Server.Arguments)"

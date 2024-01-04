@@ -20,7 +20,7 @@ function Register-PID {
       # Try to find the correct process.
       # Get a process list of all the process name are equal to  $Server.ProcessName where the StartTime is higher than $Server.StartTime
       $CorrectProcess = Get-Process -Name $Server.ProcessName |
-      Where-Object -Property StartTime -gt -Value $Server.StartTime
+      Where-Object -Property StartTime -gt -Value ([datetime]::ParseExact($Server.StartTime, $Global.DateTimeFormat, $null))
       if ($CorrectProcess) {
         $ServerProcess = $CorrectProcess
         $WrongProcess = $false

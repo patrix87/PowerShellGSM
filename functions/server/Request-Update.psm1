@@ -71,10 +71,13 @@ function Request-Update {
   Write-ServerMsg "Remote Build ID: $RemoteBuildID"
 
   #Delete the script and update return file.
-  $null = Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
-  #$null = Rename-Item -Path $ScriptPath -NewName "$ScriptFile.$(Get-TimeStamp).txt" -ErrorAction SilentlyContinue
-  $null = Remove-Item -Path ".\servers\$UpdateReturnFile" -Confirm:$false -ErrorAction SilentlyContinue
-  #$null = Rename-Item -Path ".\servers\$UpdateReturnFile" -NewName "$UpdateReturnFile.$(Get-TimeStamp).txt" -ErrorAction SilentlyContinue
+  if ($Global.Debug){
+    $null = Rename-Item -Path $ScriptPath -NewName "$ScriptFile.$(Get-TimeStamp).txt" -ErrorAction SilentlyContinue
+    $null = Rename-Item -Path ".\servers\$UpdateReturnFile" -NewName "$UpdateReturnFile.$(Get-TimeStamp).txt" -ErrorAction SilentlyContinue
+  } else {
+    $null = Remove-Item -Path $ScriptPath -Confirm:$false -ErrorAction SilentlyContinue
+    $null = Remove-Item -Path ".\servers\$UpdateReturnFile" -Confirm:$false -ErrorAction SilentlyContinue
+  }
 
   #Return true if the server needs to be updated.
   if ($InstallState -match "Update Required") {

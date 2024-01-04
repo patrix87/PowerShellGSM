@@ -41,17 +41,18 @@ $GlobalDetails = @{
   #Should be lower or equal to the two above
   TaskCheckFrequency   = 5
 
-  #Log run without actions
-  LogEmptyRun          = $false
-
   #Lock Timeout in miuntes
-  LockTimeout          = 30
+  LockTimeout          = 120
 
   #Max download retries
   MaxDownloadRetries   = 10
-    
-  # Define the DateTimeFormat 
-  DateTimeFormat       = "yyyy-MM-dd HH:mm:ss"
+
+  # Define the DateTimeFormat (Change at your own risk, used for filenames)
+  DateTimeFormat       = "yyyy-MM-dd_HH-mm-ss"
+
+  # Debug Mode (will not delete any logs or script files and will ignore script locks)
+  # !!! DO NOT ENABLE IN PRODUCTION !!!
+  Debug                = $false
 }
 
 #Create the object

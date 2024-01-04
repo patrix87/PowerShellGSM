@@ -1,18 +1,28 @@
 function Get-TaskConfig {
   Write-ScriptMsg "Getting Tasks Schedule..."
-  $EmptyDate = (Get-Date).AddYears(-1).ToString($Global.DateTimeFormat)
+  $OldDate = [datetime]::ParseExact("2000-01-01_00-00-00","yyyy-MM-dd_HH-mm-ss", $null)
+
   $NextAlive = Get-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextAlive"
   if([string]::IsNullOrEmpty($NextAlive)) {
-    $NextAlive = $EmptyDate
+    $NextAlive = $OldDate
+  } else {
+    $NextAlive = [datetime]::ParseExact($NextAlive, $Global.DateTimeFormat, $null)
   }
+
   $NextUpdate = Get-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextUpdate"
   if([string]::IsNullOrEmpty($NextUpdate)) {
-    $NextUpdate = $EmptyDate
+    $NextUpdate = $OldDate
+  } else {
+    $NextUpdate = [datetime]::ParseExact($NextUpdate, $Global.DateTimeFormat, $null)
   }
+
   $NextRestart = Get-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextRestart"
   if([string]::IsNullOrEmpty($NextRestart)) {
-    $NextRestart = $EmptyDate
+    $NextRestart = $OldDate
+  } else {
+    $NextRestart = [datetime]::ParseExact($NextRestart, $Global.DateTimeFormat, $null)
   }
+
   return [hashtable] @{
     NextAlive   = $NextAlive;
     NextUpdate  = $NextUpdate;

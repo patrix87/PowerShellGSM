@@ -5,7 +5,7 @@ function Lock-Process {
   )
   try {
     $null = New-Item -Path ".\servers\" -Name "$($Server.Name).LOCK" -ItemType "file" -Force -ErrorAction SilentlyContinue
-    Set-IniValue -file ".\servers\$($Server.Name).LOCK" -category "Lock" -key "TimeStamp" -value (Get-Date)
+    Set-IniValue -file ".\servers\$($Server.Name).LOCK" -category "Lock" -key "TimeStamp" -value ((Get-Date).ToString($Global.DateTimeFormat))
     Write-ScriptMsg "Locking Process."
   }
   catch {

@@ -111,44 +111,67 @@ if ($Task) {
     Write-ScriptMsg "No Tasks to run, unregistering Tasks..."
     Unregister-Task
     Exit
-  }
-  if (($Server.AutoRestartOnCrash) -and ($TasksSchedule.NextAlive -le (Get-Date).ToString($Global.DateTimeFormat))) {
-    Write-ScriptMsg "Checking Alive State"
-    if (-not (Get-ServerProcess)) {
-      Write-ScriptMsg "Server is Dead, Restarting..."
-      $FullRunRequired = $true
+  } else {
+    $taskName = "Tasks-$($server.Name)"
+    $existingTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+    if (-not $existingTask) {
+      Write-ScriptMsg "Task '$taskName' does not exist, Registering-Task..."
+      Register-Task
     }
-    else {
-      Write-ScriptMsg "Server is Alive"
-    }
-    Update-TaskConfig -Alive
-  }
-  else {
-    Write-ScriptMsg "Too soon for Alive check"
   }
 
-  if (($Server.AutoUpdates) -and ($TasksSchedule.NextUpdate -le (Get-Date).ToString($Global.DateTimeFormat))) {
-    Write-ScriptMsg "Checking on steamCMD if updates are avaiable for $($Server.Name)..."
-    if (Request-Update) {
-      Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
-      $FullRunRequired = $true
+  if ($Server.AutoRestartOnCrash) {
+    if (($TasksSchedule.NextAlive) -le (Get-Date)) {
+      Write-ScriptMsg "Checking Alive State"
+      if (-not (Get-ServerProcess)) {
+        Write-ScriptMsg "Server is Dead, Restarting..."
+        $FullRunRequired = $true
+      }
+      else {
+        Write-ScriptMsg "Server is Alive"
+      }
+      Update-TaskConfig -Alive
     }
     else {
-      Write-ScriptMsg "No updates are available for $($Server.Name)"
+      Write-ScriptMsg "Too soon for Alive check"
     }
-    Update-TaskConfig -Update
   }
   else {
-    Write-ScriptMsg "Too soon for Update check"
+    Write-ScriptMsg "Alive check is disabled"
   }
 
-  if (($Server.AutoRestart) -and ($TasksSchedule.NextRestart -le (Get-Date).ToString($Global.DateTimeFormat))) {
-    Write-ScriptMsg "Server is due for Restart"
-    $FullRunRequired = $true
-    Update-TaskConfig -Restart
+  if ($Server.AutoUpdates) {
+    if (($TasksSchedule.NextUpdate) -le (Get-Date)) {
+      Write-ScriptMsg "Checking on steamCMD if updates are available for $($Server.Name)..."
+      if (Request-Update) {
+        Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."
+        $FullRunRequired = $true
+      }
+      else {
+        Write-ScriptMsg "No updates are available for $($Server.Name)"
+      }
+      Update-TaskConfig -Update
+    }
+    else {
+      Write-ScriptMsg "Too soon for Update check"
+    }
   }
   else {
-    Write-ScriptMsg "Too soon for Restart"
+    Write-ScriptMsg "Auto-updates are disabled"
+  }
+
+  if ($Server.AutoRestart) {
+    if (($TasksSchedule.NextRestart) -le (Get-Date)) {
+      Write-ScriptMsg "Server is due for Restart"
+      $FullRunRequired = $true
+      Update-TaskConfig -Restart
+    }
+    else {
+      Write-ScriptMsg "Too soon for Restart"
+    }
+  }
+  else {
+    Write-ScriptMsg "Auto-restart is disabled"
   }
 
   if (-not $FullRunRequired) {
@@ -156,7 +179,7 @@ if ($Task) {
     Write-ScriptMsg "No tasks ready, exiting."
     #Close the log.
     $null = Stop-Transcript
-    if (-not ($Global.LogEmptyRun)) {
+    if (-not ($Global.Debug)) {
       $null = Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue
     }
     exit
@@ -233,6 +256,7 @@ if ($FreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Containe
   Write-Warning -Message "Stopping the Server to let you edit the configurations files."
   #Stop Server because configuration is probably bad anyway
   Stop-Server
+  $null = Unlock-Process
   & explorer.exe $Server.ConfigFolder
   Write-Warning -Message "Launch again when the server configurations files are edited."
   Read-Host "Press Enter to close this windows."
@@ -265,6 +289,6 @@ Write-ServerMsg "Script successfully completed."
 #---------------------------------------------------------
 
 $null = Stop-Transcript
-if ($NoLogs -and -not ($Global.LogEmptyRun)) {
+if ($NoLogs -and -not ($Global.Debug)) {
   $null = Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue
 }

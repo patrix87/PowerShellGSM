@@ -1,5 +1,5 @@
 Function Get-TimeStamp {
-  return Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+  return (Get-Date).ToString($Global.DateTimeFormat)
 }
 
 Export-ModuleMember -Function Get-TimeStamp

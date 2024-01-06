@@ -207,6 +207,7 @@ $PZ_CLASSPATH_LIST = @(
   "java/lwjgl-opengl.jar;",
   "java/lwjgl-opengl-natives-windows.jar;",
   "java/lwjgl_util.jar;",
+  "java/commons-compress-1.18.jar;",
   "java/sqlite-jdbc-3.27.2.1.jar;",
   "java/trove-3.0.3.jar;",
   "java/uncommons-maths-1.2.3.jar;",

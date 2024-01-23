@@ -12,11 +12,11 @@ function Install-SevenZip {
   $null = Expand-Archive -Path ".\downloads\7za920.zip" -DestinationPath ".\downloads\7z920\" -Force
   Write-ServerMsg "Downloading 7zip 23.01"
   #Download 7zip 23.01
-  $null = Invoke-Download -Uri "https://www.7-zip.org/a/7z2301-extra.7z" -OutFile ".\downloads\7z2301-extra.7z" -ErrorAction SilentlyContinue
+  $null = Invoke-Download -Uri "https://www.7-zip.org/a/7z2301-x64.exe" -OutFile ".\downloads\7z2301-x64.exe" -ErrorAction SilentlyContinue
   #Use 7zip 9.20 to unzip 7zip 23.01
-  & ".\downloads\7z920\7za.exe" x ".\downloads\7z2301-extra.7z" -o".\downloads\7z2301\" -y
+  & ".\downloads\7z920\7za.exe" x ".\downloads\7z2301-x64.exe" -o".\downloads\7z2301\" -y
   #Copy the executable and dll to the 7zip directory.
-  $null = Copy-Item -Path ".\downloads\7z2301\x64\" -Destination (Split-Path -Path $Application) -Recurse -Force
+  $null = Copy-Item -Path ".\downloads\7z2301\" -Destination (Split-Path -Path $Application) -Recurse -Force
   Write-ServerMsg "7Zip Installed."
 }
 

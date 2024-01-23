@@ -22,7 +22,7 @@ function Backup-Server {
 
   #Run Backup
   try {
-    & $Global.SevenZip a -tzip -mx=1 "$($Backups.Path)\$Type\$BackupName.zip" $Backups.Saves
+    & $Global.SevenZip a -tzip -mx=1 -r "$($Backups.Path)\$Type\$BackupName.zip" "$($Backups.Saves)" -x!*.log -x!*.zip -x!*.old #Currently not working
   }
   catch {
     Exit-WithError -ErrorMsg "Unable to backup server."

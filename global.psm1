@@ -1,6 +1,6 @@
 $GlobalDetails = @{
   #7zip
-  SevenZip             = ".\tools\7z\7za.exe"
+  SevenZip             = ".\tools\7z\7z.exe"
 
   #mcrcon
   Mcrcon               = ".\tools\mcrcon\mcrcon.exe"

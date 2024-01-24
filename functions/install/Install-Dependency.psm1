@@ -2,7 +2,6 @@ function Install-Dependency {
   #Define variables
   Write-ScriptMsg "Verifying Dependencies..."
   $Dependencies = @{
-    SevenZip = $Global.SevenZip
     Mcrcon   = $Global.Mcrcon
     SteamCMD = $Global.SteamCMD
   }

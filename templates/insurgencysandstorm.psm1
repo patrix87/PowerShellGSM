@@ -167,6 +167,9 @@ $BackupsDetails = @{
 
   #Folder to include in backup
   Saves = ".\servers\$($Server.Name)\Insurgency\Config\Server"
+
+  #Exclusions (Regex use | as separator)
+  Exclusions = "()"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

@@ -32,6 +32,12 @@ catch {
 $LogFile = "$($Global.LogFolder)\$(Get-TimeStamp)-$($ServerCfg).txt"
 # Start Logging
 Start-Transcript -Path $LogFile -IncludeInvocationHeader
+if($Global.Debug) {
+  [Console]::ForegroundColor = $Global.ErrorColor
+  [Console]::BackgroundColor = $Global.ErrorBgColor
+  Write-Host "DEBUG MODE ENABLED"
+  [Console]::ResetColor()
+}
 $NoLogs = $false
 
 #---------------------------------------------------------

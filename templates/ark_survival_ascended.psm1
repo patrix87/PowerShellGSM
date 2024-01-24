@@ -153,6 +153,9 @@ $BackupsDetails = @{
 
   #Folder to include in backup
   Saves = ".\servers\$($Server.Name)\ShooterGame\Saved"
+
+  #Exclusions (Regex use | as separator)
+  Exclusions = [regex]"(.*\d{2}\.\d{2}\.\d{2}\.ark$|.*\.profilebak$)"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

@@ -127,6 +127,9 @@ $BackupsDetails = @{
 
   #Folder to include in backup
   Saves = "$Env:userprofile\AppData\Roaming\7DaysToDie"
+
+  #Exclusions (Regex use | as separator)
+  Exclusions = "()"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

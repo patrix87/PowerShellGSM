@@ -19,7 +19,14 @@ $ServerDetails = @{
   #Server Name
   ServerName         = "My PalWorld Server"
 
-  #Server Password can be changed PalWorldSettings.ini ServerPassword="CHANGEME"
+  #Server Description (should be changed PalWorldSettings.ini if changed here after the first run)
+  ServerDescription  = "My PalWorld Server Description"
+
+  #Server Region (should be changed PalWorldSettings.ini if changed here after the first run)
+  Region             = "NA"
+
+  #Server Password (should be changed PalWorldSettings.ini if changed here after the first run)
+  ServerPassword     = "CHANGEME"
 
   #Maximum number of players
   MaxPlayers         = 32
@@ -36,7 +43,7 @@ $ServerDetails = @{
   #Rcon Port
   ManagementPort     = "25575"
 
-  #Rcon Password (AdminPassword="CHANGEMETOO" in PalWorldSettings.ini)
+  #Rcon Password (should be changed PalWorldSettings.ini if changed here after the first run)
   ManagementPassword = "CHANGEMETOO"
 
   #---------------------------------------------------------
@@ -75,7 +82,7 @@ $ServerDetails = @{
   AutoRestartTime    = @(3, 0, 0)
 
   #Process name in the task manager
-  ProcessName        = "PalServer-Win64-Test-Cmd"
+  ProcessName        = "PalServer"
 
   #Use PID instead of Process Name.
   UsePID             = $true
@@ -137,6 +144,9 @@ $BackupsDetails = @{
 
   #Folder to include in backup
   Saves = ".\servers\$($Server.Name)\Pal\Saved\"
+
+  #Exclusions (Regex use | as separator)
+  Exclusions = "()"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -147,7 +157,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
   #Use Rcon to restart server softly.
-  Use        = $false
+  Use        = $true
 
   #What protocol to use : Rcon, Telnet, Websocket
   Protocol   = "Rcon"
@@ -201,9 +211,25 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
+  # Check if the config file is empty and if so, write the default config to it.
+  if ((Get-Content -Raw "$($Server.ConfigFolder)/PalWorldSettings.ini" | Select-String -Pattern '\S').Trim() -eq '') {
+    Write-ScriptMsg "Writing default config to $($Server.ConfigFolder)/PalWorldSettings.ini"
+    # Write the content to the file
+    $content = '[/Script/Pal.PalGameWorldSettings]\r\nOptionSettings=(Difficulty=None,DayTimeSpeedRate=1.000000,NightTimeSpeedRate=1.000000,ExpRate=1.000000,PalCaptureRate=1.000000,PalSpawnNumRate=1.000000,PalDamageRateAttack=1.000000,PalDamageRateDefense=1.000000,PlayerDamageRateAttack=1.000000,PlayerDamageRateDefense=1.000000,PlayerStomachDecreaceRate=1.000000,PlayerStaminaDecreaceRate=1.000000,PlayerAutoHPRegeneRate=1.000000,PlayerAutoHpRegeneRateInSleep=1.000000,PalStomachDecreaceRate=1.000000,PalStaminaDecreaceRate=1.000000,PalAutoHPRegeneRate=1.000000,PalAutoHpRegeneRateInSleep=1.000000,BuildObjectDamageRate=1.000000,BuildObjectDeteriorationDamageRate=1.000000,CollectionDropRate=1.000000,CollectionObjectHpRate=1.000000,CollectionObjectRespawnSpeedRate=1.000000,EnemyDropItemRate=1.000000,DeathPenalty=All,bEnablePlayerToPlayerDamage=False,bEnableFriendlyFire=False,bEnableInvaderEnemy=True,bActiveUNKO=False,bEnableAimAssistPad=True,bEnableAimAssistKeyboard=False,DropItemMaxNum=3000,DropItemMaxNum_UNKO=100,BaseCampMaxNum=128,BaseCampWorkerMaxNum=15,DropItemAliveMaxHours=1.000000,bAutoResetGuildNoOnlinePlayers=False,AutoResetGuildTimeNoOnlinePlayers=72.000000,GuildPlayerMaxNum=20,PalEggDefaultHatchingTime=72.000000,WorkSpeedRate=1.000000,bIsMultiplay=False,bIsPvP=False,bCanPickupOtherGuildDeathPenaltyDrop=False,bEnableNonLoginPenalty=True,bEnableFastTravel=True,bIsStartLocationSelectByMap=True,bExistPlayerAfterLogout=False,bEnableDefenseOtherGuildPlayer=False,CoopPlayerMaxNum=4,ServerPlayerMaxNum=32,ServerName="Default Palworld Server",ServerDescription="",AdminPassword="",ServerPassword="",PublicPort=8211,PublicIP="",RCONEnabled=False,RCONPort=25575,Region="",bUseAuth=True,BanListURL="https://api.palworldgame.com/api/banlist.txt")'
+    Set-Content -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Value $content
 
+    Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "ServerName" -Value "$($Server.ServerName)"
+    Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "ServerPassword" -Value "$($Server.Password)"
+    Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "PublicPort" -Value "$($Server.Port)"
+    if ($WarningsDetails.Use){
+      Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "RCONEnabled" -Value "True"
+    }
+    Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "AdminPassword" -Value "$($Server.ManagementPassword)"
+    Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "RCONPort" -Value "$($Server.ManagementPort)"
+    Set-IniValue -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Section "/Script/Pal.PalGameWorldSettings" -Key "Region" -Value "$($Server.Region)"
+
+  }
   Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
-
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server", "Backups", "Warnings")

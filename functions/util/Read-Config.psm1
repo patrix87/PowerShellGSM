@@ -7,7 +7,6 @@ function Read-Config {
   $Server.ConfigFolder = (Resolve-CompletePath -Path $Server.ConfigFolder -ParentPath ".\servers\")
   $Backups.Path = (Resolve-CompletePath -Path $Backups.Path -ParentPath ".\backups\")
   $Backups.Saves = (Resolve-CompletePath -Path $Backups.Saves -ParentPath ".\servers\")
-  $Global.SevenZip = (Resolve-CompletePath -Path $Global.SevenZip -ParentPath ".\tools\")
   $Global.Mcrcon = (Resolve-CompletePath -Path $Global.Mcrcon -ParentPath ".\tools\")
   $Global.SteamCMD = (Resolve-CompletePath -Path $Global.SteamCMD -ParentPath ".\tools\")
   $Global.JavaDirectory = (Resolve-CompletePath -Path $Global.JavaDirectory -ParentPath ".\tools\")

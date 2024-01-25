@@ -159,7 +159,7 @@ $WarningsDetails = @{
   #Use Rcon to restart server softly.
   Use        = $true
 
-  #What protocol to use : Rcon, Telnet, Websocket
+  #What protocol to use : RCON, ARRCON, Telnet, Websocket
   Protocol   = "ARRCON"
 
   #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)

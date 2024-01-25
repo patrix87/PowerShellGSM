@@ -169,7 +169,7 @@ $WarningsDetails = @{
   Use        = $true
 
   #What protocol to use : Rcon, Telnet, Websocket
-  Protocol   = "Rcon"
+  Protocol   = "RCON"
 
   #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
   Timers     = [System.Collections.ArrayList]@(240, 50, 10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes

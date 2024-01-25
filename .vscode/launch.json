@@ -5,20 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "PowerShell: Launch Palworld",
+      "name": "PowerShell: Launch enshrouded",
       "type": "PowerShell",
       "request": "launch",
       "script": "${workspaceFolder}\\main.ps1",
-      "args": ["-ServerCfg \"palworld\""],
+      "args": ["-ServerCfg \"enshrouded\""],
       "cwd": "${workspaceFolder}",
       "createTemporaryIntegratedConsole": true
     },
     {
-      "name": "PowerShell: Launch palworld Update Check",
+      "name": "PowerShell: Launch enshrouded Update Check",
       "type": "PowerShell",
       "request": "launch",
       "script": "${workspaceFolder}\\main.ps1",
-      "args": ["-ServerCfg \"palworld\" -UpdateCheck"],
+      "args": ["-ServerCfg \"enshrouded\" -UpdateCheck"],
       "cwd": "${workspaceFolder}",
       "createTemporaryIntegratedConsole": true
     }

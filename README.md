@@ -24,6 +24,7 @@ Once started it registers a schedule task to check on your server status.
 - Left 4 Dead 2
 - Mordhau
 - Minecraft (Paperclip)
+- Palworld
 - PixArk
 - Project Zomboid
 - Rust

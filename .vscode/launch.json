@@ -5,20 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "PowerShell: Launch Icarus",
+      "name": "PowerShell: Launch Palworld",
       "type": "PowerShell",
       "request": "launch",
       "script": "${workspaceFolder}\\main.ps1",
-      "args": ["-ServerCfg \"Icarus\""],
-      "cwd": "${workspaceFolder}"
+      "args": ["-ServerCfg \"palworld\""],
+      "cwd": "${workspaceFolder}",
+      "createTemporaryIntegratedConsole": true
     },
     {
-      "name": "PowerShell: Launch Icarus Update Check",
+      "name": "PowerShell: Launch palworld Update Check",
       "type": "PowerShell",
       "request": "launch",
       "script": "${workspaceFolder}\\main.ps1",
-      "args": ["-ServerCfg \"Icarus\" -UpdateCheck"],
-      "cwd": "${workspaceFolder}"
+      "args": ["-ServerCfg \"palworld\" -UpdateCheck"],
+      "cwd": "${workspaceFolder}",
+      "createTemporaryIntegratedConsole": true
     }
   ]
 }

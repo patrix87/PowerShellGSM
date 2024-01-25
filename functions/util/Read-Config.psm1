@@ -8,6 +8,7 @@ function Read-Config {
   $Backups.Path = (Resolve-CompletePath -Path $Backups.Path -ParentPath ".\backups\")
   $Backups.Saves = (Resolve-CompletePath -Path $Backups.Saves -ParentPath ".\servers\")
   $Global.Mcrcon = (Resolve-CompletePath -Path $Global.Mcrcon -ParentPath ".\tools\")
+  $Global.ARRCON = (Resolve-CompletePath -Path $Global.ARRCON -ParentPath ".\tools\")
   $Global.SteamCMD = (Resolve-CompletePath -Path $Global.SteamCMD -ParentPath ".\tools\")
   $Global.JavaDirectory = (Resolve-CompletePath -Path $Global.JavaDirectory -ParentPath ".\tools\")
   $Global.LogFolder = (Resolve-CompletePath -Path $Global.LogFolder -ParentPath ".\")

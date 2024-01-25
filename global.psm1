@@ -2,6 +2,9 @@ $GlobalDetails = @{
   #mcrcon
   Mcrcon               = ".\tools\mcrcon\mcrcon.exe"
 
+  #ARRCON
+  ARRCON               = ".\tools\ARRCON\ARRCON.exe"
+
   #SteamCMD
   SteamCMD             = ".\tools\SteamCMD\steamcmd.exe"
 

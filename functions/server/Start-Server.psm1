@@ -2,6 +2,12 @@ function Start-Server {
   try {
     Write-ScriptMsg "Starting Server Preparation..."
     Start-ServerPrep
+  }
+  catch {
+    Write-Error $_
+    Exit-WithError -ErrorMsg "Unable to complete the server preparation."
+  }
+  try {
     Write-ScriptMsg "Starting Server..."
     #Create a Timestamp
     $timestamp = Get-TimeStamp

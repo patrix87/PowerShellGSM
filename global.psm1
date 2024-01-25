@@ -1,9 +1,9 @@
 $GlobalDetails = @{
-  #7zip
-  SevenZip             = ".\tools\7z\7za.exe"
-
   #mcrcon
   Mcrcon               = ".\tools\mcrcon\mcrcon.exe"
+
+  #ARRCON
+  ARRCON               = ".\tools\ARRCON\ARRCON.exe"
 
   #SteamCMD
   SteamCMD             = ".\tools\SteamCMD\steamcmd.exe"
@@ -14,6 +14,9 @@ $GlobalDetails = @{
   #Path of the logs folder.
   LogFolder            = ".\logs"
 
+  #File extensions to exclude from backups
+  Exclusions           = @(".tmp", ".bak", ".log", ".old", ".temp")
+
   #Number of days to keep server logs
   Days                 = 30
 
@@ -22,6 +25,12 @@ $GlobalDetails = @{
 
   #Console Output Background Color
   BgColor              = "Black"
+
+  #Console Output Text Color for errors
+  ErrorColor           = "Black"
+
+  #Console Output Background Color for errors
+  ErrorBgColor         = "Red"
 
   #Console Output Text Color for sections
   SectionColor         = "Blue"
@@ -52,7 +61,7 @@ $GlobalDetails = @{
 
   # Debug Mode (will not delete any logs or script files and will ignore script locks)
   # !!! DO NOT ENABLE IN PRODUCTION !!!
-  Debug                = $false
+  Debug                = $true
 }
 
 #Create the object

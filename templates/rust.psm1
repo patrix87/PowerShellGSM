@@ -181,6 +181,9 @@ $BackupsDetails = @{
 
   #Folder to include in backup
   Saves = ".\servers\$($Server.Name)\server\$($Server.Identity)"
+
+  #Exclusions (Regex use | as separator)
+  Exclusions = "()"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -193,8 +196,8 @@ $WarningsDetails = @{
   #Use Rcon to restart server softly.
   Use        = $true
 
-  #What protocol to use : Rcon, Telnet, Websocket
-  Protocol   = "Rcon"
+  #What protocol to use : RCON, ARRCON, Telnet, Websocket
+  Protocol   = "RCON"
 
   #Times at which the servers will warn the players that it is about to restart. (in seconds between each timers)
   Timers     = [System.Collections.ArrayList]@(240, 50, 10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes

@@ -197,7 +197,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
   # Check if the config file is almost empty and if so, write the default config to it.
-    Write-ScriptMsg "Writing configuration to $($Server.ConfigFolder)\enshrouded_server.ini"
+    Write-ScriptMsg "Writing configuration to $($Server.ConfigFolder)\enshrouded_server.json"
     $jsonObject = @{
       "name"= $Server.ServerName
       "password" = $Server.Password
@@ -210,7 +210,7 @@ function Start-ServerPrep {
     }
     $content = $jsonObject | ConvertTo-Json
 
-    Set-Content -Path "$($Server.ConfigFolder)/enshrouded_server.ini" -Value $content
+    Set-Content -Path "$($Server.ConfigFolder)/enshrouded_server.json" -Value $content
 
   Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
 }

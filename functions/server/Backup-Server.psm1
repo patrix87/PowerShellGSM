@@ -32,7 +32,7 @@ try {
   }
   # Define the filter to exclude certain files from the backup
   $ExcludeFilter = {
-    $_.Name -notmatch $Backups.Exclusions -and $_.Extension -notin $Global.Exclusions
+    ($_.Name -notmatch $Backups.Exclusions -and $_.Extension -notin $Global.Exclusions) -or $null -eq $_.Extension -or $_.Extension -eq ''
   }
 
   # Get all files that should be included in the backup

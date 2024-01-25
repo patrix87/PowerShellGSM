@@ -15,7 +15,7 @@ $GlobalDetails = @{
   LogFolder            = ".\logs"
 
   #File extensions to exclude from backups
-  Exclusions           = @(".tmp", ".bak", ".log", ".old", ".temp")
+  Exclusions           = @(".tmp", ".bak", ".log", ".old", ".temp", ".backup")
 
   #Number of days to keep server logs
   Days                 = 30
@@ -61,7 +61,7 @@ $GlobalDetails = @{
 
   # Debug Mode (will not delete any logs or script files and will ignore script locks)
   # !!! DO NOT ENABLE IN PRODUCTION !!!
-  Debug                = $true
+  Debug                = $false
 }
 
 #Create the object

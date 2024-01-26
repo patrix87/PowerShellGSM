@@ -1,9 +1,3 @@
-<#
-  Edit configuration in : .\servers\PalWorld\Pal\Saved\Config\WindowsServer\PalWorldSettings.ini
-  Instructions here
-  https://tech.palworldgame.com/optimize-game-balance
-#>
-
 #Server Name, Always Match the Launcher and config file name.
 $Name = $ServerCfg
 
@@ -19,13 +13,13 @@ $ServerDetails = @{
   #Server Name
   ServerName         = "My PalWorld Server"
 
-  #Server Description (should be changed PalWorldSettings.ini if changed here after the first run)
+  #Server Description
   ServerDescription  = "My PalWorld Server Description"
 
-  #Server Region (should be changed PalWorldSettings.ini if changed here after the first run)
+  #Server Region
   Region             = "NA"
 
-  #Server Password (should be changed PalWorldSettings.ini if changed here after the first run)
+  #Server Password
   Password           = "CHANGEME"
 
   #Maximum number of players
@@ -37,14 +31,16 @@ $ServerDetails = @{
   #Server Port
   Port               = 8211
 
-  #Rcon IP (Set RCONEnabled=True in PalWorldSettings.ini)
+  #Rcon IP
   ManagementIP       = "127.0.0.1"
 
   #Rcon Port
   ManagementPort     = "25575"
 
-  #Rcon Password (should be changed PalWorldSettings.ini if changed here after the first run)
+  #Rcon Password
   ManagementPassword = "CHANGEMETOO"
+
+  #EDIT OTHER SERVER SETTINGS AT THE BOTTOM OF THIS FILE
 
   #---------------------------------------------------------
   # Server Installation Details
@@ -212,6 +208,9 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
   Write-ScriptMsg "Writing config to $($Server.ConfigFolder)\PalWorldSettings.ini"
+
+  # YOU MUST EDIT THE CONFIGURATION BELLOW AS THE FILE WILL BE OVERWRITTEN AT EACH LAUNCH.
+
   $content ="[/Script/Pal.PalGameWorldSettings]`r`n" +
   'OptionSettings=(' +
   'Difficulty=None,' +
@@ -276,6 +275,8 @@ function Start-ServerPrep {
   'Region="",' +
   'bUseAuth=True,' +
   'BanListURL="https://api.palworldgame.com/api/banlist.txt")'
+
+  # YOU MUST EDIT THE CONFIGURATION ABOVE AS THE FILE WILL BE OVERWRITTEN AT EACH LAUNCH.
 
   $content = $content.Replace('ServerName="Default Palworld Server"', "ServerName=`"$($Server.ServerName)`"")
   $content = $content.Replace('ServerDescription=""', "ServerDescription=`"$($Server.ServerDescription)`"")

@@ -22,7 +22,6 @@ function Send-Command {
     "ARRCON" {
       #send ARRCON command.
       $Result = Start-Process $Global.ARRCON -ArgumentList "-c -H $($Server.ManagementIP) -P $($Server.ManagementPort) -p $($Server.ManagementPassword) `"$Command $Message`"" -Wait -PassThru -NoNewWindow
-      Write-Host $Result
       if ($Result.ExitCode -eq 0) {
         $Success = $true
       }

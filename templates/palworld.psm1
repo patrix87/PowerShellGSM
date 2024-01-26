@@ -166,10 +166,10 @@ $WarningsDetails = @{
   Timers     = [System.Collections.ArrayList]@(240, 50, 10) #Total wait time is 240+50+10 = 300 seconds or 5 minutes
 
   #message that will be sent. % is a wildcard for the timer.
-  MessageMin = "The server will restart in % minutes !"
+  MessageMin = "The_server_will_restart_in_%_minutes_!"
 
   #message that will be sent. % is a wildcard for the timer.
-  MessageSec = "The server will restart in % seconds !"
+  MessageSec = "The_server_will_restart_in_%_seconds_!"
 
   #command to send a message.
   CmdMessage = "Broadcast"

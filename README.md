@@ -8,8 +8,6 @@
   A modular PowerShell tool to manage game servers.<br/>
 </p>
 <p align="center">
-  <a href="https://github.com/patrix87/PowerShellGSM/releases"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/patrix87/PowerShellGSM?sort=date&display_name=release&style=flat"></a>
-  </nobr>
   <a href="https://github.com/patrix87/PowerShellGSM/releases"><img alt="GitHub release (latest by date including pre-release)" src="https://img.shields.io/github/v/release/patrix87/PowerShellGSM?include_prereleases&sort=date&display_name=release&style=flat"></a>
   </nobr>
   <a href="https://github.com/patrix87/PowerShellGSM/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/patrix87/PowerShellGSM"></a>

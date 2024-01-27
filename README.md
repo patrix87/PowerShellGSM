@@ -99,7 +99,6 @@ By [@BananaAcid](https://github.com/BananaAcid/)
 
 - A Windows machine with at least PowerShell 5.1 installed (Windows 10 or Windows Server 2016 or newer)
 - Some basic PowerShell knowledge.
-- The ability to read simple instructions.
 - Some networking basics to configure port forwarding.
 - The Windows user running the script should have admin privileges but should **not** run it with admin privileges.
 

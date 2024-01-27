@@ -13,7 +13,7 @@
   <a href="https://github.com/patrix87/PowerShellGSM/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/patrix87/PowerShellGSM"></a>
 </p>
 
-## Features:
+# Features
 
 1. Hassle-free "setup and forget" experience
 2. Automated installation of game servers
@@ -29,7 +29,7 @@
 
 Once started it registers a schedule task to check on your server status.
 
-# Supported Games
+# Currently Supported Games
 
 - 7 Days to Die
 - Ark: Survival Ascended

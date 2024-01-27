@@ -103,7 +103,7 @@ By [@BananaAcid](https://github.com/BananaAcid/)
 - Some networking basics to configure port forwarding.
 - The Windows user running the script should have admin privileges but should **not** run it with admin privileges.
 
-# Frequent Game requirements
+# Frequent Game Server Requirements
 
 - [DirectX End-User Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=35)
 - [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)

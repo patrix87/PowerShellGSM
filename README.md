@@ -13,13 +13,19 @@
   <a href="https://github.com/patrix87/PowerShellGSM/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/patrix87/PowerShellGSM"></a>
 </p>
 
-### This PowerShell tool will take care of:
+## Features:
 
-- Installation
-- Backups
-- Updates
-- Monitoring
-- Restarts
+1. Hassle-free "setup and forget" experience
+2. Automated installation of game servers
+3. Streamlined single-file configuration
+4. Automatic server updates upon new version releases
+5. Monitoring for detecting server crashes and available updates
+6. Built-in thread isolation and priority management
+7. Automatic start after a system reboot
+8. Daily server restarts with in-game broadcasts for supported games
+9. Automated, lightweight backups with archiving for 7 days and 4 weeks
+10. Full configurability, allowing customization according to your preferences
+11. Open-Source with a great community supporting the tool.
 
 Once started it registers a schedule task to check on your server status.
 

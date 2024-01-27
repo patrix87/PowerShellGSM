@@ -1,16 +1,16 @@
 <p align="center">
-  <img
-       src="https://github.com/patrix87/PowerShellGSM/blob/main/logo.png?raw=true"
-       alt="PowerShellGSM Banner"
-  />
+  <img src="https://github.com/patrix87/PowerShellGSM/blob/main/logo.png?raw=true" alt="PowerShellGSM Banner"/>
 </p>  
 <p align="center">
-  A modular PowerShell tool to manage game servers.<br/>
+A Comprehensive PowerShell Tool for Simple Automated Game Server Management.<br/>
 </p>
 <p align="center">
-  <a href="https://github.com/patrix87/PowerShellGSM/releases"><img alt="GitHub release (latest by date including pre-release)" src="https://img.shields.io/github/v/release/patrix87/PowerShellGSM?include_prereleases&sort=date&display_name=release&style=flat"></a>
+  <nobr>
+    <a href="https://github.com/patrix87/PowerShellGSM/releases"><img alt="GitHub release (latest by date including pre-release)" src="https://img.shields.io/github/v/release/patrix87/PowerShellGSM?include_prereleases&sort=date&display_name=release&style=flat"></a>
   </nobr>
-  <a href="https://github.com/patrix87/PowerShellGSM/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/patrix87/PowerShellGSM"></a>
+  <nobr>
+    <a href="https://github.com/patrix87/PowerShellGSM/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/patrix87/PowerShellGSM"></a>
+  </nobr>
 </p>
 
 # Features
@@ -93,36 +93,35 @@ Before you begin, note that this tool is not intended to run on your primary gam
 
 By [@BananaAcid](https://github.com/BananaAcid/)
 
-https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae
+[https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae](https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae)
 
 # Requirements
 
-- A windows machine with at least PowerShell 5.1 installed (Windows 10 or Windows Server 2016 or newer)
+- A Windows machine with at least PowerShell 5.1 installed (Windows 10 or Windows Server 2016 or newer)
 - Some basic PowerShell knowledge.
 - The ability to read simple instructions.
 - Some networking basics to configure port forwarding.
-- The windows user running the script should have admin privileges but should **not** run it with admin privileges.
+- The Windows user running the script should have admin privileges but should **not** run it with admin privileges.
 
 # Frequent Game requirements
 
 - [DirectX End-User Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=35)
 - [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - [.NET Framework 4.8.1](https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net481-web-installer)
-- [.NET Framework 5, 6, 7 or 8](https://dotnet.microsoft.com/en-us/download/dotnet)
+- [.NET Framework 5, 6, 7, or 8](https://dotnet.microsoft.com/en-us/download/dotnet)
 - [Java JDK](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc)
 - [Microsoft XNA Redistributable](https://www.microsoft.com/en-ca/download/details.aspx?id=20914)
 
-# Expanding the code
+# Expanding the Code
 
 You can create pull requests for changes to this project.
 
-Please follow the current structure and formating.
+Please follow the current structure and formatting.
 
-If you want to add support for more games, copy one of the configuration files and edit the values and launch parameters.
-You can then create a pull request to include your configuration here.
+If you want to add support for more games, copy one of the configuration files and edit the values and launch parameters. You can then create a pull request to include your configuration here.
 
 # Disclaimer
 
-I'm am in no way responsible for anything that this script will do, you are responsible for reading and understanding what this script will do before executing it.
+I am in no way responsible for anything that this script will do; you are responsible for reading and understanding what this script will do before executing it.
 
-This script will download and install third party softwares like SteamCMD, ARRCON, mcrcon, Java, Microsoft XNA, Paperclip, Terraria and any games you try to install.
+This script will download and install third-party software like SteamCMD, ARRCON, mcrcon, Java, Microsoft XNA, Paperclip, Terraria, and any games you try to install.

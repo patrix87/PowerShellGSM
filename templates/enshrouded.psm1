@@ -180,7 +180,7 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-  "-name=$($Server.ServerName) ",
+  "-name=`"$($Server.ServerName)`" ",
   "-gamePort=$($Server.Port) ",
   "-queryPort=$($Server.QueryPort) ",
   "-slotCount=$($Server.MaxPlayers) ",

@@ -155,7 +155,7 @@ $BackupsDetails = @{
   Saves = ".\servers\$($Server.Name)\ShooterGame\Saved"
 
   #Exclusions (Regex use | as separator)
-  Exclusions = [regex]"(.*\d{2}\.\d{2}\.\d{2}\.ark$|.*\.profilebak$)"
+  Exclusions = [regex]"(.*\d{2}\.\d{2}\.\d{2}\.ark$|.*\.profilebak$|.*\.tribebak$)"
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

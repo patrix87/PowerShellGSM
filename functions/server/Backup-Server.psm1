@@ -42,11 +42,6 @@ try {
       return $true
     }
 
-    if ($_.Extension -eq '') {
-      if($Global.Debug) {Write-ServerMsg "Excluded: File extension is empty."}
-      return $false
-    }
-
     if ($Global.Exclusions.Count -gt 0) {
       if ($_.Extension -in $Global.Exclusions) {
         if($Global.Debug) {Write-ServerMsg "Excluded: Global Extension Exclusions"}

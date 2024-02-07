@@ -37,11 +37,13 @@ try {
       Write-ServerMsg "File: $($_.FullName) Extension: $($_.Extension)"
     }
 
+    # If the file is a directory, include it in the backup
     if ($_.PSIsContainer) {
       if($Global.Debug) {Write-ServerMsg "Is a Folder"}
       return $true
     }
 
+    # If the file extension is in the global exclusions list, exclude it from the backup
     if ($Global.Exclusions.Count -gt 0) {
       if ($_.Extension -in $Global.Exclusions) {
         if($Global.Debug) {Write-ServerMsg "Excluded: Global Extension Exclusions"}
@@ -49,12 +51,15 @@ try {
       }
     }
 
+    # If the filename match the backups Regex Exclusions, exclude it from the backup
     if ($Backups.Exclusions -ne "") {
       if ($_.Name -match $Backups.Exclusions) {
         if($Global.Debug) {Write-ServerMsg "Excluded: REGEX"}
         return $false
       }
     }
+
+    # else include it in the backup
     if ($Global.Debug) {Write-ServerMsg "Included"}
     return $true
   }

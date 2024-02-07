@@ -125,7 +125,7 @@ $BackupsDetails = @{
   Saves = $Server.ConfigFolder
 
   #Exclusions (Regex use | as separator)
-  Exclusions = "()"
+  Exclusions = ""
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

@@ -24,19 +24,56 @@ function Backup-Server {
 
 #Run Backup
 try {
-  if ($Backups.Exclusions -ne "()") {
+  if ($Backups.Exclusions -ne "") {
     Write-ServerMsg "Server Backup Exclusions: $($Backups.Exclusions)"
   }
-  if ($Global.Exclusions -ne "()") {
+  if ($Global.Exclusions.Count -gt 0) {
     Write-ServerMsg "Global Backup Exclusions: $($Global.Exclusions)"
   }
-  # Define the filter to exclude certain files from the backup
-  $ExcludeFilter = {
-    ($_.Name -notmatch $Backups.Exclusions -and $_.Extension -notin $Global.Exclusions) -or $null -eq $_.Extension -or $_.Extension -eq ''
+  # Return true if the file should be included in the backup, otherwise return false
+  $IncludeFilter = {
+
+    if($Global.Debug) {
+      Write-ServerMsg "File: $($_.FullName) Extension: $($_.Extension)"
+    }
+
+    if ($_.PSIsContainer) {
+      if($Global.Debug) {Write-ServerMsg "Is a Folder"}
+      return $true
+    }
+
+    if ($_.Extension -eq '') {
+      if($Global.Debug) {Write-ServerMsg "Excluded: File extension is empty."}
+      return $false
+    }
+
+    if ($Global.Exclusions.Count -gt 0) {
+      if ($_.Extension -in $Global.Exclusions) {
+        if($Global.Debug) {Write-ServerMsg "Excluded: Global Extension Exclusions"}
+        return $false
+      }
+    }
+
+    if ($Backups.Exclusions -ne "") {
+      if ($_.Name -match $Backups.Exclusions) {
+        if($Global.Debug) {Write-ServerMsg "Excluded: REGEX"}
+        return $false
+      }
+    }
+    if ($Global.Debug) {Write-ServerMsg "Included"}
+    return $true
   }
 
   # Get all files that should be included in the backup
-  $FilesToBackup = Get-ChildItem -Path $Backups.Saves -Recurse | Where-Object $ExcludeFilter
+  $FilesToBackup = Get-ChildItem -Path $Backups.Saves -Recurse | Where-Object $IncludeFilter
+
+  # Add debug messages if $Global.Debug is true
+  if ($Global.Debug) {
+    Write-ServerMsg "Files to Backup:"
+    $FilesToBackup | ForEach-Object {
+      Write-ServerMsg $_.FullName
+    }
+  }
 
   # Create a temporary directory
   $TempDirectory = New-Item -ItemType Directory -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)"

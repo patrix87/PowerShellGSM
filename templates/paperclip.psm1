@@ -152,7 +152,7 @@ $BackupsDetails = @{
   Saves = "$Env:userprofile\Documents\My Games\Terraria\Worlds"
 
   #Exclusions (Regex use | as separator)
-  Exclusions = "()"
+  Exclusions = ""
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

@@ -150,7 +150,7 @@ $BackupsDetails = @{
   Saves = "$Env:userprofile\Zomboid"
 
   #Exclusions (Regex use | as separator)
-  Exclusions = "()"
+  Exclusions = ""
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails

@@ -53,7 +53,7 @@ $ServerDetails = @{
   Path               = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder       = ".\servers\$Name\Pal\Saved\Config\WindowsServer\"
+  ConfigFolder       = ".\servers\$Name\Pal\Saved\Config\WindowsServer"
 
   #Steam Server App Id
   AppID              = 2394010
@@ -139,10 +139,10 @@ $BackupsDetails = @{
   Weeks = 4
 
   #Folder to include in backup
-  Saves = ".\servers\$($Server.Name)\Pal\Saved\"
+  Saves = ".\servers\$($Server.Name)\Pal\Saved"
 
   #Exclusions (Regex use | as separator)
-  Exclusions = "()"
+  Exclusions = ""
 }
 #Create the object
 $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
@@ -287,6 +287,9 @@ function Start-ServerPrep {
   $content = $content.Replace('RCONPort=25575', "RCONPort=$($Server.ManagementPort)")
   $content = $content.Replace('Region=""', "Region=`"$($Server.Region)`"")
   $content = $content.Replace('RCONEnabled=False', "RCONEnabled=$($WarningsDetails.Use.ToString())")
+  if (-not (Test-Path -Path $Server.ConfigFolder)) {
+    New-Item -ItemType Directory -Path $Server.ConfigFolder -Force | Out-Null
+  }
   Set-Content -Path "$($Server.ConfigFolder)/PalWorldSettings.ini" -Value $content
 
   Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"

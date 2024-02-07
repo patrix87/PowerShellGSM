@@ -62,7 +62,7 @@ $ServerDetails = @{
   Path               = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder       = "$Env:userprofile\Zomboid\Server\"
+  ConfigFolder       = "$Env:userprofile\Zomboid\Server"
 
   #Steam Server App Id
   AppID              = 380870

@@ -52,7 +52,7 @@ $ServerDetails = @{
   Path                   = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder           = ".\servers\$Name\ConanSandbox\Saved\Config\WindowsServer\"
+  ConfigFolder           = ".\servers\$Name\ConanSandbox\Saved\Config\WindowsServer"
 
   #Steam Server App Id
   AppID                  = 443030

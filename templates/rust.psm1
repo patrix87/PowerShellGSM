@@ -94,7 +94,7 @@ $ServerDetails = @{
   Path               = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder       = ".\servers\$Name\server\$Name\cfg\"
+  ConfigFolder       = ".\servers\$Name\server\$Name\cfg"
 
   #Steam Server App Id
   AppID              = 258550

@@ -63,7 +63,7 @@ $ServerDetails = @{
   Path               = ".\servers\$Name"
 
   #Server Configuration
-  ConfigFolder       = ".\servers\$Name\KFGame\Config\"
+  ConfigFolder       = ".\servers\$Name\KFGame\Config"
 
   #Steam Server App Id
   AppID              = 232130
@@ -149,7 +149,7 @@ $BackupsDetails = @{
   Weeks = 4
 
   #Folder to include in backup
-  Saves = ".\servers\$($Server.Name)\KFGame\Config\"
+  Saves = ".\servers\$($Server.Name)\KFGame\Config"
 
   #Exclusions (Regex use | as separator)
   Exclusions = ""

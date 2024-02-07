@@ -67,7 +67,7 @@ $ServerDetails = @{
   Name               = $Name
 
   #Server Installation Path
-  Path               = ".\servers\$Name\"
+  Path               = ".\servers\$Name"
 
   #Server configuration folder
   ConfigFolder       = ".\servers\$Name\Multiplayer"

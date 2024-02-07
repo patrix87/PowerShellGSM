@@ -45,7 +45,7 @@ $ServerDetails = @{
   Path = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder = ".\servers\Squad\SquadGame\ServerConfig\"
+  ConfigFolder = ".\servers\Squad\SquadGame\ServerConfig"
 
   #Steam Server App Id
   AppID = 403240
@@ -131,7 +131,7 @@ $BackupsDetails = @{
   Weeks = 4
 
   #Folder to include in backup
-  Saves = ".\servers\$($Server.Name)\SquadGame\ServerConfig\"
+  Saves = ".\servers\$($Server.Name)\SquadGame\ServerConfig"
 
   #Exclusions (Regex use | as separator)
   Exclusions = ""

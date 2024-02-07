@@ -91,7 +91,7 @@ $ServerDetails = @{
   Path                   = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder           = ".\servers\$Name\ShooterGame\Saved\Config\WindowsServer\"
+  ConfigFolder           = ".\servers\$Name\ShooterGame\Saved\Config\WindowsServer"
 
   #Steam Server App Id
   AppID                  = 824360

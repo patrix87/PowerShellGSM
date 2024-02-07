@@ -55,7 +55,7 @@ $ServerDetails = @{
   Path               = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder       = ".\servers\$Name\left4dead2\cfg\"
+  ConfigFolder       = ".\servers\$Name\left4dead2\cfg"
 
   #Steam Server App Id
   AppID              = 222860

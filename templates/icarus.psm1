@@ -71,7 +71,7 @@ $ServerDetails = @{
   Path                            = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder                    = ".\servers\$Name\Icarus\Saved\Config\WindowsServer\"
+  ConfigFolder                    = ".\servers\$Name\Icarus\Saved\Config\WindowsServer"
 
   #Steam Server App Id
   AppID                           = 2089300
@@ -157,7 +157,7 @@ $BackupsDetails = @{
   Weeks = 4
 
   #Folder to include in backup
-  Saves = ".\servers\$($Server.Name)\Icarus\Saved\"
+  Saves = ".\servers\$($Server.Name)\Icarus\Saved"
 
   #Exclusions (Regex use | as separator)
   Exclusions = ""

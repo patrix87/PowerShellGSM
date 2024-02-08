@@ -40,7 +40,7 @@ $ServerDetails = @{
   Path               = ".\servers\$Name"
 
   #Server configuration folder
-  ConfigFolder       = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves\"
+  ConfigFolder       = "$Env:userprofile\AppData\Roaming\7DaysToDie\Saves"
 
   #Steam Server App Id
   AppID              = 294420

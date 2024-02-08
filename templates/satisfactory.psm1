@@ -132,7 +132,7 @@ $BackupsDetails = @{
   Weeks = 4
 
   #Folder to include in backup
-  Saves = "$Env:userprofile\AppData\Local\FactoryGame\Saved\SaveGames"
+  Saves = "$Env:userprofile\AppData\Local\FactoryGame\Saved"
 
   #Exclusions (Regex use | as separator)
   Exclusions = ""

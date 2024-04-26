@@ -2,6 +2,7 @@ function Backup-Server {
   Write-ServerMsg "Creating Backup."
   #Create backup name from date and time
   $BackupName = Get-TimeStamp
+  $BackupStart = Get-Date
 
   #Check if it's friday (Sunday is 0)
   if ((Get-Date -UFormat %u) -eq 5) {
@@ -89,7 +90,11 @@ try {
   }
 
   # Compress the temporary directory into a zip archive using the specified compression options
-  Compress-Archive -Path $TempDirectory -DestinationPath "$($Backups.Path)\$Type\$BackupName.zip" -CompressionLevel 'Fastest'
+  if (Get-Module -ListAvailable -Name 7Zip4PowerShell) {
+    Compress-7Zip -Path $TempDirectory -ArchiveFileName "$($Backups.Path)\$Type\$BackupName.zip" -CompressionLevel 'Fast' -Format Zip
+  } else {
+    Compress-Archive -Path $TempDirectory -DestinationPath "$($Backups.Path)\$Type\$BackupName.zip" -CompressionLevel 'Fastest'
+  }
 
   # Remove the temporary directory
   Remove-Item -Path $TempDirectory -Force -Recurse
@@ -98,7 +103,7 @@ catch {
   Exit-WithError -ErrorMsg "Unable to backup server."
 }
 
-  Write-ServerMsg "Backup Created : $BackupName.zip"
+  Write-ServerMsg "Backup Created : $BackupName.zip [$((New-TimeSpan -Start $BackupStart).toString("g"))]"
 
   #Delete old backups
   Write-ServerMsg "Deleting old backups."

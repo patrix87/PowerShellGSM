@@ -53,7 +53,7 @@ try {
 
     # If the filename match the backups Regex Exclusions, exclude it from the backup
     if ($Backups.Exclusions -ne "") {
-      if ($_.Name -match $Backups.Exclusions) {
+      if ($_.FullName -match $Backups.Exclusions) {
         if($Global.Debug) {Write-ServerMsg "Excluded: REGEX"}
         return $false
       }

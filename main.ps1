@@ -127,7 +127,7 @@ if ($Task) {
   }
 
   if ($Server.AutoRestartOnCrash) {
-    if (($TasksSchedule.NextAlive) -le (Get-Date)) {
+    if ((($TasksSchedule.NextAlive) -le (Get-Date)) -or ($Global.TaskCheckFrequency -eq $Global.AliveCheckFrequency)) {
       Write-ScriptMsg "Checking Alive State"
       if (-not (Get-ServerProcess)) {
         Write-ScriptMsg "Server is Dead, Restarting..."
@@ -147,7 +147,7 @@ if ($Task) {
   }
 
   if ($Server.AutoUpdates) {
-    if (($TasksSchedule.NextUpdate) -le (Get-Date)) {
+    if ((($TasksSchedule.NextUpdate) -le (Get-Date)) -or ($Global.TaskCheckFrequency -eq $Global.UpdateCheckFrequency)) {
       Write-ScriptMsg "Checking on steamCMD if updates are available for $($Server.Name)..."
       if (Request-Update) {
         Write-ScriptMsg "Updates are available for $($Server.Name), Proceeding with update process..."

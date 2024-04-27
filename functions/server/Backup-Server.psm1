@@ -103,7 +103,8 @@ catch {
   Exit-WithError -ErrorMsg "Unable to backup server."
 }
 
-  Write-ServerMsg "Backup Created : $BackupName.zip [$((New-TimeSpan -Start $BackupStart).toString("g"))]"
+  $zipFile = Get-Item "$($Backups.Path)\$Type\$BackupName.zip"
+  Write-ServerMsg "Backup Created : $BackupName.zip [$(Format-FileSize $zipFile.Length)][$((New-TimeSpan -Start $BackupStart).toString("g"))]"
 
   #Delete old backups
   Write-ServerMsg "Deleting old backups."

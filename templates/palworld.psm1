@@ -78,7 +78,7 @@ $ServerDetails = @{
   AutoRestartTime    = @(3, 0, 0)
 
   #Process name in the task manager
-  ProcessName        = "PalServer-Win64-Test-Cmd"
+  ProcessName        = "PalServer-Win64-Shipping-Cmd"
 
   #Use PID instead of Process Name.
   UsePID             = $true

@@ -226,6 +226,7 @@ if ($Backups.Use -and -not $FreshInstall) {
   if ((($TasksSchedule.NextBackup) -le (Get-Date)) -or ($Global.BackupFrequency -le $Global.TaskCheckFrequency)) {
     Write-ScriptMsg "Verifying Backups..."
     Backup-Server
+    Update-TaskConfig -Backup
   }
 }
 

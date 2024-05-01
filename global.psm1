@@ -50,7 +50,7 @@ $GlobalDetails = @{
   #Should be lower or equal to the two above
   TaskCheckFrequency   = 5
 
-  #Lock Timeout in miuntes
+  #Lock Timeout in minutes
   LockTimeout          = 120
 
   #Max download retries

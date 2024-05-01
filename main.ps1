@@ -228,6 +228,12 @@ if ($Backups.Use -and -not $FreshInstall) {
     Backup-Server
     Update-TaskConfig -Backup
   }
+  else {
+    Write-ScriptMsg "Too soon for Backup"
+  }
+}
+else {
+  Write-ScriptMsg "Backups are disabled"
 }
 
 #---------------------------------------------------------

@@ -223,7 +223,7 @@ if (-not $FreshInstall) {
 
 #If not a fresh install and Backups are enabled, run backups.
 if ($Backups.Use -and -not $FreshInstall) {
-  if ((($TasksSchedule.NextBackup) -le (Get-Date)) -or ($Global.BackupFrequency -le $Global.TaskCheckFrequency)) {
+  if ((($TasksSchedule.NextBackup) -le (Get-Date)) -or ($Global.BackupCheckFrequency -le $Global.TaskCheckFrequency)) {
     Write-ScriptMsg "Verifying Backups..."
     Backup-Server
     Update-TaskConfig -Backup

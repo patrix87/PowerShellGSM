@@ -20,7 +20,7 @@ function Update-TaskConfig {
   }
 
   if ($Backup) {
-    $NextBackup = (Get-Date).AddMinutes($Global.AliveCheckFrequency).ToString($Global.DateTimeFormat)
+    $NextBackup = (Get-Date).AddMinutes($Global.BackupCheckFrequency).ToString($Global.DateTimeFormat)
     Set-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextBackup" -value $NextBackup
   }
 

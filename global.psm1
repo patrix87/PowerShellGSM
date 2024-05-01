@@ -41,6 +41,9 @@ $GlobalDetails = @{
   #Pause on errors
   PauseOnErrors        = $false
 
+  #Backup Frequency in Minutes
+  BackupFrequency = 60
+
   #Check for Update Frequency in Minutes
   UpdateCheckFrequency = 15
 

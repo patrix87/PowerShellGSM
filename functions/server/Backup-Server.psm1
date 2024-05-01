@@ -76,7 +76,13 @@ try {
   }
 
   # Remove any existing temporary directory
-  Remove-Item -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)" -Force -Recurse
+  if (Test-Path -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)" -PathType "Container" -ErrorAction SilentlyContinue) {
+    # Remove the files first
+    Get-ChildItem "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)" -Recurse | Remove-Item -Force
+
+    # Now remove the folders
+    Remove-Item -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)" -Force -Recurse
+  }
 
   # Create a temporary directory
   $TempDirectory = New-Item -ItemType Directory -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)"
@@ -93,6 +99,9 @@ try {
 
   # Compress the temporary directory into a zip archive using the specified compression options
   Compress-Archive -Path $TempDirectory -DestinationPath "$($Backups.Path)\$Type\$BackupName.zip" -CompressionLevel 'Fastest'
+
+  # Remove the temporary files
+  Get-ChildItem $TempDirectory -Recurse | Remove-Item -Force
 
   # Remove the temporary directory
   Remove-Item -Path $TempDirectory -Force -Recurse

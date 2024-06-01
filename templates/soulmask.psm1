@@ -35,13 +35,13 @@ $ServerDetails = @{
   ServerLog             = "True"
   
   #Specifies the interval for writing game objects to the database (unit: seconds).
-  ServerSaving			= 600
+  ServerSaving			    = 600
   
   #Specifies the interval for writing the game database to disk (unit: seconds).
-  ServerBackup       	= 900
+  ServerBackup       	  = 900
   
   #Specifies how often (minutes) to automatically back up the world save.
-  BackupInterval 		= 10
+  BackupInterval 		    = 10
   
   #Specifies the local listening address. Use 0.0.0.0 or the local network card address.
   MultihomeIP           = "0.0.0.0"
@@ -50,7 +50,7 @@ $ServerDetails = @{
   ManagementPort        = 18888
   
   #Backs up game saves when the game starts. "True" or "False"
-  InitBackup 			= "True"
+  InitBackup 			      = "True"
 
   #---------------------------------------------------------
   # Server Installation Details

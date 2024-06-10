@@ -76,6 +76,11 @@ try {
     }
   }
 
+  # Remove any existing temporary directory
+  if (Test-Path -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)" -PathType "Container" -ErrorAction SilentlyContinue) {
+    Remove-Item -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)" -Force -Recurse
+  }
+
   # Create a temporary directory
   $TempDirectory = New-Item -ItemType Directory -Path "$($Backups.Path)\$Type\$((Get-Item $Backups.Saves).Name)"
 

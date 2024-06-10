@@ -5,6 +5,8 @@ function Update-TaskConfig {
     [Parameter(Mandatory = $false)]
     [switch]$Alive,
     [Parameter(Mandatory = $false)]
+    [switch]$Backup,
+    [Parameter(Mandatory = $false)]
     [switch]$Update,
     [Parameter(Mandatory = $false)]
     [switch]$Restart
@@ -15,6 +17,11 @@ function Update-TaskConfig {
   if ($Alive) {
     $NextAlive = (Get-Date).AddMinutes($Global.AliveCheckFrequency).ToString($Global.DateTimeFormat)
     Set-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextAlive" -value $NextAlive
+  }
+
+  if ($Backup) {
+    $NextBackup = (Get-Date).AddMinutes($Global.BackupCheckFrequency).ToString($Global.DateTimeFormat)
+    Set-IniValue -file ".\servers\$($Server.Name).INI" -category "Schedule" -key "NextBackup" -value $NextBackup
   }
 
   if ($Update) {

@@ -7,7 +7,7 @@ function Register-TaskConfig {
   catch {
     return $null
   }
-  Update-TaskConfig -Alive -Update -Restart
+  Update-TaskConfig -Alive -Backup -Update -Restart
   return $true
 }
 Export-ModuleMember -Function Register-TaskConfig

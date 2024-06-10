@@ -8,49 +8,49 @@ $Name = $ServerCfg
 $ServerDetails = @{
 
   #Login username used by SteamCMD
-  Login                 = "anonymous"
+  Login              = "anonymous"
 
   #Name of the server in the Server Browser
-  SessionName           = "Soulmask"
+  SessionName        = "Soulmask"
 
   #Maximum Number of Players
-  MaxPlayers            = 20
+  MaxPlayers         = 20
 
   #Password to join the server *NO SPACES*
-  Password              = ""
-  
+  Password           = ""
+
   #Admin Password to manage your Server *NO SPACES*
-  AdminPassword         = ""
+  AdminPassword      = ""
 
   #Server Port
-  Port                  = 7777
+  Port               = 7777
 
   #Query Port
-  QueryPort             = 27015
+  QueryPort          = 27015
 
   #Enable PVE "True" or "False"
-  ServerPVE             = "True"
-  
+  ServerPVE          = "True"
+
   #Turns on game console output. "True" or "False"
-  ServerLog             = "True"
-  
+  ServerLog          = "True"
+
   #Specifies the interval for writing game objects to the database (unit: seconds).
-  ServerSaving		= 600
-  
+  ServerSaving       = 600
+
   #Specifies the interval for writing the game database to disk (unit: seconds).
-  ServerBackup       	= 900
-  
+  ServerBackup       = 900
+
   #Specifies how often (minutes) to automatically back up the world save.
-  BackupInterval 	= 10
-  
+  BackupInterval     = 10
+
   #Specifies the local listening address. Use 0.0.0.0 or the local network card address.
-  MultihomeIP           = "0.0.0.0"
-  
+  MultihomeIP        = "0.0.0.0"
+
   #Maintenance port, used for local telnet server maintenance, TCP, does not need to be open.
-  ManagementPort        = 18888
-  
+  ManagementPort     = 18888
+
   #Backs up game saves when the game starts. "True" or "False"
-  InitBackup 		= "True"
+  InitBackup         = "True"
 
   #---------------------------------------------------------
   # Server Installation Details
@@ -146,7 +146,7 @@ $BackupsDetails = @{
   Days  = 7
 
   #Number of weeks of weekly backups to keep.
-  Weeks = 16
+  Weeks = 4
 
   #Folder to include in backup
   Saves = ".\servers\$($Server.Name)\WS\Saved\Worlds\Dedicated\Level01_Main"
@@ -160,7 +160,7 @@ $Backups = New-Object -TypeName PsObject -Property $BackupsDetails
 
 $WarningsDetails = @{
   #Use Rcon to restart server softly.
-  Use        = $true
+  Use        = $false
 
   #What protocol to use : Rcon, Telnet, Websocket
   Protocol   = "Telnet"

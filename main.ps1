@@ -233,7 +233,7 @@ if ($Backups.Use -and -not $FreshInstall) {
   }
 }
 else {
-  Write-ScriptMsg "Backups are disabled"
+  Write-ScriptMsg "Backups are disabled or this is a fresh installation."
 }
 
 #---------------------------------------------------------

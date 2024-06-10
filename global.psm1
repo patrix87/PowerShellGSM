@@ -47,10 +47,10 @@ $GlobalDetails = @{
   #Check if the server is alive Frequency in Minutes
   AliveCheckFrequency  = 5
 
-  #Should be lower or equal to the two above
+  #Should be lower or equal to the two above. If you change this value, you need to manually update your exsiting task in the task scheduler.s
   TaskCheckFrequency   = 5
 
-  #Lock Timeout in miuntes
+  #Lock Timeout in minutes
   LockTimeout          = 120
 
   #Max download retries

@@ -111,6 +111,14 @@ By [@BananaAcid](https://github.com/BananaAcid/)
 - [Java JDK](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc)
 - [Microsoft XNA Redistributable](https://www.microsoft.com/en-ca/download/details.aspx?id=20914)
 
+# Optional Additional Packages
+
+- [7Zip4PowerShell](https://www.powershellgallery.com/packages/7Zip4Powershell/)
+
+```ps
+Install-Module -Name 7Zip4Powershell
+```
+
 # Expanding the Code
 
 You can create pull requests for changes to this project.

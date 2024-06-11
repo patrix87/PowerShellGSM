@@ -3,7 +3,7 @@ function Register-Task {
   $trigger = New-ScheduledTaskTrigger -Daily -At 12am
   $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 3)
   $description = "Run Tasks for $($server.Name)"
-  $title = "Tasks-$($server.Name)"
+  $title = "PowerShellGSM\Tasks-$($server.Name)"
   $task = New-ScheduledTask -Description $description -Action $action -Trigger $trigger -Settings $settings
   $RegisteredTask = Register-ScheduledTask $title -InputObject $task
   $RegisteredTask.Triggers.Repetition.Duration = "P1D" #Repeat for a duration of one day

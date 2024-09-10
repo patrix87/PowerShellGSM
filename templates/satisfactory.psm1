@@ -71,7 +71,7 @@ $ServerDetails = @{
   AutoRestartTime    = @(3, 0, 0)
 
   #Process name in the task manager
-  ProcessName        = "UnrealServer-Win64-Shipping"
+  ProcessName        = "FactoryServer-Win64-Shipping-Cmd"
 
   #Use PID instead of Process Name.
   UsePID             = $true

@@ -62,7 +62,7 @@ $ServerDetails = @{
   ConfigFolder       = ".\servers\$Name"
 
   #Server Version
-  Version            = "1423"
+  Version            = "1449"
 
   #Steam Server App Id *0 Skip SteamCMD Installation
   AppID              = 0

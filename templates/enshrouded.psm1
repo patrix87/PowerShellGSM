@@ -13,17 +13,21 @@ $ServerDetails = @{
   #Server Name
   ServerName         = "My Enshrouded Server"
 
-  #Server Password
-  Password           = "CHANGEME"
+  #All passwords must be unique and at least 8 characters long.
+  #Guest / Helper Password
+  GuestPassword      = "CHANGEME1"
+
+  #Friend Password
+  FriendPassword     = "CHANGEME2"
+
+  #Admin Password
+  AdminPassword      = "CHANGEME3"
 
   #Maximum number of players
   MaxPlayers         = 16
 
-  #Server Port
-  Port               = 15636
-
-  #Query Port
-  QueryPort          = 15637
+  #Server Query Port
+  Port               = 15637
 
   #Rcon IP (Not available yet)
   ManagementIP       = "127.0.0.1"
@@ -180,11 +184,6 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 
 #Launch Arguments
 $ArgumentList = @(
-  "-name=`"$($Server.ServerName)`" ",
-  "-gamePort=$($Server.Port) ",
-  "-queryPort=$($Server.QueryPort) ",
-  "-slotCount=$($Server.MaxPlayers) ",
-  "-ip=$($Global.InternalIP) ",
   "-log"
 )
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
@@ -196,23 +195,27 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-  # Check if the config file is almost empty and if so, write the default config to it.
-    Write-ScriptMsg "Writing configuration to $($Server.ConfigFolder)\enshrouded_server.json"
-    $jsonObject = @{
-      "name"= $Server.ServerName
-      "password" = $Server.Password
-      "saveDirectory" = "./savegame"
-      "logDirectory" = "./logs"
-      "ip" = $Global.InternalIP
-      "gamePort" = $Server.Port
-      "queryPort" = $Server.QueryPort
-      "slotCount" = $Server.MaxPlayers
-    }
-    $content = $jsonObject | ConvertTo-Json
+  # Import enshrouded_server.json
+  $json = Get-Content "$($Server.ConfigFolder)/enshrouded_server.json" | ConvertFrom-Json
+  # Update the server configuration json file with the current server configuration.
+  $json.name = $Server.ServerName
+  $json.userGroups | Where-Object { $_.name -eq "Admin" } | ForEach-Object { $_.password = $Server.AdminPassword }
+  $json.userGroups | Where-Object { $_.name -eq "Friend" } | ForEach-Object { $_.password = $Server.FriendPassword }
+  $json.userGroups | Where-Object { $_.name -eq "Guest" } | ForEach-Object { $_.password = $Server.GuestPassword }
+  $json.saveDirectory = "./savegame"
+  $json.logDirectory = "./logs"
+  $json.ip = $Global.InternalIP
+  $json.queryPort = $Server.Port
+  $json.slotCount = $Server.MaxPlayers
 
-    Set-Content -Path "$($Server.ConfigFolder)/enshrouded_server.json" -Value $content
+  # Write the default config to it.
+  Write-ScriptMsg "Writing configuration to $($Server.ConfigFolder)\enshrouded_server.json"
 
-  Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
+  $content = $json | ConvertTo-Json | Format-Json -Indentation 4
+
+  Set-Content -Path "$($Server.ConfigFolder)/enshrouded_server.json" -Value $content
+
+  Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP to $($Global.InternalIP)"
 }
 
 Export-ModuleMember -Function Start-ServerPrep -Variable @("Server", "Backups", "Warnings")

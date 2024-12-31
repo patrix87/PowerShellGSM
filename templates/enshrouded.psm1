@@ -195,6 +195,12 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
+  # Check if the configuration file exists.
+  # If not, skip the modification of the configuration file.
+  if (-not (Test-Path "$($Server.ConfigFolder)/enshrouded_server.json")) {
+    Write-ScriptMsg "Configuration file not found. Skipping configuration modification."
+    return
+  }
   # Import enshrouded_server.json
   $json = Get-Content "$($Server.ConfigFolder)/enshrouded_server.json" | ConvertFrom-Json
   # Update the server configuration json file with the current server configuration.

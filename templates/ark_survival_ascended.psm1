@@ -99,7 +99,7 @@ $ServerDetails = @{
   #Server Executable
   Exec                   = ".\servers\$Name\ShooterGame\Binaries\Win64\ArkAscendedServer.exe"
 
-  #Allow force close, usefull for server without RCON and Multiple instances.
+  #Allow force close, usefull for server without RCON.
   AllowForceClose        = $true
 
   #Process Priority Realtime, High, AboveNormal, Normal, BelowNormal, Low

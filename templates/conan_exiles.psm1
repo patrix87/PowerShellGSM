@@ -85,7 +85,7 @@ $ServerDetails = @{
   #Server Executable
   Exec                   = ".\servers\$Name\ConanSandbox\Binaries\Win64\ConanSandboxServer-Win64-Shipping.exe"
 
-  #Allow force close, usefull for server without RCON and Multiple instances.
+  #Allow force close, usefull for server without RCON.
   AllowForceClose        = $true
 
   #Process Priority Realtime, High, AboveNormal, Normal, BelowNormal, Low

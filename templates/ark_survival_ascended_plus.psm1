@@ -71,6 +71,9 @@ $ServerDetails = @{
   # Extra parameters - Leave blank for default.
   ExtraParams            = $ServerData.ExtraParams # or "-NoTransferFromFiltering -ServerGameLogIncludeTribeLogs -ServerGameLog -AutoManagedMods"
 
+  #Enable Rcon "True" or "False"
+  EnableRcon             = $ServerData.EnableRcon # or "True"
+
   #User Store - This saves Survivor and Tribe data as part of the world save instead of using seperate files.
   EnableUsesStore        = $ServerData.EnableUsesStore # or $false
 
@@ -230,6 +233,7 @@ $ArgumentList = @(
   "?listen",
   "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Yes, triple double quotes are needed only here.
   "?Port=$($Server.Port)",
+  "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)"
 )

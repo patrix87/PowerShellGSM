@@ -55,6 +55,9 @@ ark_shared.json - Duplicate this file if hosting multiple clusters.
   "ServerPVE": "True",
 
   // Enable or disable UserStore - Saves Survivor and Tribe data as part of the world save
-  "EnableUsesStore": false
+  "EnableUsesStore": false,
+
+  // Enable Rcon "True" or "False"
+  "EnableRcon": "True"
 }
 ```

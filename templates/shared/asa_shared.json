@@ -15,5 +15,6 @@
   "ManagementIP": "127.0.0.1",
   "ManagementPassword": "CHANGEME2",
   "ServerPVE": "True",
-  "EnableUsesStore": false
+  "EnableUsesStore": false,
+  "EnableRcon": "True"
 }

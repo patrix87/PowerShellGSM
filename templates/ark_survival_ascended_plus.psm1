@@ -238,6 +238,10 @@ $ArgumentList = @(
   "?ServerPVE=$($Server.ServerPVE)"
 )
 
+if($Server.Password) {
+  $ArgumentList += "?ServerPassword=`"$($Server.Password)`"" #If using Exclusive Join, then a Server Password can be excluded.
+}
+
 if ($Server.SaveFolder) {
   $ArgumentList += "?AltSaveDirectoryName=$($Server.SaveFolder)"
 }

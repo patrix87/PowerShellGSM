@@ -2,7 +2,7 @@
   "Login": "anonymous",
   "MaxPlayers": 64,
   "Password": "CHANGEME",
-  "BattlEye": "True",
+  "BattlEye": true,
   "SaveFolder": "",
   "Mods": "",
   "IsCluster": false,

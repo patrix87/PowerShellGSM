@@ -39,7 +39,7 @@ $ServerDetails = @{
   ServerPVE              = $ServerData.ServerPVE # or "True"
 
   #Enable BattlEye "True" or "False"
-  BattlEye               = $ServerData.BattlEye # or "True"
+  BattlEye               = $ServerData.BattlEye # or $true
 
   # Savegame Folder - Leave blank for default.
   SaveFolder             = $ServerData.SaveFolder # or ""
@@ -275,7 +275,7 @@ if($Server.EnableUsesStore){
   $ArgumentList += " -usestore"
 }
 
-if ($Server.BattlEye -eq "False") {
+if (!$Server.BattlEye) {
   $ArgumentList += " -NoBattlEye"
 }
 

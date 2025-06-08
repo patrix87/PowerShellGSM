@@ -1,0 +1,20 @@
+{
+  "Login": "anonymous",
+  "MaxPlayers": 64,
+  "Password": "CHANGEME",
+  "BattlEye": true,
+  "SaveFolder": "",
+  "Mods": "",
+  "IsCluster": false,
+  "ClusterId": "",
+  "ClusterDirOverride": "",
+  "ServerPlatform": "ALL",
+  "EnableExclusiveJoin": false,
+  "ExclusiveJoinList": "",
+  "ExtraParams": "-NoTransferFromFiltering -ServerGameLogIncludeTribeLogs -ServerGameLog -AutoManagedMods",
+  "ManagementIP": "127.0.0.1",
+  "ManagementPassword": "CHANGEME2",
+  "ServerPVE": "True",
+  "EnableUsesStore": false,
+  "EnableRcon": "True"
+}

@@ -22,9 +22,6 @@ $ServerDetails = @{
   #Server Port
   Port                   = 7777
 
-  #Query Port
-  QueryPort              = 27015
-
   #World Name *NO SPACES or Question Mark*
   WorldName              = "TheIsland_WP"
 
@@ -32,7 +29,7 @@ $ServerDetails = @{
   ServerPVE              = "True"
 
   #Enable BattlEye "True" or "False"
-  BattlEye               = "True"
+  BattlEye               = $true
 
   # Savegame Folder - Leave blank for default.
   SaveFolder             = ""
@@ -206,11 +203,9 @@ $ArgumentList = @(
   "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Yes, triple double quotes are needed only here.
   "?ServerPassword=`"$($Server.Password)`"",
   "?Port=$($Server.Port)",
-  "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
-  "?ServerPVE=$($Server.ServerPVE)",
-  "?MaxPlayers=$($Server.MaxPlayers)"
+  "?ServerPVE=$($Server.ServerPVE)"
 )
 
 if ($Server.SaveFolder) {
@@ -227,7 +222,7 @@ if ($Server.Mods) {
   $ArgumentList += " -Mods=$($Server.Mods)"
 }
 
-if ($Server.BattlEye -eq "False") {
+if (!$Server.BattlEye) {
   $ArgumentList += " -NoBattlEye"
 }
 

@@ -132,5 +132,3 @@ If you want to add support for more games, copy one of the configuration files a
 I am in no way responsible for anything that this script will do; you are responsible for reading and understanding what this script will do before executing it.
 
 This script will download and install third-party software like SteamCMD, ARRCON, mcrcon, Java, Microsoft XNA, Paperclip, Terraria, and any games you try to install.
-
-test commit

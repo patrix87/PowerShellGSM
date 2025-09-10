@@ -11,10 +11,13 @@
   "ServerPlatform": "ALL",
   "EnableExclusiveJoin": false,
   "ExclusiveJoinList": "",
+  "ExtraGUSParams": "?AllowHitMarkers=True?AlwaysAllowStructurePickup=True?ItemStackSizeMultiplier=5",
   "ExtraParams": "-NoTransferFromFiltering -ServerGameLogIncludeTribeLogs -ServerGameLog -AutoManagedMods",
   "ManagementIP": "127.0.0.1",
   "ManagementPassword": "CHANGEME2",
   "ServerPVE": "True",
   "EnableUsesStore": false,
-  "EnableRcon": "True"
+  "EnableRcon": "True",
+  "UseDynamicConfig": false,
+  "CustomDynamicConfigUrl": "http://localhost/dynamicconfig.ini"
 }

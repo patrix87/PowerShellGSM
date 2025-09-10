@@ -68,8 +68,18 @@ $ServerDetails = @{
   # PlayersJoinNoCheckList.txt - Whitelist of players that con join over capacity
   ExclusiveJoinList     = $ServerData.ExclusiveJoinList # or ""
 
+  # If UseDynamicConfig is true, CustomDynamicConfigUrl is required.
+  UseDynamicConfig      = $ServerData.UseDynamicConfig # or $false
+
+  # Url for dynamicconfig.ini file. Must be http, https not supported by the game server.
+  CustomDynamicConfigUrl = $ServerData.CustomDynamicConfigUrl # or "http://localhost/dynamicconfig.ini"
+
   # Extra parameters - Leave blank for default.
   ExtraParams            = $ServerData.ExtraParams # or "-NoTransferFromFiltering -ServerGameLogIncludeTribeLogs -ServerGameLog -AutoManagedMods"
+
+  # Extra question mark parameters to avoid dealing with GUS (GameUserSettings.ini) file - Leave blank for default.
+  # Must not contain spaces
+  ExtraGUSParams         = $ServerData.ExtraGUSParams # or ""
 
   #Enable Rcon "True" or "False"
   EnableRcon             = $ServerData.EnableRcon # or "True"
@@ -246,8 +256,19 @@ if ($Server.SaveFolder) {
   $ArgumentList += "?AltSaveDirectoryName=$($Server.SaveFolder)"
 }
 
+if ($Server.UseDynamicConfig) {
+  if ($Server.CustomDynamicConfigUrl) {
+    $ArgumentList += "?CustomDynamicConfigUrl=`"`"`"$($Server.CustomDynamicConfigUrl)`"`"`"" #Yes, triple double quotes are needed.
+  }
+}
+
+if ($Server.ExtraGUSParams) {
+  $ArgumentList += $Server.ExtraGUSParams # This must come before the ?ServerAdminPassword and the - (dashed) params, and NOT be separated by spaces
+}
+
+# MUST be the last ?Parameter
 if ($Server.ManagementPassword) {
-  $ArgumentList += "?ServerAdminPassword=`"$($Server.ManagementPassword)`"" #Fix Server Admin Password Issues.
+  $ArgumentList += "?ServerAdminPassword=`"$($Server.ManagementPassword)`"" #Fix Server Admin Password Issues. Must be the last ?Parameter.
 }
 
 $ArgumentList += " -WinLiveMaxPlayers=$($Server.MaxPlayers)" #Fix MaxPlayers not working.
@@ -269,6 +290,10 @@ if ($Server.EnableExclusiveJoin)
   } else {
     $ArgumentList += " -exclusivejoin"
   }
+}
+
+if ($Server.UseDynamicConfig) {
+  $ArgumentList += " -UseDynamicConfig"
 }
 
 if($Server.EnableUsesStore){

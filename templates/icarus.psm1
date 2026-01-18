@@ -224,19 +224,19 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 #---------------------------------------------------------
 
 function Start-ServerPrep {
-  if (-not (Test-Path -Path "$($Server.ConfigFolder)ServerSettings.ini" -PathType "leaf" -ErrorAction SilentlyContinue)) {
+  if (-not (Test-Path -Path "$($Server.ConfigFolder)\ServerSettings.ini" -PathType "leaf" -ErrorAction SilentlyContinue)) {
     New-Item -Path $Server.ConfigFolder -ItemType "directory" -ErrorAction SilentlyContinue
-    Invoke-Download -Uri "https://raw.githubusercontent.com/RocketWerkz/IcarusDedicatedServer/main/ServerSettings.ini" -OutFile "$($Server.ConfigFolder)ServerSettings.ini" -ErrorAction SilentlyContinue
+    Invoke-Download -Uri "https://raw.githubusercontent.com/RocketWerkz/IcarusDedicatedServer/main/ServerSettings.ini" -OutFile "$($Server.ConfigFolder)\ServerSettings.ini" -ErrorAction SilentlyContinue
   }
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "SessionName" -value $Global.SessionName
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "JoinPassword" -value $Server.Password
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "MaxPlayers" -value $Server.MaxPlayers
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AdminPassword" -value $Server.ManagementPassword
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ShutdownIfNotJoinedFor" -value $Server.ShutdownIfNotJoinedFor
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ShutdownIfEmptyFor" -value $Server.ShutdownIfEmptyFor
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AllowNonAdminsToLaunchProspects" -value $Server.AllowNonAdminsToLaunchProspects
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AllowNonAdminsToDeleteProspects" -value $Server.AllowNonAdminsToDeleteProspects
-  Set-IniValue -file "$($Server.ConfigFolder)ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ResumeProspect" -value $Server.ResumeProspect
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "SessionName" -value $Global.SessionName
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "JoinPassword" -value $Server.Password
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "MaxPlayers" -value $Server.MaxPlayers
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AdminPassword" -value $Server.ManagementPassword
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ShutdownIfNotJoinedFor" -value $Server.ShutdownIfNotJoinedFor
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ShutdownIfEmptyFor" -value $Server.ShutdownIfEmptyFor
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AllowNonAdminsToLaunchProspects" -value $Server.AllowNonAdminsToLaunchProspects
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "AllowNonAdminsToDeleteProspects" -value $Server.AllowNonAdminsToDeleteProspects
+  Set-IniValue -file "$($Server.ConfigFolder)\ServerSettings.ini" -category "/Script/Icarus.DedicatedServerSettings" -key "ResumeProspect" -value $Server.ResumeProspect
 
   Write-ScriptMsg "Port Forward : $($Server.Port) and $($Server.QueryPort) in TCP and UDP to $($Global.InternalIP)"
 }

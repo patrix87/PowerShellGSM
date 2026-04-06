@@ -2,7 +2,7 @@
   Edit configuration in : .\servers\Satisfactory\FactoryGame\Saved\Config\WindowsServer\
   Modify Game.ini and Engine.ini
   Instructions here
-  https://satisfactory.fandom.com/wiki/Dedicated_servers
+  https://satisfactory.wiki.gg/wiki/Dedicated_servers
 #>
 
 #Server Name, Always Match the Launcher and config file name.
@@ -17,16 +17,22 @@ $ServerDetails = @{
   #Login username used by SteamCMD
   Login                 = "anonymous"
 
-  #Server Port
+  #Game Port (TCP+UDP). Cannot be NAT-remapped: the external and internal port must match. CAUTION: will auto-increment if in use
   Port                  = 7777
 
-  #Reliable Messaging Port
+  #Reliable Messaging Port (TCP). Internal port the server binds to.
+  #Can be any unused TCP port. If unavailable the server fails to start (no auto-increment).
   ReliablePort          = 8888
 
-  #External Reliable Messaging Port
+  #External Reliable Messaging Port (TCP). Public port advertised to clients.
+  #Equal to ReliablePort in most setups. Differs only when NAT remaps the port
+  #(e.g. router forwards public 9001 -> internal 8888: set ReliablePort=8888, ExternalReliablePort=9001).
   ExternalReliablePort  = 8888
 
-  #Rcon IP
+  #Use the Satisfactory 1.0 Unreal console window (Windows-only, cosmetic, useful for interactive debugging).
+  NewConsole            = $true
+
+  #Rcon IP (not available in Satifactory, use API instead (not implemented in powershellGSM))
   ManagementIP          = "127.0.0.1"
 
   #Rcon Port
@@ -186,8 +192,9 @@ $ArgumentList = @(
   "-ExternalReliablePort=$($Server.ExternalReliablePort) ",
   "-log ",
   "-unattended"
-
 )
+if ($Server.NewConsole) { $ArgumentList += "-NewConsole" }
+
 Add-Member -InputObject $Server -Name "ArgumentList" -Type NoteProperty -Value $ArgumentList
 Add-Member -InputObject $Server -Name "Launcher" -Type NoteProperty -Value "$($Server.Exec)"
 Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Value "$($Server.Path)"
@@ -198,7 +205,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-  Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.ExternalReliablePort) in TCP and UDP to $($Global.InternalIP)"
+  Write-ScriptMsg "Port Forward : $($Server.Port) in TCP and UDP, and $($Server.ExternalReliablePort) in TCP to $($Global.InternalIP)"
 
 }
 

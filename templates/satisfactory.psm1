@@ -15,25 +15,25 @@ $Name = $ServerCfg
 $ServerDetails = @{
 
   #Login username used by SteamCMD
-  Login              = "anonymous"
+  Login                 = "anonymous"
 
   #Server Port
-  Port               = 7777
+  Port                  = 7777
 
-  #Query Port
-  QueryPort          = 15777
+  #Reliable Messaging Port
+  ReliablePort          = 8888
 
-  #Beacon Port
-  Beaconport         = 15000
+  #External Reliable Messaging Port
+  ExternalReliablePort  = 8888
 
   #Rcon IP
-  ManagementIP       = "127.0.0.1"
+  ManagementIP          = "127.0.0.1"
 
   #Rcon Port
-  ManagementPort     = ""
+  ManagementPort        = ""
 
   #Rcon Password
-  ManagementPassword = ""
+  ManagementPassword    = ""
 
   #---------------------------------------------------------
   # Server Installation Details
@@ -182,8 +182,8 @@ $Warnings = New-Object -TypeName PsObject -Property $WarningsDetails
 #Launch Arguments
 $ArgumentList = @(
   "-Port=$($Server.Port) ",
-  "-ServerQueryPort=$($Server.QueryPort) ",
-  "-BeaconPort=$($Server.Beaconport) ",
+  "-ReliablePort=$($Server.ReliablePort) ",
+  "-ExternalReliablePort=$($Server.ExternalReliablePort) ",
   "-log ",
   "-unattended"
 
@@ -198,7 +198,7 @@ Add-Member -InputObject $Server -Name "WorkingDirectory" -Type NoteProperty -Val
 
 function Start-ServerPrep {
 
-  Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.QueryPort), $($Server.Beaconport) in TCP and UDP to $($Global.InternalIP)"
+  Write-ScriptMsg "Port Forward : $($Server.Port), $($Server.ExternalReliablePort) in TCP and UDP to $($Global.InternalIP)"
 
 }
 

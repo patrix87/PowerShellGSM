@@ -19,6 +19,9 @@ $ServerDetails = @{
   #Server Port
   Port                   = 7777
 
+  #Query Port
+  QueryPort     	 = 27015 
+
   #World Name *NO SPACES or Question Mark*
   WorldName              = "TheIsland_WP"
 
@@ -243,6 +246,7 @@ $ArgumentList = @(
   "?listen",
   "?SessionName=`"`"`"$($Server.SessionName)`"`"`"", #Yes, triple double quotes are needed only here.
   "?Port=$($Server.Port)",
+  "?QueryPort=$($Server.QueryPort)",
   "?RCONEnabled=$($Server.EnableRcon)",
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)"

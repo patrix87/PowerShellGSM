@@ -19,6 +19,9 @@ $ServerDetails = @{
   #Server Port
   Port                   = 7777
 
+  #Query Port - This option prevents the server from returning an “error” if another server on the same host is already using port 27015.
+  #QueryPort     	       = 27016
+
   #World Name *NO SPACES or Question Mark*
   WorldName              = "TheIsland_WP"
 
@@ -247,6 +250,11 @@ $ArgumentList = @(
   "?RCONPort=$($Server.ManagementPort)",
   "?ServerPVE=$($Server.ServerPVE)"
 )
+
+if( $Server.QueryPort)
+{
+  $ArgumentList +="?QueryPort=$($Server.QueryPort)";
+}
 
 if($Server.Password) {
   $ArgumentList += "?ServerPassword=`"$($Server.Password)`"" #If using Exclusive Join, then a Server Password can be excluded.

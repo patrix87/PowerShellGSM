@@ -23,7 +23,7 @@ $ServerDetails = @{
   Port                   = 7777
 
   #Query Port - This option prevents the server from returning an “error” if another server on the same host is already using port 27015.
-  #QueryPort     	 = 27016
+  #QueryPort     	       = 27016
 
   #World Name *NO SPACES or Question Mark*
   WorldName              = "TheIsland_WP"

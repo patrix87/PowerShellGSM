@@ -68,22 +68,19 @@ A Comprehensive PowerShell Tool for Simple Automated Game Server Management.<br/
 
 Before you begin, note that this tool is not intended to run on your primary gaming computer. Ideally, use a virtual machine on a dedicated server or a secondary computer. If you still want to use this tool on your main computer, you should consider disabling the monitoring features. Otherwise, the Task Scheduler will briefly open a cmd window for a tenth of a second every 5 minutes. You can disable this by turning off the monitoring features (AutoUpdates, AutoRestartOnCrash, AutoRestart) in the game server configuration file or by disabling the game server monitoring task created in the Windows Task Scheduler after the second launch of the server.
 
-01. Install [Git](https://git-scm.com/download/win) and your preferred IDE, such as [VSCode](https://code.visualstudio.com/download).
-02. Ensure that your File Explorer is set to display file extensions.
-03. Clone this repository using Git (F1 then Git:Clone in VSCode) or extract the zip file anywhere.
+1. Install [Git](https://git-scm.com/download/win) and your preferred IDE, such as [VSCode](https://code.visualstudio.com/download).
+2. Ensure that your File Explorer is set to display file extensions.
+3. Clone this repository using Git (F1 then Git:Clone in VSCode) or extract the zip file anywhere.
     _(Preferably C:\, but any directory will work unless the path is excessively long)_
-04. Copy the desired server configuration file from the `templates` folder to the `configs` folder.
-
-    Example: Copy `icarus.psm1` from the `templates` folder to the `configs` folder.
-05. Edit the copied configuration file to customize your server settings.
-06. Copy and rename `launchers/run.cmd` to match your server configuration file.
-
-    Example: Copy and rename `run.cmd` to `icarus.cmd` to start the `icarus.psm1` Icarus server.
-
-    _The filename in the `launchers` folder must match the one in the `configs` folder._
-07. Launch your server by double-clicking on your `icarus.cmd` file from the `launchers` folder.
-08. The PowerShell window will open, install the server, and **stop the server** to allow you to edit the server configuration files.
-09. After editing your config files, run the `icarus.cmd` file from the `launchers` folder again.
+4. Copy the desired server configuration file from the `templates` folder to the `configs` folder.
+    - Example: Copy `icarus.psm1` from the `templates` folder to the `configs` folder.
+5. Edit the copied configuration file to customize your server settings.
+6. Copy and rename `launchers/run.cmd` to match your server configuration file.
+    - Example: Copy and rename `run.cmd` to `icarus.cmd` to start the `icarus.psm1` Icarus server.
+    - _The filename in the `launchers` folder must match the one in the `configs` folder._
+7. Launch your server by double-clicking on your `icarus.cmd` file from the `launchers` folder.
+8. The PowerShell window will open, install the server, and **stop the server** to allow you to edit the server configuration files.
+9. After editing your config files, run the `icarus.cmd` file from the `launchers` folder again.
 10. On the second launch, it will start the server and configure the **scheduled task** to keep the server running and updated.
 11. To disable a server, use the Windows **Task Scheduler** application to disable or delete the corresponding Scheduled Task.
 12. Forward the server ports in your router and configure the Windows firewall accordingly.

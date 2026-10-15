@@ -59,7 +59,7 @@ A Comprehensive PowerShell Tool for Simple Automated Game Server Management.
 
 ## Installation
 
-### Manual Installation (Recommended)
+### Manual Installation
 
 Before you begin, note that this tool is not intended to run on your primary
 gaming computer. Ideally, use a virtual machine on a dedicated server or a
@@ -98,11 +98,47 @@ the Windows Task Scheduler after the second launch of the server.
     _You can also disable the Windows firewall entirely, but ensure that you
     still forward the ports in your router._
 
-### Automated Installation Script
+## Global Settings
 
-By [@BananaAcid](https://github.com/BananaAcid/)
+Tool-wide settings live in `defaults.psm1`. Do not edit it: it is part of
+PowerShellGSM and is overwritten by updates. To change a setting, copy
+`override.example.psm1` to `override.psm1` and keep only the settings you want
+to change. `override.psm1` is not tracked by git, so updates never touch it.
 
-[https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae](https://gist.github.com/BananaAcid/1dc9117571967b26ceabc972009137ae)
+Upgrading from a version with `global.psm1`: move your changes to
+`override.psm1`. `global.psm1` is no longer used.
+
+## Automatic PowerShellGSM Updates
+
+When `AutoUpdateTool` is `$true` (the default), PowerShellGSM registers a
+`PowerShellGSM-Update` scheduled task that runs `update.ps1` every
+`ToolUpdateFrequency` hours (24 by default). It resets the installation to the
+latest upstream version, overwriting any local change to PowerShellGSM's own
+files. Your configs, launchers, servers, backups, logs and `override.psm1` are
+not tracked by git and are kept. This requires an installation cloned with Git.
+Set `AutoUpdateTool` to `$false` to remove the task on the next run.
+
+## Scheduled Task Options
+
+Both are off by default. After changing one, delete the `Tasks-*` and
+`PowerShellGSM-Update` tasks in the Task Scheduler; they are registered again
+on the next run.
+
+- `TaskHeadless`: start the tasks through `conhost.exe --headless`, so no
+  console window flashes every few minutes.
+- `TaskRunWhileLoggedOff`: run the tasks whether the user is logged on or not
+  (S4U logon, no password stored), so the servers start after a reboot without
+  auto-logon. Servers then run in the background with no window, and the tasks
+  cannot reach network shares. Some servers need a logged-on desktop and will
+  not work this way.
+
+## Unattended Installs
+
+By default, the first launch of a new server installs it, starts it once so it
+generates its files, then stops and waits so you can edit them. Set
+`StopAfterFreshInstall` to `$false` when the configuration files are already in
+place (for example deployed by a provisioning tool), so the server keeps
+running after its first install.
 
 ## Requirements
 

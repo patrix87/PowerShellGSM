@@ -27,8 +27,9 @@ $null = Set-Location -Path $dir
 #---------------------------------------------------------
 
 try {
-  Import-Module -Name ".\global.psm1"
+  Import-Module -Name ".\defaults.psm1"
   Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
+  Import-Override
 }
 catch {
   Write-Error "Unable to import modules."

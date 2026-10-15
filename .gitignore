@@ -11,3 +11,4 @@ launchers/*
 !launchers/run.cmd
 !launchers/start_all.cmd
 .tmp
+override.psm1

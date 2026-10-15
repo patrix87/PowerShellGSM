@@ -16,8 +16,9 @@ param (
 
 # import global config, all functions. Exit if fails.
 try {
-  Import-Module -Name ".\global.psm1"
+  Import-Module -Name ".\defaults.psm1"
   Get-ChildItem -Path ".\functions" -Include "*.psm1" -Recurse | Import-Module
+  Import-Override
 }
 catch {
   Exit-WithError -ErrorMsg "Unable to import modules."
@@ -256,6 +257,16 @@ if (($Server.AutoUpdates -or $Server.AutoRestartOnCrash -or $Server.AutoRestart)
   Register-Task
 }
 
+$UpdateTaskExists = [bool](Get-ScheduledTask -TaskName "PowerShellGSM-Update" -ErrorAction SilentlyContinue)
+if ($Global.AutoUpdateTool -and -not $UpdateTaskExists) {
+  Write-ScriptMsg "Registering PowerShellGSM Update Task..."
+  Register-UpdateTask
+}
+elseif (-not $Global.AutoUpdateTool -and $UpdateTaskExists) {
+  Write-ScriptMsg "Unregistering PowerShellGSM Update Task..."
+  Unregister-UpdateTask
+}
+
 #---------------------------------------------------------
 # Start Server
 #---------------------------------------------------------
@@ -267,7 +278,7 @@ Start-Server
 # Open FreshInstall Configuration folder
 #---------------------------------------------------------
 
-if ($FreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Container" -ErrorAction SilentlyContinue)) {
+if ($FreshInstall -and $Global.StopAfterFreshInstall -and (Test-Path -Path $Server.ConfigFolder -PathType "Container" -ErrorAction SilentlyContinue)) {
   Write-Warning -Message "Stopping the Server to let you edit the configurations files."
   #Stop Server because configuration is probably bad anyway
   Stop-Server

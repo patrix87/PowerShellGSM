@@ -53,6 +53,25 @@ $GlobalDetails = @{
   #Should be lower or equal to the two above. If you change this value, you need to manually update your exsiting task in the task scheduler.s
   TaskCheckFrequency   = 5
 
+  #Set to $true to keep PowerShellGSM up to date with git pull.
+  AutoUpdateTool       = $true
+
+  #Check for PowerShellGSM updates Frequency in Hours. If you change this value, delete the PowerShellGSM-Update task in the task scheduler, it will be registered again on the next run.
+  ToolUpdateFrequency  = 24
+
+  #Run the scheduled tasks whether the user is logged on or not (S4U logon, no password stored), so no auto-logon is needed.
+  #Servers then run in the background without a window, and the tasks cannot use network shares.
+  #If you change this value, delete the Tasks-* and PowerShellGSM-Update tasks in the task scheduler, they will be registered again on the next run.
+  TaskRunWhileLoggedOff = $false
+
+  #Start the scheduled tasks through "conhost.exe --headless" so no console window flashes every few minutes.
+  #If you change this value, delete the Tasks-* and PowerShellGSM-Update tasks in the task scheduler, they will be registered again on the next run.
+  TaskHeadless         = $false
+
+  #After installing a new server, stop it and wait so you can edit the configuration files it generated.
+  #Set to $false when the configuration files are already in place, or for unattended installs.
+  StopAfterFreshInstall = $true
+
   #Lock Timeout in minutes
   LockTimeout          = 120
 

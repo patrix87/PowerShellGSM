@@ -287,6 +287,12 @@ if ($FreshInstall -and $Global.StopAfterFreshInstall -and (Test-Path -Path $Serv
   Write-Warning -Message "Launch again when the server configurations files are edited."
   Read-Host "Press Enter to close this windows."
 }
+elseif ($FreshInstall) {
+  #The server generated its files on this first start, after Start-ServerPrep ran. Restart once so the configuration is applied to them.
+  Write-ScriptMsg "Restarting the Server so the configuration is applied to the files it generated..."
+  Stop-Server
+  Start-Server
+}
 
 #---------------------------------------------------------
 # Cleanup

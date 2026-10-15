@@ -69,7 +69,7 @@ $GlobalDetails = @{
   TaskHeadless         = $false
 
   #After installing a new server, stop it and wait so you can edit the configuration files it generated.
-  #Set to $false when the configuration files are already in place, or for unattended installs.
+  #Set to $false for unattended installs: the server is restarted once instead, so the configuration is applied to the files it generated.
   StopAfterFreshInstall = $true
 
   #Lock Timeout in minutes

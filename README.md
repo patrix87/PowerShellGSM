@@ -136,9 +136,10 @@ on the next run.
 
 By default, the first launch of a new server installs it, starts it once so it
 generates its files, then stops and waits so you can edit them. Set
-`StopAfterFreshInstall` to `$false` when the configuration files are already in
-place (for example deployed by a provisioning tool), so the server keeps
-running after its first install.
+`StopAfterFreshInstall` to `$false` for unattended installs (for example from a
+provisioning tool): PowerShellGSM then restarts the server once after its first
+install, so the configuration from the server's config file is applied to the
+files the server just generated, and the server keeps running.
 
 ## Requirements
 

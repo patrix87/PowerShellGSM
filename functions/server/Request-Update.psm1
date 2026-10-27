@@ -83,6 +83,10 @@ function Request-Update {
   if ($InstallState -match "Update Required") {
     return $true
   }
+  if (-not $RemoteBuildID) {
+    Write-ServerMsg "Remote Build ID unavailable, skipping update."
+    return $false
+  }
   if ($LocalBuildID -ne $RemoteBuildID) {
     return $true
   }

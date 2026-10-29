@@ -62,12 +62,26 @@ function Request-Update {
   }
 
   #Parse the file for the update status
-  $SteamCMDResult = Get-Content -Path ".\servers\$UpdateReturnFile" -Raw
-  $InstallState = $($SteamCMDResult | Select-String -Pattern "install state:([\w ,]*)").Matches.Groups[1].Value.Trim()
+  $SteamCMDResult = $null
+  if (Test-Path -Path ".\servers\$UpdateReturnFile") {
+    $SteamCMDResult = Get-Content -Path ".\servers\$UpdateReturnFile" -Raw
+  }
+  else {
+    Write-ServerMsg "SteamCMD return file not found: .\servers\$UpdateReturnFile"
+  }
+  $InstallState = $null
+  $LocalBuildID = $null
+  $RemoteBuildID = $null
+  if ($SteamCMDResult) {
+    $Match = [regex]::Match($SteamCMDResult, "install state:([\w ,]*)")
+    if ($Match.Success) { $InstallState = $Match.Groups[1].Value.Trim() }
+    $Match = [regex]::Match($SteamCMDResult, "BuildID (\d+)")
+    if ($Match.Success) { $LocalBuildID = $Match.Groups[1].Value.Trim() }
+    $Match = [regex]::Match($SteamCMDResult, "`"$([regex]::Escape($BranchName))`"\s*\{\s*`"buildid`"\s*`"(\d+)", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    if ($Match.Success) { $RemoteBuildID = $Match.Groups[1].Value.Trim() }
+  }
   Write-ServerMsg "Install State: $InstallState"
-  $LocalBuildID = $($SteamCMDResult | Select-String -Pattern "BuildID (\d+)" -CaseSensitive).Matches.Groups[1].Value.Trim()
   Write-ServerMsg "Local Build ID: $LocalBuildID"
-  $RemoteBuildID = $($SteamCMDResult | Select-String -Pattern "`"$BranchName`"\s*\{\s*`"buildid`"\s*`"(\d+)").Matches.Groups[1].Value.Trim()
   Write-ServerMsg "Remote Build ID: $RemoteBuildID"
 
   #Delete the script and update return file.
@@ -79,9 +93,18 @@ function Request-Update {
     $null = Remove-Item -Path ".\servers\$UpdateReturnFile" -Confirm:$false -ErrorAction SilentlyContinue
   }
 
+  #Validate the SteamCMD output before deciding anything.
+  if (-not $SteamCMDResult) {
+    Write-ServerMsg "SteamCMD returned no output (exit code: $($Task.ExitCode)), skipping update."
+    return $false
+  }
   #Return true if the server needs to be updated.
   if ($InstallState -match "Update Required") {
     return $true
+  }
+  if (-not $LocalBuildID -or -not $RemoteBuildID) {
+    Write-ServerMsg "Unable to read build IDs from SteamCMD output (exit code: $($Task.ExitCode)), skipping update."
+    return $false
   }
   if ($LocalBuildID -ne $RemoteBuildID) {
     return $true

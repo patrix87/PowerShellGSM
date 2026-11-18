@@ -7,7 +7,9 @@
 param (
   [Parameter(Mandatory)]
   [int]$TargetPid,
-  [string]$Title = ""
+  [string]$Title = "",
+  #Send Ctrl+C to every process attached to the target's console.
+  [switch]$CtrlC
 )
 
 Add-Type -Namespace "PowerShellGSM" -Name "ConsoleApi" -MemberDefinition @"
@@ -17,6 +19,10 @@ public static extern bool FreeConsole();
 public static extern bool AttachConsole(uint dwProcessId);
 [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 public static extern bool SetConsoleTitle(string lpConsoleTitle);
+[DllImport("kernel32.dll", SetLastError = true)]
+public static extern bool SetConsoleCtrlHandler(IntPtr HandlerRoutine, bool Add);
+[DllImport("kernel32.dll", SetLastError = true)]
+public static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
 "@
 
 $null = [PowerShellGSM.ConsoleApi]::FreeConsole()
@@ -26,6 +32,14 @@ if (-not [PowerShellGSM.ConsoleApi]::AttachConsole($TargetPid)) {
 $Success = $true
 if ($Title) {
   $Success = [PowerShellGSM.ConsoleApi]::SetConsoleTitle($Title) -and $Success
+}
+if ($CtrlC) {
+  #Ignore the Ctrl+C ourselves: it reaches every process attached to the console, this one included.
+  $null = [PowerShellGSM.ConsoleApi]::SetConsoleCtrlHandler([IntPtr]::Zero, $true)
+  #CTRL_C_EVENT (0) to process group 0, every process on the console.
+  $Success = [PowerShellGSM.ConsoleApi]::GenerateConsoleCtrlEvent(0, 0) -and $Success
+  #The event is delivered asynchronously, stay attached until it is.
+  Start-Sleep -Milliseconds 500
 }
 $null = [PowerShellGSM.ConsoleApi]::FreeConsole()
 if ($Success) {

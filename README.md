@@ -138,6 +138,24 @@ close for a clean shutdown, and it stops whenever Windows Terminal crashes or
 updates. Use the `.cmd` files in `launchers` to start a server; they open the
 PowerShellGSM window in Windows Console Host as well.
 
+## Stopping Servers
+
+Each template lists, in `StopMethods`, the ways its server can be stopped
+cleanly, in the order to try them. PowerShellGSM gives each one up to
+`SaveDelay` seconds before trying the next:
+
+- `Command`: send `CmdSave`, wait `SaveDelay`, then send `CmdStop` through the
+  template's Warnings protocol (RCON, ARRCON, Telnet, StdIn or REST API). Only
+  used when Warnings are enabled and the server answers remote commands.
+- `CtrlC`: send Ctrl+C to the server's console.
+- `CloseWindow`: close the server's window.
+
+When none of them worked and `AllowForceClose` is `$true`, the server is
+killed. A template without `StopMethods` uses `Command` then `CloseWindow`.
+Games handle these differently: a game without a Ctrl+C or window close
+handler exits at once without saving, so list only the methods that save for
+that game.
+
 ## Unattended Installs
 
 By default, the first launch of a new server installs it, starts it once so it

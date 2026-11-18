@@ -1,12 +1,9 @@
 function Send-RestartWarning {
+  #Warn the players at each of the Warnings.Timers, waiting in between. Returns $false when a message could not be sent.
   [CmdletBinding()]
   [OutputType([boolean])]
   param (
-    [Parameter(Mandatory)]
-    $ServerProcess
   )
-  $Stopped = 0
-  $Failed = $false
   #Loop until the list of timers is empty
   while ($Warnings.Timers.Count -gt 0) {
     #Select first timer in the list
@@ -30,47 +27,15 @@ function Send-RestartWarning {
     }
     #Insert time in messages.
     $Message = $Message -replace "%", $TimerText
-    #Send the message.
-    $Success = Send-Command -Command $Warnings.CmdMessage -Message $Message
-    #If the command succeed, sleep until next command, else break.
-    if ($Success) {
-      Write-ServerMsg "Waiting $Timer seconds before next warning..."
-      Start-Sleep -Seconds $Timer
-    }
-    else {
+    #Send the message, then sleep until the next one.
+    if (-not (Send-Command -Command $Warnings.CmdMessage -Message $Message)) {
       Write-Warning "Unable to send restart warning."
-      $Failed = $true
-      break
+      return $false
     }
+    Write-ServerMsg "Waiting $Timer seconds before next warning..."
+    Start-Sleep -Seconds $Timer
   }
-  #If warning messages commands succeeded, send save cmd and wait safety timer.
-  if (-not ($Failed)) {
-    if (-not ($null -eq $Warnings.CmdSave)) {
-      Write-ServerMsg "Saving server."
-      $Success = Send-Command -Command $Warnings.CmdSave
-      if ($Success) {
-        Start-Sleep -Seconds $Warnings.SaveDelay
-      }
-      else {
-        Write-Warning "Unable to send save command."
-      }
-    }
-    #Send server stop command and wait for the process to exit for at most 60 seconds.
-    Write-ServerMsg "Closing server."
-    if (Send-Command -Command $Warnings.CmdStop) {
-      $Stopped = 1
-    }
-    else {
-      $Stopped = 0
-    }
-    $ServerProcess.WaitForExit(30000)
-    Start-Sleep -Seconds 5
-  }
-  #if the process is still running, if allowed, stop process.
-  if (-not ($ServerProcess.HasExited) -and ($Server.AllowForceClose)) {
-    $Stopped = Stop-ServerProcess -ServerProcess $ServerProcess
-  }
-  return $Stopped
+  return $true
 }
 
 Export-ModuleMember -Function Send-RestartWarning

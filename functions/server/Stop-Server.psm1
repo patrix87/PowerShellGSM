@@ -5,8 +5,8 @@ function Stop-Server {
     Write-ServerMsg "Server is not running."
   }
   else {
-    #Check if it's the right server via RCON if possible.
-    $Success = $false
+    #Check if the server answers remote commands, and warn the players before stopping it.
+    $CommandAvailable = $false
     if ($Warnings.Use) {
       <#
       Liveness probe. "help" exists on most RCON and Telnet servers, but an API
@@ -14,26 +14,18 @@ function Stop-Server {
       read only command with Warnings.CmdCheck.
       #>
       $CmdCheck = if ($Warnings.CmdCheck) { $Warnings.CmdCheck } else { "help" }
-      $Success = Send-Command -Command $CmdCheck
-      if ($Success) {
+      $CommandAvailable = Send-Command -Command $CmdCheck
+      if ($CommandAvailable) {
         Write-ServerMsg "Server is responding to remote messages."
+        Write-ServerMsg "Server is running, warning users about upcomming restart."
+        $CommandAvailable = Send-RestartWarning
       }
       else {
         Write-ServerMsg "Server is not responding to remote messages."
       }
     }
-    #If Rcon worked, send stop warning.
-    if ($Success) {
-      Write-ServerMsg "Server is running, warning users about upcomming restart."
-      $Stopped = Send-RestartWarning -ServerProcess $ServerProcess
-    }
-    else {
-      #If Server is allow to be closed, close it.
-      if ($Server.AllowForceClose) {
-        Write-ServerMsg "Server is running, stopping server."
-        $Stopped = Stop-ServerProcess -ServerProcess $ServerProcess
-      }
-    }
+    Write-ServerMsg "Server is running, stopping server."
+    $Stopped = Stop-ServerProcess -ServerProcess $ServerProcess -CommandAvailable $CommandAvailable
     #If the server stopped, send messages, if not check if it's normal, then stopped it, if it fails, exit with error.
     switch ($Stopped) {
       -1 {

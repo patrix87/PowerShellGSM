@@ -2,4 +2,4 @@
 :: running, or pass a name directly: console.cmd necesse
 @echo off
 cd /d "%~dp0"
-powershell.exe -noprofile -executionpolicy bypass -file ".\console.ps1" %*
+start "" conhost.exe powershell.exe -noprofile -executionpolicy bypass -file ".\console.ps1" %*

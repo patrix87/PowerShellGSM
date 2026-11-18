@@ -63,13 +63,7 @@ A Comprehensive PowerShell Tool for Simple Automated Game Server Management.
 
 Before you begin, note that this tool is not intended to run on your primary
 gaming computer. Ideally, use a virtual machine on a dedicated server or a
-secondary computer. If you still want to use this tool on your main computer,
-you should consider disabling the monitoring features. Otherwise, the Task
-Scheduler will briefly open a cmd window for a tenth of a second every 5
-minutes. You can disable this by turning off the monitoring features
-(AutoUpdates, AutoRestartOnCrash, AutoRestart) in the game server
-configuration file or by disabling the game server monitoring task created in
-the Windows Task Scheduler after the second launch of the server.
+secondary computer.
 
 1. Install [Git](https://git-scm.com/download/win) and your preferred IDE,
    such as [VSCode](https://code.visualstudio.com/download).
@@ -118,19 +112,30 @@ files. Your configs, launchers, servers, backups, logs and `override.psm1` are
 not tracked by git and are kept. This requires an installation cloned with Git.
 Set `AutoUpdateTool` to `$false` to remove the task on the next run.
 
-## Scheduled Task Options
+## Scheduled Tasks
 
-Both are off by default. After changing one, delete the `Tasks-*` and
-`PowerShellGSM-Update` tasks in the Task Scheduler; they are registered again
-on the next run.
+PowerShellGSM registers a `Tasks-<server>` scheduled task for each server that
+uses AutoUpdates, AutoRestartOnCrash or AutoRestart, and the
+`PowerShellGSM-Update` task. The tasks run in the background with no window.
+Each run checks that the tasks still match the current settings and registers
+them again when they do not, so a setting change needs no manual cleanup in
+the Task Scheduler.
 
-- `TaskHeadless`: start the tasks through `conhost.exe --headless`, so no
-  console window flashes every few minutes.
-- `TaskRunWhileLoggedOff`: run the tasks whether the user is logged on or not
-  (S4U logon, no password stored), so the servers start after a reboot without
-  auto-logon. Servers then run in the background with no window, and the tasks
-  cannot reach network shares. Some servers need a logged-on desktop and will
-  not work this way.
+- `TaskRunWhileLoggedOff` (off by default): run the tasks whether the user is
+  logged on or not (S4U logon, no password stored), so the servers start after
+  a reboot without auto-logon. Servers then run in the background with no
+  window, and the tasks cannot reach network shares. Some servers need a
+  logged-on desktop and will not work this way.
+
+## Console Windows
+
+PowerShellGSM always starts the servers, its own windows and its scheduled
+tasks through Windows Console Host (`conhost.exe`), whatever default terminal
+is set in Windows. With Windows Terminal as the default terminal, a server
+would otherwise run inside Windows Terminal: it has no window of its own to
+close for a clean shutdown, and it stops whenever Windows Terminal crashes or
+updates. Use the `.cmd` files in `launchers` to start a server; they open the
+PowerShellGSM window in Windows Console Host as well.
 
 ## Unattended Installs
 

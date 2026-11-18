@@ -1,5 +1,6 @@
 function New-Task {
-  #Build a scheduled task running PowerShell with the given arguments, following TaskHeadless and TaskRunWhileLoggedOff.
+  #Build a scheduled task running PowerShellGSM's PowerShell with the given arguments, following TaskRunWhileLoggedOff.
+  #It runs through "conhost.exe --headless": no window, and the user's default terminal never applies.
   [CmdletBinding()]
   param (
     [Parameter(Mandatory)]
@@ -13,12 +14,7 @@ function New-Task {
     [Parameter(Mandatory)]
     $Settings
   )
-  if ($Global.TaskHeadless) {
-    $action = New-ScheduledTaskAction -Execute "conhost.exe" -Argument "--headless Powershell.exe $Arguments" -WorkingDirectory $WorkingDirectory
-  }
-  else {
-    $action = New-ScheduledTaskAction -Execute "Powershell.exe" -Argument $Arguments -WorkingDirectory $WorkingDirectory
-  }
+  $action = New-ScheduledTaskAction -Execute "conhost.exe" -Argument "--headless `"$(Get-PowerShellPath)`" $Arguments" -WorkingDirectory $WorkingDirectory
   $TaskParams = @{
     Description = $Description
     Action      = $action

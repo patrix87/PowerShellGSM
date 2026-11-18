@@ -119,11 +119,10 @@ if ($Task) {
     Unregister-Task
     Exit
   } else {
-    $taskName = "Tasks-$($server.Name)"
-    $existingTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
-    if (-not $existingTask) {
-      Write-ScriptMsg "Task '$taskName' does not exist, Registering-Task..."
-      Register-Task
+    #Registered again when it no longer matches the current settings.
+    Register-Task
+    if ($Global.AutoUpdateTool) {
+      Register-UpdateTask
     }
   }
 
@@ -252,17 +251,15 @@ if (-not $FreshInstall -and $Server.AutoUpdates) {
 # Register Scheduled Task
 #---------------------------------------------------------
 
-if (($Server.AutoUpdates -or $Server.AutoRestartOnCrash -or $Server.AutoRestart) -and -not (Get-ScheduledTask -TaskName "Tasks-$($server.Name)" -ErrorAction SilentlyContinue)) {
-  Write-ScriptMsg "Registering Scheduled Tasks Check for $($Server.Name)..."
+#Both are registered when missing, or again when they no longer match the current settings.
+if ($Server.AutoUpdates -or $Server.AutoRestartOnCrash -or $Server.AutoRestart) {
   Register-Task
 }
 
-$UpdateTaskExists = [bool](Get-ScheduledTask -TaskName "PowerShellGSM-Update" -ErrorAction SilentlyContinue)
-if ($Global.AutoUpdateTool -and -not $UpdateTaskExists) {
-  Write-ScriptMsg "Registering PowerShellGSM Update Task..."
+if ($Global.AutoUpdateTool) {
   Register-UpdateTask
 }
-elseif (-not $Global.AutoUpdateTool -and $UpdateTaskExists) {
+elseif (Get-ScheduledTask -TaskName "PowerShellGSM-Update" -ErrorAction SilentlyContinue) {
   Write-ScriptMsg "Unregistering PowerShellGSM Update Task..."
   Unregister-UpdateTask
 }

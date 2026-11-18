@@ -33,14 +33,8 @@ function Start-StdInHost {
   }
   $HostParams | ConvertTo-Json | Set-Content -Path $ParamsFile -Encoding UTF8
 
-  $ArgumentList = @(
-    "-NoProfile",
-    "-ExecutionPolicy", "Bypass",
-    "-WindowStyle", "Hidden",
-    "-File", "`"$RunnerPath`"",
-    "-ParamsFile", "`"$((Resolve-Path -Path $ParamsFile).Path)`""
-  )
-  $HostProcess = Start-Process -FilePath "powershell.exe" -ArgumentList $ArgumentList -WindowStyle Hidden -PassThru
+  $Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$RunnerPath`" -ParamsFile `"$((Resolve-Path -Path $ParamsFile).Path)`""
+  $HostProcess = Start-ConsoleProcess -FilePath (Get-PowerShellPath) -Arguments $Arguments -Headless
 
   #Open the visible console window that stands in for the server's own window.
   $null = Start-ServerConsole -WatchPID $HostProcess.Id

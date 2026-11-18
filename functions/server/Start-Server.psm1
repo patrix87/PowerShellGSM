@@ -16,13 +16,14 @@ function Start-Server {
       Write-ServerMsg "Starting Server $($Server.Launcher) via StdIn host with Arguments: $($Server.Arguments)"
       $ServerProcess = Start-StdInHost
     }
-    elseif ($Server.Arguments.length -gt 0) {
-      Write-ServerMsg "Starting Server $($Server.Launcher) with Arguments: $($Server.Arguments)"
-      $ServerProcess = Start-Process -FilePath $Server.Launcher -WorkingDirectory $($Server.WorkingDirectory) -ArgumentList $Server.Arguments -PassThru
-    }
     else {
-      Write-ServerMsg "Starting Server $($Server.Launcher) with no Arguments."
-      $ServerProcess = Start-Process -FilePath $Server.Launcher -WorkingDirectory $($Server.WorkingDirectory) -PassThru
+      if ($Server.Arguments.length -gt 0) {
+        Write-ServerMsg "Starting Server $($Server.Launcher) with Arguments: $($Server.Arguments)"
+      }
+      else {
+        Write-ServerMsg "Starting Server $($Server.Launcher) with no Arguments."
+      }
+      $ServerProcess = Start-ConsoleProcess -FilePath $Server.Launcher -Arguments $Server.Arguments -WorkingDirectory $Server.WorkingDirectory -Title $Server.Name
     }
     #Wait to see if the server is stable.
     Start-Sleep -Seconds $Server.StartupWaitTime

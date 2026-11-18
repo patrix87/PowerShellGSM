@@ -4,7 +4,6 @@
 $OverrideDetails = @{
   #AutoUpdateTool        = $false
   #TaskRunWhileLoggedOff = $true
-  #TaskHeadless          = $true
   #StopAfterFreshInstall = $false
 }
 

@@ -1,5 +1,5 @@
 <#
-  Not a module function. Launched as its own detached, hidden powershell.exe process by
+  Not a module function. Launched as its own detached, headless PowerShell process by
   Start-StdInHost, and stays alive for as long as the game process runs so that later,
   separate invocations of main.ps1 can deliver console commands (save/exit/etc) through
   the named pipe instead of relying on CloseMainWindow/Stop-Process.

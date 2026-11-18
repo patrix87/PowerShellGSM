@@ -6,13 +6,7 @@ function Start-ServerConsole {
     [int]$WatchPID = 0
   )
   $ConsoleScript = (Resolve-Path -Path ".\console.ps1").Path
-  $ArgumentList = @(
-    "-NoProfile",
-    "-ExecutionPolicy", "Bypass",
-    "-File", "`"$ConsoleScript`"",
-    "-ServerCfg", "`"$($Server.Name)`"",
-    "-WatchPID", $WatchPID
-  )
-  return Start-Process -FilePath "powershell.exe" -WorkingDirectory (Get-Location).Path -ArgumentList $ArgumentList -PassThru
+  $Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$ConsoleScript`" -ServerCfg `"$($Server.Name)`" -WatchPID $WatchPID"
+  return Start-ConsoleProcess -FilePath (Get-PowerShellPath) -Arguments $Arguments
 }
 Export-ModuleMember -Function Start-ServerConsole

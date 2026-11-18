@@ -6,10 +6,15 @@ function Invoke-Download {
     $OutFile
   )
 
+  # Windows PowerShell does not load System.Net.Http by default.
+  Add-Type -AssemblyName "System.Net.Http"
+
   # Create the HTTP client download request
   $httpClient = New-Object System.Net.Http.HttpClient
   $response = $httpClient.GetAsync($Uri)
   $response.Wait()
+  # Fail on an HTTP error instead of saving the error page as the file.
+  $null = $response.Result.EnsureSuccessStatusCode()
 
   # Create a file stream to pointed to the output file destination
   $outputFileStream = [System.IO.FileStream]::new($OutFile, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write)

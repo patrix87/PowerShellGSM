@@ -3,7 +3,8 @@ function Import-Override {
   if (-not (Test-Path -Path ".\override.psm1" -PathType "Leaf")) {
     return
   }
-  Import-Module -Name ".\override.psm1"
+  #-Force reads the file again when it was already imported in this session.
+  Import-Module -Name ".\override.psm1" -Force
   foreach ($Key in $OverrideDetails.Keys) {
     if ($Global.PSObject.Properties.Name -contains $Key) {
       $Global.$Key = $OverrideDetails[$Key]

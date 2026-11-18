@@ -82,7 +82,7 @@ function Stop-ServerProcess {
 
   if ((-not $ServerProcess.HasExited) -and $Server.AllowForceClose) {
     Write-Warning "Forcefully stopping server..."
-    $null = Stop-Process -InputObject $ServerProcess -Force
+    $null = Stop-Process -Id $ServerProcess.Id -Force
     $null = $ServerProcess.WaitForExit(30000)
   }
   #Safety timer for allowing the files to unlock before backup.

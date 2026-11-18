@@ -6,7 +6,7 @@ function Remove-OldPwsh {
   $Root = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine((Get-Location).Path, $Global.PwshDirectory))
   $OldVersions = Get-ChildItem -Path $Root -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne $Global.PwshVersion }
   foreach ($Folder in $OldVersions) {
-    $Prefix = "$($Folder.FullName)\"
+    $Prefix = $Folder.FullName + [System.IO.Path]::DirectorySeparatorChar
     $InUse = Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase) }
     if (-not $InUse) {
       Write-ScriptMsg "Removing PowerShell $($Folder.Name)."

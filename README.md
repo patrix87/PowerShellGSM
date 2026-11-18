@@ -80,8 +80,9 @@ secondary computer.
    - _The filename in `launchers` must match the one in `configs`._
 7. Launch your server by double-clicking on your `icarus.cmd` file from the
    `launchers` folder.
-8. The PowerShell window will open, install the server, and **stop the server**
-   to allow you to edit the server configuration files.
+8. The PowerShell window will open, install PowerShellGSM's toolchain (see
+   [Toolchain](#toolchain)) and the server, and **stop the server** to allow
+   you to edit the server configuration files.
 9. After editing your config files, run the `icarus.cmd` file from `launchers`
    again.
 10. On the second launch, it will start the server and configure the
@@ -146,9 +147,27 @@ provisioning tool): PowerShellGSM then restarts the server once after its first
 install, so the configuration from the server's config file is applied to the
 files the server just generated, and the server keeps running.
 
+## Toolchain
+
+PowerShellGSM installs and updates its own tools in the `tools` folder, so
+every installation runs the same versions. Nothing is installed system wide.
+
+- **PowerShell 7**: PowerShellGSM always runs on the PowerShell version pinned
+  in `defaults.psm1` (`PwshVersion`), installed from the official portable zip
+  to `tools\pwsh\<version>` and checked against its SHA256 (`PwshSha256`). The
+  `.cmd` launchers start Windows PowerShell 5.1, which only installs PowerShell
+  7 when missing and runs PowerShellGSM again on it. When a PowerShellGSM update
+  moves the pin, the new version is installed on the next run and the old one
+  is removed once nothing uses it.
+- **SteamCMD**, **ARRCON** and **mcrcon**: installed when missing.
+- **Windows Console Host** (`conhost.exe`, part of Windows): hosts every
+  PowerShellGSM and server window (see [Console Windows](#console-windows)).
+
 ## Requirements
 
-- A Windows machine with at least PowerShell 5.1 (Windows 10 or Server 2016+)
+- A Windows machine with Windows PowerShell 5.1 (Windows 10 or Server 2016+),
+  used once to install PowerShellGSM's own PowerShell 7
+- Internet access to GitHub and Steam for the toolchain downloads
 - Some basic PowerShell knowledge.
 - Some networking basics to configure port forwarding.
 - The Windows user running the script should have admin privileges but should

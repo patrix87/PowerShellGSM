@@ -26,6 +26,32 @@ catch {
 }
 
 #---------------------------------------------------------
+# Run on PowerShellGSM's own PowerShell
+#---------------------------------------------------------
+
+#Every run uses the pinned PowerShell 7 in tools\pwsh. Started by anything else (the .cmd launchers start
+#Windows PowerShell), install it when missing, then run again on it in this same window.
+try {
+  $Pwsh = Get-PowerShellPath
+}
+catch {
+  Write-Host -ForegroundColor "Red" -BackgroundColor "Black" -Object "Unable to install PowerShell $($Global.PwshVersion): $_"
+  if (-not $Task) {
+    Read-Host "Press Enter to close this window."
+  }
+  exit 1
+}
+if ((Get-Process -Id $PID).Path -ne $Pwsh) {
+  $ArgumentList = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $MyInvocation.MyCommand.Path, "-ServerCfg", $ServerCfg)
+  if ($Task) {
+    $ArgumentList += "-Task"
+  }
+  & $Pwsh @ArgumentList
+  exit $LASTEXITCODE
+}
+Remove-OldPwsh
+
+#---------------------------------------------------------
 # Start Logging
 #---------------------------------------------------------
 

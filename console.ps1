@@ -38,6 +38,29 @@ catch {
 }
 
 #---------------------------------------------------------
+# Run on PowerShellGSM's own PowerShell
+#---------------------------------------------------------
+
+#Same as main.ps1: started by anything else than the pinned PowerShell 7, run again on it in this same window.
+try {
+  $Pwsh = Get-PowerShellPath
+}
+catch {
+  Write-Error "Unable to install PowerShell $($Global.PwshVersion): $_"
+  Read-Host "Press Enter to close this window."
+  exit 1
+}
+if ((Get-Process -Id $PID).Path -ne $Pwsh) {
+  $ArgumentList = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $scriptpath, "-WatchPID", $WatchPID)
+  #Windows PowerShell drops empty arguments, so an empty name is left out rather than passed.
+  if (-not [string]::IsNullOrWhiteSpace($ServerCfg)) {
+    $ArgumentList += @("-ServerCfg", $ServerCfg)
+  }
+  & $Pwsh @ArgumentList
+  exit $LASTEXITCODE
+}
+
+#---------------------------------------------------------
 # Pick a server when none was given.
 #---------------------------------------------------------
 

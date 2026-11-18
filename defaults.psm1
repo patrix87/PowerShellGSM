@@ -8,6 +8,12 @@ $GlobalDetails = @{
   #SteamCMD
   SteamCMD             = ".\tools\SteamCMD\steamcmd.exe"
 
+  #PowerShell 7 that runs PowerShellGSM, installed by PowerShellGSM in PwshDirectory\PwshVersion from the official portable zip.
+  #Pinned to the version PowerShellGSM is tested with: a PowerShellGSM update that moves the pin installs the new version on the next run.
+  PwshDirectory        = ".\tools\pwsh"
+  PwshVersion          = "7.6.10"
+  PwshSha256           = "7D871531806EB1646264E4BBABD9F0C30C23355591BC756BB9909448C29AE166"
+
   #Java Directory
   JavaDirectory        = ".\tools\java"
 

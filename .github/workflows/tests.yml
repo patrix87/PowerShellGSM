@@ -1,0 +1,43 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.powershell }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        powershell: [Windows PowerShell 5.1, Pinned PowerShell 7]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the tests on Windows PowerShell 5.1
+        if: matrix.powershell == 'Windows PowerShell 5.1'
+        shell: powershell
+        run: .\tests\Invoke-Tests.ps1 -ResultPath test-results.xml
+
+      # Installs the PowerShell pinned in defaults.psm1 the way PowerShellGSM does, then runs the tests on it.
+      - name: Run the tests on the pinned PowerShell 7
+        if: matrix.powershell == 'Pinned PowerShell 7'
+        shell: powershell
+        run: |
+          Import-Module .\defaults.psm1
+          Get-ChildItem -Path .\functions -Include *.psm1 -Recurse | Import-Module
+          $Pwsh = Get-PowerShellPath
+          & $Pwsh -NoProfile -ExecutionPolicy Bypass -File .\tests\Invoke-Tests.ps1 -ResultPath test-results.xml
+          exit $LASTEXITCODE
+
+      - name: Upload the test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ strategy.job-index }}
+          path: test-results.xml

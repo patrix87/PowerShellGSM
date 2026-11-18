@@ -214,6 +214,25 @@ You can create pull requests for changes to this project.
 
 Please follow the current structure and formatting.
 
+### Tests
+
+The `tests` folder holds [Pester](https://pester.dev) tests: every template
+loads and defines the settings PowerShellGSM needs, and the core functions
+(stop methods, update checks, scheduled tasks, INI files, PowerShell install)
+behave as expected. They run on GitHub for every push and pull request, on
+both PowerShell versions PowerShellGSM uses. Run them locally before opening a
+pull request:
+
+```ps
+# Windows PowerShell 5.1
+powershell -File .\tests\Invoke-Tests.ps1
+# The pinned PowerShell 7, installed by PowerShellGSM
+.\tools\pwsh\<PwshVersion>\pwsh.exe -File .\tests\Invoke-Tests.ps1
+```
+
+`Invoke-Tests.ps1` installs the pinned Pester version to `tools\Pester` on
+its first run. A new template gets its checks automatically.
+
 If you want to add support for more games, copy one of the configuration files
 and edit the values and launch parameters. You can then create a pull request
 to include your configuration here.

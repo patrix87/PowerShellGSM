@@ -1,0 +1,260 @@
+Steam Console Client (c) Valve Corporation - version 1794537082
+-- type 'quit' to exit --
+Loading Steam API...OK
+force_install_dir "C:\PowerShellGSM\servers\enshrouded"
+@ShutdownOnFailedCommand 1
+"@ShutdownOnFailedCommand" = "1"
+@NoPromptForPassword 1
+"@NoPromptForPassword" = "1"
+@sSteamCmdForcePlatformType windows
+"@sSteamCmdForcePlatformType" = "windows"
+
+Connecting anonymously to Steam Public...OK
+Waiting for client config...OK
+Waiting for user info...OK
+app_info_update 1
+app_status 2278520
+App Status 2278520 "Enshrouded Dedicated Server":
+ - license state: no License
+ - release state: released
+ - install state: Fully Installed
+ - install folder: "c:\powershellgsm\servers\enshrouded"
+ - install size: 8102177083 bytes (BuildID 26430253)
+ - mounted depots:
+   1004 : 67.86 MB (manifest 7604377918839582995)
+   2278521 : 8.05 GB (manifest 8886672487109033979)
+ - imports shared depot 228989 from app 228980
+ - update state: not running
+ - update stats: staged 0/0 MB (0%), downloaded 0/0 MB (0%)
+User Config 2278520: 
+"UserConfig"
+{
+}
+app_info_print 2278520
+AppID : 2278520, change number : 41233587/41233587, last change : Wed Nov 18 07:05:07 2026 
+"2278520"
+{
+	"common"
+	{
+		"name"		"Enshrouded Dedicated Server"
+		"type"		"Tool"
+		"parent"		"1203620"
+		"oslist"		"windows"
+		"osarch"		"64"
+		"osextended"		""
+		"clienticon"		"b51ff4aa19722a1f3587b35f37f590a998f36a9a"
+		"clienttga"		"fe73371754e5775388602786867295c4c3820fe5"
+		"icon"		"b51ff4aa19722a1f3587b35f37f590a998f36a9a"
+		"ReleaseState"		"released"
+		"freetodownload"		"1"
+		"small_capsule"
+		{
+			"english"		"c586e2ee5ea2dc14b6874025149e05fc7fd97093/capsule_231x87.jpg"
+		}
+		"header_image"
+		{
+			"english"		"b87ab9f709ce9f6cf553a0e62dc1f4831cfd96cb/header.jpg"
+		}
+		"library_assets"
+		{
+			"library_capsule"		"en"
+			"library_hero"		"en"
+			"library_hero_blur"		"en"
+			"library_logo"		"en"
+			"library_header"		"en"
+			"logo_position"
+			{
+				"pinned_position"		"BottomLeft"
+				"width_pct"		"36.2700228832952"
+				"height_pct"		"33.66261473947938"
+			}
+		}
+		"library_assets_full"
+		{
+			"library_capsule"
+			{
+				"image"
+				{
+					"english"		"c5b176856a5e744e328a5a589a7ab13a21491739/library_capsule.jpg"
+				}
+				"image2x"
+				{
+					"english"		"c5b176856a5e744e328a5a589a7ab13a21491739/library_capsule_2x.jpg"
+				}
+			}
+			"library_hero"
+			{
+				"image"
+				{
+					"english"		"65bf9ce18aee402c94c5e370f0a4c7c87119f910/library_hero.jpg"
+				}
+				"image2x"
+				{
+					"english"		"65bf9ce18aee402c94c5e370f0a4c7c87119f910/library_hero_2x.jpg"
+				}
+			}
+			"library_hero_blur"
+			{
+				"image"
+				{
+					"english"		"65bf9ce18aee402c94c5e370f0a4c7c87119f910/library_hero_blur.jpg"
+				}
+			}
+			"library_logo"
+			{
+				"image2x"
+				{
+					"english"		"d39da3fe47f15317fa32cc8a76e4707464fade89/logo_2x.png"
+				}
+				"image"
+				{
+					"english"		"d39da3fe47f15317fa32cc8a76e4707464fade89/logo.png"
+				}
+				"logo_position"
+				{
+					"pinned_position"		"BottomLeft"
+					"width_pct"		"36.2700228832952"
+					"height_pct"		"33.66261473947938"
+				}
+			}
+			"library_header"
+			{
+				"image"
+				{
+					"english"		"90f746b96b0331723d548692bc64c70b11f867c6/library_header.jpg"
+				}
+				"image2x"
+				{
+					"english"		"90f746b96b0331723d548692bc64c70b11f867c6/library_header_2x.jpg"
+				}
+			}
+		}
+		"store_asset_mtime"		"1792588243"
+		"associations"
+		{
+		}
+		"primary_genre"		"0"
+		"genres"
+		{
+			"0"		"37"
+		}
+		"category"
+		{
+			"category_62"		"1"
+		}
+		"steam_release_date"		"1706106600"
+		"gameid"		"2278520"
+		"review_score"		"7"
+		"review_percentage"		"90"
+	}
+	"extended"
+	{
+		"isfreeapp"		"1"
+	}
+	"config"
+	{
+		"installdir"		"EnshroudedServer"
+		"launch"
+		{
+			"0"
+			{
+				"executable"		"enshrouded_server.exe"
+			}
+		}
+	}
+	"depots"
+	{
+		"1004"
+		{
+			"config"
+			{
+				"oslist"		"windows"
+			}
+			"manifests"
+			{
+				"public"
+				{
+					"gid"		"7604377918839582995"
+					"size"		"67863136"
+					"download"		"24251776"
+				}
+			}
+			"depotfromapp"		"1007"
+		}
+		"1005"
+		{
+			"config"
+			{
+				"oslist"		"macos"
+			}
+			"manifests"
+			{
+				"public"
+				{
+					"gid"		"2135359612286175146"
+					"size"		"0"
+					"download"		"0"
+				}
+			}
+			"depotfromapp"		"1007"
+		}
+		"1006"
+		{
+			"config"
+			{
+				"oslist"		"linux"
+			}
+			"manifests"
+			{
+				"public"
+				{
+					"gid"		"4559160656493359681"
+					"size"		"111284048"
+					"download"		"36733840"
+				}
+			}
+			"depotfromapp"		"1007"
+		}
+		"228989"
+		{
+			"config"
+			{
+				"oslist"		"windows"
+			}
+			"depotfromapp"		"228980"
+			"sharedinstall"		"1"
+		}
+		"2278521"
+		{
+			"config"
+			{
+				"oslist"		"windows"
+			}
+			"manifests"
+			{
+				"public"
+				{
+					"gid"		"8886672487109033979"
+					"size"		"8047349315"
+					"download"		"3602183216"
+				}
+			}
+		}
+		"branches"
+		{
+			"public"
+			{
+				"buildid"		"26430253"
+				"timeupdated"		"1793801894"
+				"timebuildupdated"		"1793792245"
+			}
+		}
+		"privatebranches"		"1"
+	}
+}
+quit
+Unloading Steam API...OK
+Redirecting stderr to 'C:\PowerShellGSM\tools\SteamCMD\logs\stderr.txt'
+Logging directory: 'C:\PowerShellGSM\tools\SteamCMD/logs'
+[  0%] Checking for available updates...
+[----] Verifying installation...
